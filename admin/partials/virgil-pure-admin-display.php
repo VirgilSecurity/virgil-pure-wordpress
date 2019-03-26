@@ -15,7 +15,7 @@
     if ($pb->credentialsBlock())
         require_once 'blocks/credentials.php';
 
-    if ($pb->migrationBlock())
+    if ($pb->migrateBlock())
         require_once 'blocks/migrate.php';
 
     if ($pb->updateBlock())

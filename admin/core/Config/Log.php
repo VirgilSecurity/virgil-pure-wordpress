@@ -37,7 +37,10 @@
 
 namespace Plugin\Pure\Config;
 
-
+/**
+ * Class Log
+ * @package Plugin\Pure\Config
+ */
 class Log
 {
     const PLUGIN_ACTIVATION = "Plugin activation";

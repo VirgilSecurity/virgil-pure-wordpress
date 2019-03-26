@@ -404,7 +404,7 @@ p.virgil-phe-migration-count {
     text-transform: uppercase;
 }
 
-.virgil-phe-log-paginator-number {
+.virgil-phe-log-paginator > a.page-numbers {
     font-size: 14px;
     display: inline-block;
     background: none;
@@ -415,12 +415,27 @@ p.virgil-phe-migration-count {
     border-right: 0;
     border-top: 0;
     border-bottom: 0;
+    text-decoration: none;
+    color: #333333;
+    border-top: 1px solid #CCCCCC;
+    border-right: 1px solid #333333;
+    border-bottom: 1px solid #333333;
+    border-left: 1px solid #CCCCCC;
 }
 
-.virgil-phe-log-paginator-active {
+.virgil-phe-log-paginator > .page-numbers .current {
     background-color: #0000CC;
     border: 0;
     color: white;
+    border-left: 1px solid lightgray;
+    border-right: 0;
+    border-top: 0;
+    border-bottom: 0;
+    text-decoration: none;
+    border-top: 1px solid #CCCCCC;
+    border-right: 1px solid #333333;
+    border-bottom: 1px solid #333333;
+    border-left: 1px solid #CCCCCC;
 }
 
 /* ROTATE */

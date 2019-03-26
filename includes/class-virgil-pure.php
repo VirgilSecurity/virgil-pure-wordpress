@@ -5,12 +5,24 @@
  */
 class Virgil_Pure {
 
+    /**
+     * @var
+     */
 	protected $loader;
 
+    /**
+     * @var string
+     */
 	protected $Virgil_Pure;
 
+    /**
+     * @var string
+     */
 	protected $version;
 
+    /**
+     * Virgil_Pure constructor.
+     */
 	public function __construct() {
 		if ( defined( 'VIRGIL_PURE_VERSION' ) ) {
 			$this->version = VIRGIL_PURE_VERSION;
@@ -24,6 +36,9 @@ class Virgil_Pure {
 		$this->define_admin_hooks();
 	}
 
+    /**
+     *
+     */
 	private function load_dependencies() {
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-virgil-pure-loader.php';
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-virgil-pure-i18n.php';
@@ -32,6 +47,9 @@ class Virgil_Pure {
 		$this->loader = new Virgil_Pure_Loader();
 	}
 
+    /**
+     *
+     */
 	private function set_locale() {
 
 		$plugin_i18n = new Virgil_Pure_i18n();
@@ -40,6 +58,9 @@ class Virgil_Pure {
 
 	}
 
+    /**
+     *
+     */
 	private function define_admin_hooks() {
 
 		$plugin_admin = new Virgil_Pure_Admin( $this->get_Virgil_Pure(), $this->get_version() );
@@ -50,9 +71,12 @@ class Virgil_Pure {
 		$this->loader->add_action('plugins_loaded', $plugin_admin, 'virgil_pure_init_background_processes');
 		$this->loader->add_filter('check_password', $plugin_admin, 'virgil_pure_check_password', 1, 4);
 		$this->loader->add_action('after_password_reset', $plugin_admin, 'virgil_pure_password_reset', 1, 1);
-		$this->loader->add_action('profile_update', $plugin_admin, 'virgil_pure_profile_update', 1, 2);
+		$this->loader->add_action('profile_update', $plugin_admin, 'virgil_pure_profile_update', 1, 1);
 	}
 
+    /**
+     *
+     */
 	public function run() {
 		$this->loader->run();
 	}

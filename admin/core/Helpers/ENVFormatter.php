@@ -59,7 +59,7 @@ class ENVFormatter
         $titleSK = Credential::APP_SECRET_KEY;
         $titleUT = Credential::UPDATE_TOKEN;
 
-        $formatData = "$titleAT=\"$appToken\"\n$titlePK=\"$servicePublicKey\"\n$titleSK=\"$appSecretKey\"\n$titleUT=\"$updateToken\"\nVIRGIL_ENV=\"api-stg\"";
+        $formatData = "$titleAT=\"$appToken\"\n$titlePK=\"$servicePublicKey\"\n$titleSK=\"$appSecretKey\"\n$titleUT=\"$updateToken\"";
 
         return $formatData;
     }

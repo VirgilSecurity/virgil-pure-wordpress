@@ -2,7 +2,6 @@
 use Plugin\Pure\Config\Form;
 use Plugin\Pure\Helpers\InfoHelper;
 use Plugin\Pure\Helpers\StatusHelper;
-
 ?>
 
 <div class="virgil-phe-demo-container">
@@ -27,6 +26,4 @@ use Plugin\Pure\Helpers\StatusHelper;
             >
         </form>
     </div>
-
-
 </div>

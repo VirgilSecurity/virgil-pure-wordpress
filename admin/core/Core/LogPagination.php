@@ -38,46 +38,85 @@
 namespace Plugin\Pure\Core;
 
 use Plugin\Pure\Config\Config;
-use Plugin\Pure\Config\Credential;
 
 /**
- * Class PluginValidator
+ * Class LogPagination
  * @package Plugin\Pure\Core
  */
-class PluginValidator
+class LogPagination implements Pagination
 {
     /**
-     * @return bool
+     * @var float|int
      */
-    public function isPluginActive(): bool
+    private $offset;
+
+    /**
+     * @var \wpdb
+     */
+    private $wpdb;
+
+    /**
+     * @var string
+     */
+    private $query;
+
+    /**
+     * @var int
+     */
+    private $ipp;
+
+    /**
+     * @var float|int
+     */
+    private $p;
+
+    /**
+     * LogPagination constructor.
+     */
+    public function __construct()
     {
-        require_once ABSPATH . 'wp-admin/includes/plugin.php';
-        return (bool)is_plugin_active(Config::PLUGIN_FULL_NAME);
+        global $wpdb;
+        $this->wpdb = $wpdb;
+
+        $this->query = "SELECT * FROM $wpdb->prefix".Config::PLUGIN_DB_LOG_TABLE;
+
+        $this->ipp = 10;
+
+        $this->p = isset($_GET['p']) ? abs((int) $_GET['p']) : 1;
+        $this->offset = ($this->p*$this->ipp)-($this->ipp);
     }
 
     /**
-     * @return bool
+     * @return string
      */
-    public function checkEnvCredentials(): bool
-    {
-        return (!empty($_ENV[Credential::APP_TOKEN]) && !empty($_ENV[Credential::APP_SECRET_KEY]) && !empty
-            ($_ENV[Credential::SERVICE_PUBLIC_KEY]));
+    public function getPag(): string {
+        $pag = "";
+
+        $this->wpdb->get_results($this->query);
+        $total = $this->wpdb->num_rows;
+
+        $totalPage = ceil($total/$this->ipp);
+
+        if($totalPage > 1){
+
+            $pag = paginate_links( array(
+                    'base' => add_query_arg('p', '%#%'),
+                    'format' => '',
+                    'prev_text' => __('&laquo;'),
+                    'next_text' => __('&raquo;'),
+                    'total' => $totalPage,
+                    'current' => $this->p,
+                ));
+        }
+
+        return $pag;
     }
 
     /**
-     * @return bool
+     * @return array|null|object
      */
-    public function checkService(): bool
+    public function getData()
     {
-        $ac = new AuthChecker();
-        return $ac->check();
-    }
-
-    /**
-     * @return bool
-     */
-    public function check(): bool
-    {
-        return $this->isPluginActive()&&$this->checkEnvCredentials()&&$this->checkService();
+        return $this->wpdb->get_results( $this->query . " ORDER BY ID DESC LIMIT {$this->offset}, {$this->ipp}");
     }
 }

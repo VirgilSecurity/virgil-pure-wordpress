@@ -37,18 +37,23 @@
 
 namespace Plugin\Pure\Config;
 
+/**
+ * Class Config
+ * @package Plugin\Pure\Config
+ */
 class Config
 {
     const EXTENSION_NAME = 'vsce_phe_php';
 
+    const PLUGIN_NAME = 'Virgil_Pure';
+    const PLUGIN_FULL_NAME = self::PLUGIN_NAME.DIRECTORY_SEPARATOR.self::PLUGIN_NAME.'.php';
+
     const MAIN_PAGE = 'Virgil_Pure';
+
     const MAIN_PAGE_TITLE = 'Virgil Pure';
     const LOG_PAGE = self::MAIN_PAGE.'_Log';
     const FAQ_PAGE = self::MAIN_PAGE.'_FAQ';
     const DEV_PAGE = self::MAIN_PAGE.'_Dev';
-
-    const PLUGIN_VERSION = '0.1.0';
-    const PLUGIN_NAME = 'Virgil_Pure';
 
     const CAPABILITY = 'administrator';
 

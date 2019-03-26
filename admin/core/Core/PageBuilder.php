@@ -42,6 +42,10 @@ use Plugin\Pure\Config\Credential;
 use Plugin\Pure\Config\Option;
 use Plugin\Pure\Helpers\InfoHelper;
 
+/**
+ * Class PageBuilder
+ * @package Plugin\Pure\Core
+ */
 class PageBuilder
 {
     /**
@@ -52,6 +56,9 @@ class PageBuilder
         return !extension_loaded(Config::EXTENSION_NAME);
     }
 
+    /**
+     * @return bool
+     */
     public function demoModeBlock(): bool
     {
         if($this->disabledBlock())
@@ -60,7 +67,10 @@ class PageBuilder
         return (bool)get_option(Option::DEMO_MODE);
     }
 
-    public function credentialsBlock()
+    /**
+     * @return bool
+     */
+    public function credentialsBlock(): bool
     {
         if($this->disabledBlock())
             return false;
@@ -69,7 +79,10 @@ class PageBuilder
             &&$this->isMainPage());
     }
 
-    public function migrationBlock()
+    /**
+     * @return bool
+     */
+    public function migrateBlock(): bool
     {
         if($this->disabledBlock())
             return false;
@@ -78,7 +91,10 @@ class PageBuilder
             &&$this->isMainPage()&&!$this->isAllUsersMigrated());
     }
 
-    public function updateBlock()
+    /**
+     * @return bool
+     */
+    public function updateBlock(): bool
     {
         if($this->disabledBlock())
             return false;
@@ -87,7 +103,10 @@ class PageBuilder
             &&$this->isMainPage()&&$this->isAllUsersMigrated());
     }
 
-    public function logBlock()
+    /**
+     * @return bool
+     */
+    public function logBlock(): bool
     {
         if($this->disabledBlock())
             return false;
@@ -95,32 +114,50 @@ class PageBuilder
         return $this->isLogPage();
     }
 
-    public function faqBlock()
+    /**
+     * @return bool
+     */
+    public function faqBlock(): bool
     {
         return $this->isFAQPage();
     }
 
-    public function infoBlock()
+    /**
+     * @return bool
+     */
+    public function infoBlock(): bool
     {
         return $this->isMainPage()||$this->disabledBlock();
     }
 
-    private function isAllUsersMigrated()
+    /**
+     * @return bool
+     */
+    private function isAllUsersMigrated(): bool
     {
         return 100==(int)InfoHelper::getMigratedPercents();
     }
 
-    private function isMainPage()
+    /**
+     * @return bool
+     */
+    private function isMainPage(): bool
     {
         return Config::MAIN_PAGE==$_GET['page'];
     }
 
-    private function isLogPage()
+    /**
+     * @return bool
+     */
+    private function isLogPage(): bool
     {
         return Config::LOG_PAGE==$_GET['page'];
     }
 
-    private function isFAQPage()
+    /**
+     * @return bool
+     */
+    private function isFAQPage(): bool
     {
         return Config::FAQ_PAGE==$_GET['page'];
     }

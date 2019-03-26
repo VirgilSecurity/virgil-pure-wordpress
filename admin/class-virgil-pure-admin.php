@@ -8,6 +8,7 @@ use Plugin\Pure\Config\Option;
 use Plugin\Pure\Core\CoreProtocol;
 use Plugin\Pure\Core\FormHandler;
 use Plugin\Pure\Core\passw0rdHash;
+use Plugin\Pure\Core\PluginValidator;
 use Plugin\Pure\Core\WPPasswordEnroller;
 use Plugin\Pure\Helpers\DBQueryHelper;
 use Plugin\Pure\Helpers\Redirector;
@@ -49,6 +50,11 @@ class Virgil_Pure_Admin
     private $ph;
 
     /**
+     * @var PluginValidator
+     */
+    private $pv;
+
+    /**
      * Virgil_Pure_Admin constructor.
      * @param $Virgil_Pure
      * @param $version
@@ -59,6 +65,7 @@ class Virgil_Pure_Admin
         $this->dbqh = new DBQueryHelper();
         $this->fh = new FormHandler($this->protocol);
         $this->ph = new passw0rdHash();
+        $this->pv = new PluginValidator();
 
         $this->Virgil_Pure = $Virgil_Pure;
         $this->version = $version;
@@ -69,12 +76,15 @@ class Virgil_Pure_Admin
      */
     public function enqueue_styles()
     {
-        wp_enqueue_style($this->Virgil_Pure, plugin_dir_url(__FILE__) . 'css/virgil-pure-admin.css', array(), $this->version, 'all');
+        wp_enqueue_style($this->Virgil_Pure, plugin_dir_url(__FILE__) . 'css/virgil-pure-admin.css', array(),
+            $this->version, 'all');
     }
 
+    /**
+     *
+     */
     public function virgil_pure_menu()
     {
-        $devMode = get_option(Option::DEV_MODE);
         $extLoaded = extension_loaded(Config::EXTENSION_NAME);
         $title = $extLoaded ? "Action" : "Info";
 
@@ -86,16 +96,12 @@ class Virgil_Pure_Admin
         }
 
         add_submenu_page(Config::MAIN_PAGE, 'FAQ', 'FAQ', Config::CAPABILITY, Config::FAQ_PAGE, array($this, 'virgil_pure_page_builder'));
-
-        if ($extLoaded && $devMode) {
-            add_submenu_page(Config::MAIN_PAGE, 'Dev', '* Dev', Config::CAPABILITY, Config::DEV_PAGE, array($this, 'virgil_pure_page_dev'));
-        }
     }
 
     /**
      *
      */
-    function virgil_pure_form_handler()
+    public function virgil_pure_form_handler()
     {
         if (in_array($_POST[Form::TYPE], Form::ALL)) {
 
@@ -116,15 +122,6 @@ class Virgil_Pure_Admin
 
                     case Form::UPDATE:
                         $this->fh->update();
-                        break;
-
-                    //dev
-                    case Form::DEV_ADD_USERS:
-                        $this->fh->addUsers();
-                        break;
-
-                    case Form::DEV_RESTORE_DEFAULTS:
-                        $this->fh->restoreDefaults();
                         break;
                 }
 
@@ -148,7 +145,7 @@ class Virgil_Pure_Admin
      */
     public function virgil_pure_check_password($check, $password, $hash, $user_id): bool
     {
-        if ($user_id) {
+        if ($this->pv->check() && $user_id) {
             if (StatusHelper::isAllUsersMigrated()) {
                 $passw0rdHash = new passw0rdHash();
 
@@ -209,35 +206,46 @@ class Virgil_Pure_Admin
      */
     public function virgil_pure_init_background_processes()
     {
-        if($this->protocol) {
+        if ($this->protocol) {
             new MigrateBackgroundProcess($this->protocol);
             new UpdateBackgroundProcess($this->protocol);
         }
     }
 
     /**
-     * @param $user_id
-     * @param $old_user_data
-     */
-    public function virgil_pure_profile_update($user_id, $old_user_data)
-    {
-        var_dump($user_id, $old_user_data);
-        die;
-    }
-
-    /**
-     * @param $user
+     * @param int $user_id
      * @throws \GuzzleHttp\Exception\GuzzleException
      * @throws \Virgil\PureKit\Exceptions\ProtocolException
      */
-    public function virgil_pure_password_reset($user)
+    public function virgil_pure_profile_update(int $user_id)
     {
-        $user = get_user_by('id', $user->ID);
+        if ($this->pv->check()&&!empty(get_user_by('id', $user_id)->user_pass))
+            $this->enroll($user_id);
+    }
+
+    /**
+     * @param WP_User $user
+     * @throws \GuzzleHttp\Exception\GuzzleException
+     * @throws \Virgil\PureKit\Exceptions\ProtocolException
+     */
+    public function virgil_pure_password_reset(WP_User $user)
+    {
+        if($this->pv->check())
+        $this->enroll($user->ID);
+    }
+
+    /**
+     * @param int $userId
+     * @throws \GuzzleHttp\Exception\GuzzleException
+     * @throws \Virgil\PureKit\Exceptions\ProtocolException
+     */
+    private function enroll(int $userId)
+    {
+        $user = get_user_by('id', $userId);
 
         $wppe = new WPPasswordEnroller($this->protocol, $this->ph);
         $wppe->enroll($user);
 
         $this->dbqh->clearUserPass($user->ID);
     }
-
 }

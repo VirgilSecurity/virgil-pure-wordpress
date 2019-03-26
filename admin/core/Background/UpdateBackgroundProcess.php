@@ -46,14 +46,36 @@ use Plugin\Pure\Core\Logger;
 use Plugin\Pure\Config\Config;
 use Virgil\PureKit\Protocol\RecordUpdater;
 
+/**
+ * Class UpdateBackgroundProcess
+ * @package Plugin\Pure\Background
+ */
 class UpdateBackgroundProcess extends BaseBackgroundProcess
 {
+    /**
+     * @var
+     */
     private $recordUpdater;
+
+    /**
+     * @var CredentialsManager
+     */
     private $credentialsManager;
+
+    /**
+     * @var CoreProtocol
+     */
     private $protocol;
 
+    /**
+     * @var string
+     */
     protected $action = Config::BACKGROUND_ACTION_UPDATE;
 
+    /**
+     * UpdateBackgroundProcess constructor.
+     * @param CoreProtocol $protocol
+     */
     public function __construct(CoreProtocol $protocol)
     {
         $this->protocol = $protocol;
@@ -71,7 +93,7 @@ class UpdateBackgroundProcess extends BaseBackgroundProcess
 
         try {
             if (is_null($this->recordUpdater))
-                $this->recordUpdater = new RecordUpdater($_ENV['UPDATE_TOKEN']);
+                $this->recordUpdater = new RecordUpdater($_ENV[Credential::UPDATE_TOKEN]);
                 $newRecordRaw = $this->recordUpdater->update(base64_decode($record[0]));
         } catch (\Exception $e) {
             if("PHE Client error"==$e->getMessage())
@@ -95,26 +117,32 @@ class UpdateBackgroundProcess extends BaseBackgroundProcess
         return false;
     }
 
+    /**
+     *
+     */
     protected function complete()
     {
 
         if ($this->is_queue_empty()) {
             update_option(Option::UPDATE_FINISH, microtime(true));
 
-            $v = $this->credentialsManager->getVersion($_ENV['UPDATE_TOKEN']);
+            $v = $this->credentialsManager->getVersion($_ENV[Credential::UPDATE_TOKEN]);
 
             $duration = round(get_option(Option::UPDATE_FINISH) - get_option
                 (Option::UPDATE_START), 2);
             Logger::log(Log::FINISH_UPDATE . " (records ver.: $v, duration: $duration sec.)");
 
-            $nk = $this->protocol->getNewRawKeys();
+            $protocol = $this->protocol->init();
 
-            $newAppSecretKey = 'SK.' . $v . "." . base64_encode($nk[0]);
-            $newServicePublicKey = 'PK.' . $v . "." . base64_encode($nk[1]);
+            $nk = $protocol->getNewRawKeys();
+
+            $newAppSecretKey = Credential::APP_SECRET_KEY_PREFIX."." . $v . "." . base64_encode($nk[0]);
+            $newServicePublicKey = Credential::SERVICE_PUBLIC_KEY_PREFIX."." . $v . "." . base64_encode($nk[1]);
 
             $this->credentialsManager->addRotatedCredentials($newServicePublicKey, $newAppSecretKey);
 
             unset($protocol);
+            unset($this->protocol);
 
             delete_option(Option::UPDATE_START);
             delete_option(Option::UPDATE_FINISH);
