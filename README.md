@@ -26,7 +26,7 @@ This technology can be used within any database or login system that uses a pass
 - [Download the WordPress Virgil Pure plugin](https://github.com/VirgilSecurity/virgil-pure-wordpress/archive/develop.zip) repository .zip
 - Navigate to WordPress Dashboard
 - Open "Plugins" tab
-- Updload the .zip WordPress Virgil Pure plugin file
+- Upload the .zip WordPress Virgil Pure plugin file
 
 ### Install PureKit Package
 
