@@ -1,6 +1,6 @@
 # Virgil WordPress Plugin PHE PHP
 
-[Introduction](#introduction) | [Features](#features) | [Register Your Account](#register-your-account) | [Installation](#installation) | [Prepare Your Database](#prepare-your-database) | [Usage Examples](#usage-examples) | [Docs](#docs) | [Support](#support)
+[Introduction](#introduction) | [Features](#features) | [Installation](#installation) | [How To Use Plugin](#how-to-use-plugin) | [License](#license) | [Support](#support)
 
 ## Introduction
 <img src="https://cdn.virgilsecurity.com/assets/images/github/logos/pure_grey_logo.png" align="left" hspace="0" vspace="0"></a>[Virgil Security](https://virgilsecurity.com) introduces an implementation of the [Password-Hardened Encryption (PHE) protocol](https://virgilsecurity.com/wp-content/uploads/2018/11/PHE-Whitepaper-2018.pdf) – a powerful and revolutionary cryptographic technology that provides stronger and more modern security, that secures users' data and lessens the security risks associated with weak passwords.
@@ -52,8 +52,36 @@ Now, install PureKit library with the following code:
 composer require virgil/purekit
 ```
 
-## Register Your Account
-In order to use the plugin, you'll need to:
+
+## How To Use Plugin
+
+### Set the credentials
+To start working with the plugin, at the plugin tab at your WordPress dashboard you'll need to place some credentials in corresponding fields. In order to do that, go through the following steps:
 - create an account at [Virgil Dashboard](https://dashboard.virgilsecurity.com/),
-- create PURE application
-- get your PURE application's credentials such as: `APP_TOKEN`, `APP_SECRET_KEY`, `SERVICE_PUBLIC_KEY`
+- create Pure application
+- copy your Pure application's credentials such as: `APP_TOKEN`, `APP_SECRET_KEY`, `SERVICE_PUBLIC_KEY`
+- paste them into the corresponding fields
+
+### Migration
+
+Migration is a phase during which the plugin requests cryptographic data from Virgil server to associate users' passwords or their hash (or whatever you use) with cryptographic enrollments provided by the server. Then enrollment records are created and stored in your database instead of users' passwords.
+
+> Warning! The plugin replaces (and therefore removes) the default passwords hashes.
+
+Simply click the "Start migration" button to start migration.
+
+### Records update (optional)
+
+This function allows you to use a special update_token to update all of the enrollment records in your database. This action doesn't requite changing users' passwords or modifying the scheme of the existing table.
+
+Navigate to your Pure application at [Virgil Dashboard](https://dashboard.virgilsecurity.com/), get your update token and insert it into the field at the Virgil Pure plugin tab. 
+
+## License
+See [LICENSE](https://github.com/VirgilSecurity/virgil-cli/tree/master/LICENSE) for details.
+
+## Support
+Our developer support team is here to help you. Find out more information on our [Help Center](https://help.virgilsecurity.com/).
+
+You can find us on [Twitter](https://twitter.com/VirgilSecurity) or send us email support@VirgilSecurity.com.
+
+Also, get extra help from our support team on [Slack](https://virgilsecurity.com/join-community).
