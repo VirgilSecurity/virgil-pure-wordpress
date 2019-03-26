@@ -75,8 +75,7 @@ class PageBuilder
         if($this->disabledBlock())
             return false;
 
-        return ((bool)!get_option(Option::CHECKED_CREDENTIALS)&&!$this->isCredentialsSet()
-            &&$this->isMainPage());
+        return (!$this->isCredentialsSet()&&$this->isMainPage());
     }
 
     /**
@@ -87,8 +86,7 @@ class PageBuilder
         if($this->disabledBlock())
             return false;
 
-        return ((bool)get_option(Option::CHECKED_CREDENTIALS)&&$this->isCredentialsSet()
-            &&$this->isMainPage()&&!$this->isAllUsersMigrated());
+        return ($this->isCredentialsSet()&&$this->isMainPage()&&!$this->isAllUsersMigrated());
     }
 
     /**
@@ -99,8 +97,7 @@ class PageBuilder
         if($this->disabledBlock())
             return false;
 
-        return ((bool)get_option(Option::CHECKED_CREDENTIALS)&&$this->isCredentialsSet()
-            &&$this->isMainPage()&&$this->isAllUsersMigrated());
+        return ($this->isCredentialsSet()&&$this->isMainPage()&&$this->isAllUsersMigrated());
     }
 
     /**

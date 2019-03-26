@@ -85,17 +85,21 @@ class Virgil_Pure_Admin
      */
     public function virgil_pure_menu()
     {
+        $devMode = get_option(Option::DEV_MODE);
         $extLoaded = extension_loaded(Config::EXTENSION_NAME);
         $title = $extLoaded ? "Action" : "Info";
 
         add_menu_page(Config::MAIN_PAGE_TITLE, Config::MAIN_PAGE_TITLE, Config::CAPABILITY, Config::MAIN_PAGE);
         add_submenu_page(Config::MAIN_PAGE, $title, $title, Config::CAPABILITY, Config::MAIN_PAGE, array($this, 'virgil_pure_page_builder'));
-
         if ($extLoaded) {
             add_submenu_page(Config::MAIN_PAGE, 'Log', 'Log', Config::CAPABILITY, Config::LOG_PAGE, array($this, 'virgil_pure_page_builder'));
         }
 
         add_submenu_page(Config::MAIN_PAGE, 'FAQ', 'FAQ', Config::CAPABILITY, Config::FAQ_PAGE, array($this, 'virgil_pure_page_builder'));
+
+        if ($extLoaded && $devMode) {
+            add_submenu_page(Config::MAIN_PAGE, 'Dev', '* Dev', Config::CAPABILITY, Config::DEV_PAGE, array($this, 'virgil_pure_page_dev'));
+        }
     }
 
     /**
@@ -122,6 +126,14 @@ class Virgil_Pure_Admin
 
                     case Form::UPDATE:
                         $this->fh->update();
+                        break;
+
+                    case Form::DEV_ADD_USERS:
+                        $this->fh->addUsers();
+                        break;
+
+                    case Form::DEV_RESTORE_DEFAULTS:
+                        $this->fh->restoreDefaults();
                         break;
                 }
 

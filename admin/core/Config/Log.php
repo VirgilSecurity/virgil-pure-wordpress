@@ -57,6 +57,4 @@ class Log
     const INVALID_APP_TOKEN = "Invalid ".Credential::APP_TOKEN;
     const INVALID_PROOF = "Invalid ".Credential::SERVICE_PUBLIC_KEY." or ".
     Credential::APP_SECRET_KEY;
-
-
 }

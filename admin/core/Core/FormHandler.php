@@ -128,7 +128,6 @@ class FormHandler
             Redirector::toPageLog();
         }
 
-        update_option(Option::CHECKED_CREDENTIALS, 1);
         Logger::log(Log::INIT_CREDENTIALS);
     }
 
@@ -188,5 +187,57 @@ class FormHandler
         else {
             wp_die("Empty ".Credential::UPDATE_TOKEN);
         }
+    }
+
+    /**
+     *
+     */
+    public function addUsers()
+    {
+        for ($i = 0; $i < (int)$_POST['number_of_users']; $i++) {
+//        $user = wp_generate_password(8, false, false);
+            $user = 'user_' . rand(100, 999) . '_' . $i;
+            $password = &$user;
+            wp_create_user($user, $password, $user . '@mailinator.com');
+        }
+
+        $num = (int)$_POST['number_of_users'];
+        Logger::log(Log::DEV_ADD_USERS." (".$num.")");
+    }
+
+    /**
+     *
+     */
+    public function restoreDefaults()
+    {
+        $this->wpdb->query('DELETE FROM wp_users WHERE id NOT IN (1)');
+        $this->wpdb->query('DELETE FROM wp_usermeta WHERE user_id NOT IN (1)');
+
+        $users = get_users(array('fields' => array('ID')));
+
+        foreach ($users as $user) {
+            delete_user_meta($user->ID, Option::RECORD);
+            delete_user_meta($user->ID, Option::PARAMS);
+        }
+
+        update_option(Option::DEMO_MODE, 1);
+
+        delete_option(Option::MIGRATE_START);
+        delete_option(Option::MIGRATE_FINISH);
+        delete_option(Option::UPDATE_START);
+        delete_option(Option::UPDATE_FINISH);
+        delete_option('_transient_doing_cron');
+        $this->wpdb->query("DELETE FROM wp_options WHERE option_name LIKE '%migrate_batch_%'");
+        $this->wpdb->query("DELETE FROM wp_options WHERE option_name LIKE '%migrate_process'");
+        $this->wpdb->query("DELETE FROM wp_options WHERE option_name LIKE '%update_process'");
+
+        $this->cm->addEmptyCredentials();
+
+        $this->dbq->clearTableLog();
+
+        $pass = '$P$Be8bkgCZxUx096p9aAzZ3ydfE/qMyd0';
+        $this->wpdb->query("UPDATE wp_users SET user_pass='$pass' WHERE id=1");
+
+        Logger::log(Log::DEV_RESTORE_DEFAULTS);
     }
 }

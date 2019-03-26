@@ -82,8 +82,7 @@ class CredentialsManager
         $this->updateToken = $updateToken;
 
         return $this->addCredentials($_ENV[Credential::APP_TOKEN], $_ENV[Credential::SERVICE_PUBLIC_KEY],
-        $_ENV[Credential::APP_SECRET_KEY],
-            $updateToken);
+        $_ENV[Credential::APP_SECRET_KEY], $updateToken);
     }
 
     public function addRotatedCredentials(string $servicePK, string $appSK): bool
