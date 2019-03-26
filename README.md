@@ -1,11 +1,11 @@
-# Virgil WordPress Plugin PHE PHP
+# Virgil WordPress Plugin Pure PHP
 
 [Introduction](#introduction) | [Features](#features) | [Installation](#installation) | [How To Use Plugin](#how-to-use-plugin) | [License](#license) | [Support](#support)
 
 ## Introduction
 <img src="https://cdn.virgilsecurity.com/assets/images/github/logos/pure_grey_logo.png" align="left" hspace="0" vspace="0"></a>[Virgil Security](https://virgilsecurity.com) introduces an implementation of the [Password-Hardened Encryption (PHE) protocol](https://virgilsecurity.com/wp-content/uploads/2018/11/PHE-Whitepaper-2018.pdf) – a powerful and revolutionary cryptographic technology that provides stronger and more modern security, that secures users' data and lessens the security risks associated with weak passwords.
 
-Virgil WordPress PHE plugin allows developers to interact with Virgil PHE Service to protect users' passwords in a WordPress database from offline/online attacks and makes stolen passwords/data useless if your database has been compromised. Neither Virgil nor attackers know anything about users' passwords/data.
+Virgil WordPress Pure plugin allows developers to interact with Virgil PHE Service to protect users' passwords in a WordPress database from offline/online attacks and makes stolen passwords/data useless if your database has been compromised. Neither Virgil nor attackers know anything about users' passwords/data.
 
 This technology can be used within any database or login system that uses a password, so it’s accessible for a company of any industry or size.
 
@@ -21,12 +21,12 @@ This technology can be used within any database or login system that uses a pass
 
 ## Installation
 
-### Install WordPress plugin
+### Install WordPress Pure Plugin
 
-- [Download the WordPress Virgil PHE plugin](https://github.com/VirgilSecurity/virgil-phe-wordpress-plugin-php/archive/develop.zip) .zip
+- [Download the WordPress Virgil Pure plugin](https://github.com/VirgilSecurity/virgil-pure-wordpress/archive/develop.zip) repository .zip
 - Navigate to WordPress Dashboard
 - Open "Plugins" tab
-- Updload the .zip WordPress Virgil PHE plugin file
+- Updload the .zip WordPress Virgil Pure plugin file
 
 ### Install PureKit Package
 
@@ -72,7 +72,7 @@ Simply click the "Start migration" button to start migration.
 
 ### Records update (optional)
 
-This function allows you to use a special update_token to update all of the enrollment records in your database. This action doesn't requite changing users' passwords or modifying the scheme of the existing table.
+This function allows you to use a special `update_token` to update all of the enrollment records in your database. This action doesn't requite changing users' passwords or modifying the scheme of the existing table.
 
 Navigate to your Pure application at [Virgil Dashboard](https://dashboard.virgilsecurity.com/), get your update token and insert it into the field at the Virgil Pure plugin tab. 
 
