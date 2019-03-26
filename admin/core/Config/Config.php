@@ -51,6 +51,7 @@ class Config
     const MAIN_PAGE = 'Virgil_Pure';
 
     const MAIN_PAGE_TITLE = 'Virgil Pure';
+    const ACTION_PAGE = self::MAIN_PAGE.'_Action';
     const LOG_PAGE = self::MAIN_PAGE.'_Log';
     const FAQ_PAGE = self::MAIN_PAGE.'_FAQ';
     const DEV_PAGE = self::MAIN_PAGE.'_Dev';

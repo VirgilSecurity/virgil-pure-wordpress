@@ -53,6 +53,7 @@ class PageBuilder
      */
     public function disabledBlock(): bool
     {
+
         return !extension_loaded(Config::EXTENSION_NAME);
     }
 
@@ -140,7 +141,7 @@ class PageBuilder
      */
     private function isMainPage(): bool
     {
-        return Config::MAIN_PAGE==$_GET['page'];
+        return Config::ACTION_PAGE==$_GET['page'];
     }
 
     /**
