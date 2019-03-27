@@ -4,9 +4,7 @@ use Plugin\Pure\Config\Form;
 
 <div class="virgil-phe-global-container">
 
-    <?php
-    require_once 'blocks/header.php';
-    ?>
+    <?php require_once 'blocks/header.php'; ?>
 
     <h3 class="virgil-phe-global-section-title">Dev</h3>
     <hr class="virgil-phe-global-line"/>

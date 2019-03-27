@@ -39,7 +39,7 @@ namespace Plugin\Pure\Helpers;
 
 use Plugin\Pure\Config\Credential;
 use Plugin\Pure\Exceptions\PluginPureException;
-use Virgil\Pure\Exceptions\InputCredentialsCheckerException;
+use Virgil\PureKit\Exceptions\InputCredentialsCheckerException;
 
 class CredentialsChecker
 {

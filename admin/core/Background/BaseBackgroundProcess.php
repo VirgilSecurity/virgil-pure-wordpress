@@ -37,13 +37,23 @@
 
 namespace Plugin\Pure\Background;
 
-
+/**
+ * Class BaseBackgroundProcess
+ * @package Plugin\Pure\Background
+ */
 abstract class BaseBackgroundProcess extends WP_Background_Process
 {
+    /**
+     * BaseBackgroundProcess constructor.
+     */
     public function __construct()
     {
         parent::__construct();
     }
 
+    /**
+     * @param mixed $item
+     * @return mixed
+     */
     abstract protected function task($item);
 }

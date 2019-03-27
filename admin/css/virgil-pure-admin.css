@@ -404,9 +404,12 @@ p.virgil-phe-migration-count {
     text-transform: uppercase;
 }
 
-.virgil-phe-log-paginator-number {
+.virgil-phe-log-paginator .page-numbers {
     font-size: 14px;
-    display: inline-block;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-decoration: none;
     background: none;
     min-width: 40px;
     padding: 0 10px;
@@ -417,7 +420,7 @@ p.virgil-phe-migration-count {
     border-bottom: 0;
 }
 
-.virgil-phe-log-paginator-active {
+.virgil-phe-log-paginator .current {
     background-color: #0000CC;
     border: 0;
     color: white;

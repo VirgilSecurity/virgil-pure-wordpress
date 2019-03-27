@@ -39,6 +39,10 @@ namespace Plugin\Pure\Helpers;
 
 use Plugin\Pure\Config\Option;
 
+/**
+ * Class StatusHelper
+ * @package Plugin\Pure\Helpers
+ */
 class StatusHelper
 {
     /**

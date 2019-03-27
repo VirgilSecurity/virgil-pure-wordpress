@@ -37,9 +37,6 @@
 
 namespace Plugin\Pure\Core;
 
-use GuzzleHttp\Exception\ClientException;
-use Plugin\Pure\Config\Credential;
-use Plugin\Pure\Helpers\Redirector;
 use Plugin\Pure\Config\Config;
 
 /**
@@ -48,31 +45,14 @@ use Plugin\Pure\Config\Config;
  */
 class AuthChecker
 {
-    /**
-     * @param bool $redirectToLog
-     * @return bool
-     * @throws \GuzzleHttp\Exception\GuzzleException
-     */
-    public static function check(bool $redirectToLog = true): bool {
+    public function check(): bool {
         try {
-            $protocol = CoreProtocol::init();
-            $protocol->enrollAccount(Config::TEST_ENROLLMENT);
-        }
-        catch(ClientException $e) {
-            if(401==$e->getCode()) {
-                Logger::log("Invalid ".Credential::APP_TOKEN, 0);
-            } else {
-                Logger::log($e->getMessage(), 0);
-            }
-
-            true==$redirectToLog ? Redirector::toPageLog() : Redirector::toPageHome();
-
+            $p = new CoreProtocol();
+            $p = $p->init();
+            $p->enrollAccount(Config::TEST_ENROLLMENT);
         }
         catch (\Exception $e) {
-            Logger::log("Invalid proof"==$e->getMessage() ? "Invalid ".Credential::SERVICE_PUBLIC_KEY." or ".
-                Credential::APP_SECRET_KEY : $e->getMessage(), 0);
-
-            true==$redirectToLog ? Redirector::toPageLog() : Redirector::toPageHome();
+            return false;
         }
 
         return true;

@@ -38,6 +38,7 @@
 namespace Plugin\Pure\Core;
 
 use Plugin\Pure\Config\Credential;
+use Plugin\Pure\Helpers\Redirector;
 use Virgil\PureKit\Protocol\Protocol;
 use Virgil\PureKit\Protocol\ProtocolContext;
 
@@ -61,8 +62,15 @@ class CoreProtocol
                 $p = $this->createProtocol();
 
         } catch (\Exception $e) {
-            wp_die($e);
-            die;
+            if(0==$e->getCode()) {
+                Logger::log("Invalid credentials", 0);
+                $cm = new CredentialsManager();
+                $cm->addUpdateTokenToOldCredentials("");
+            }
+            else {
+                Logger::log($e->getMessage(),0);
+            }
+            Redirector::toPageLog();
         }
 
         return $p;

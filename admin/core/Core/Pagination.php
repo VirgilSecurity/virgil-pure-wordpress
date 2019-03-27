@@ -37,47 +37,19 @@
 
 namespace Plugin\Pure\Core;
 
-use Plugin\Pure\Config\Config;
-use Plugin\Pure\Config\Credential;
-
 /**
- * Class PluginValidator
+ * Interface Pagination
  * @package Plugin\Pure\Core
  */
-class PluginValidator
+interface Pagination
 {
     /**
-     * @return bool
+     * @return mixed
      */
-    public function isPluginActive(): bool
-    {
-        require_once ABSPATH . 'wp-admin/includes/plugin.php';
-        return (bool)is_plugin_active(Config::PLUGIN_FULL_NAME);
-    }
+    public function getData();
 
     /**
-     * @return bool
+     * @return mixed
      */
-    public function checkEnvCredentials(): bool
-    {
-        return (!empty($_ENV[Credential::APP_TOKEN]) && !empty($_ENV[Credential::APP_SECRET_KEY]) && !empty
-            ($_ENV[Credential::SERVICE_PUBLIC_KEY]));
-    }
-
-    /**
-     * @return bool
-     */
-    public function checkService(): bool
-    {
-        $ac = new AuthChecker();
-        return $ac->check();
-    }
-
-    /**
-     * @return bool
-     */
-    public function check(): bool
-    {
-        return $this->isPluginActive()&&$this->checkEnvCredentials()&&$this->checkService();
-    }
+    public function getPag();
 }

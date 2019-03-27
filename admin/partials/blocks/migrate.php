@@ -7,14 +7,13 @@ use Plugin\Pure\Background\MigrateBackgroundProcess;
 $total = InfoHelper::getTotalUsers();
 $migrated = InfoHelper::getMigrated();
 $migratedPercents = InfoHelper::getMigratedPercents();
-$message = 123123;
 
-//$mbp = new MigrateBackgroundProcess();
-//
-//$value = $mbp->is_process_running() ? "Migration In Progress" : "Start Migration";
-//$disabled = $mbp->is_process_running() ? "disabled" : null;
-//$message = $mbp->is_process_running() ? "- $migratedPercents% complete.<br>Please reload the page in a few minutes." :
-//    null;
+$mbp = new MigrateBackgroundProcess();
+
+$value = $mbp->is_process_running() ? "Migration In Progress" : "Start Migration";
+$disabled = $mbp->is_process_running() ? "disabled" : null;
+$message = $mbp->is_process_running() ? "- $migratedPercents% complete.<br>Please reload the page in a few minutes." :
+    null;
 ?>
 
 <div class="virgil-phe-global-section">
@@ -39,7 +38,7 @@ $message = 123123;
             <input type="hidden" name="form_type" value="<?= Form::MIGRATE ?>">
             <?php wp_nonce_field('nonce', Form::NONCE) ?>
             <input  type="submit" name="submit" id="submit" class="virgil-phe-global-button
-            virgil-phe-global-submit" value="Start Migration">
+            virgil-phe-global-submit" value="<?= $value ?>" <?= $disabled ?>>
         </form>
     </div>
 </div>

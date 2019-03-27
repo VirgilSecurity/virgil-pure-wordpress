@@ -37,6 +37,10 @@
 
 namespace Plugin\Pure\Exceptions;
 
+/**
+ * Class PluginPureException
+ * @package Plugin\Pure\Exceptions
+ */
 class PluginPureException extends \Exception
 {
 

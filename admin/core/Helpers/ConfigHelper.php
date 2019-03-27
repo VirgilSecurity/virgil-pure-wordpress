@@ -37,18 +37,27 @@
 
 namespace Plugin\Pure\Helpers;
 
-
 use Plugin\Pure\Config\Config;
 use Plugin\Pure\Config\Option;
 
+/**
+ * Class ConfigHelper
+ * @package Plugin\Pure\Helpers
+ */
 class ConfigHelper
 {
-    public static function isExtensionLoaded()
+    /**
+     * @return bool
+     */
+    public static function isExtensionLoaded(): bool
     {
         return !extension_loaded(Config::EXTENSION_NAME);
     }
 
-    public static function isDevMode()
+    /**
+     * @return bool
+     */
+    public static function isDevMode(): bool
     {
         return (bool) get_option(Option::DEV_MODE);
     }

@@ -25,6 +25,10 @@ if (!defined('PLUGIN_PURE_CORE_ENV_FILE')) {
     define('PLUGIN_PURE_CORE_ENV_FILE', PLUGIN_PURE_CORE . DIRECTORY_SEPARATOR .'.env');
 }
 
+if(!is_file(PLUGIN_PURE_CORE_ENV_FILE)) {
+    copy(PLUGIN_PURE_CORE_ENV_FILE."-example", PLUGIN_PURE_CORE_ENV_FILE);
+}
+
 (new Dotenv(PLUGIN_PURE_CORE))->overload();
 
 if (!defined('WPINC')) {
@@ -45,8 +49,15 @@ function deactivate_Virgil_Pure()
     Virgil_Pure_Deactivator::deactivate();
 }
 
+function uninstall_Virgil_Pure()
+{
+    require_once plugin_dir_path(__FILE__) . 'includes/class-virgil-pure-uninstaller.php';
+    Virgil_Pure_Uninstaller::uninstall();
+}
+
 register_activation_hook(__FILE__, 'activate_Virgil_Pure');
 register_deactivation_hook(__FILE__, 'deactivate_Virgil_Pure');
+register_uninstall_hook(__FILE__, 'uninstall_Virgil_Pure');
 
 require plugin_dir_path(__FILE__) . 'includes/class-virgil-pure.php';
 

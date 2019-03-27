@@ -37,6 +37,10 @@
 
 namespace Plugin\Pure\Helpers;
 
+/**
+ * Class DurationHelper
+ * @package Plugin\Pure\Helpers
+ */
 class DurationHelper
 {
     /**

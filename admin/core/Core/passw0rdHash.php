@@ -97,7 +97,7 @@ class passw0rdHash
             $hash = crypt($password, $this->corePH->gensalt_blowfish($random));
             if (strlen($hash) == 60)
 
-                var_dump('Hash password warning'); // TODO Fix!
+                var_dump('Hash password: CRYPT_BLOWFISH');
                 die;
 
                 return $hash;
@@ -106,11 +106,10 @@ class passw0rdHash
         if (CRYPT_EXT_DES == 1 && !$this->corePH->portable_hashes) {
             if (strlen($random) < 3)
                 $random = $this->corePH->get_random_bytes(3);
-            $hash =
-                crypt($password, $this->corePH->gensalt_extended($random));
+            $hash =  crypt($password, $this->corePH->gensalt_extended($random));
             if (strlen($hash) == 20)
 
-                var_dump('Hash password error warning'); // TODO Fix!
+                var_dump('Hash password: CRYPT_EXT_DES');
                 die;
 
                 return $hash;
@@ -127,6 +126,11 @@ class passw0rdHash
         return '*';
     }
 
+    /**
+     * @param string $password
+     * @param string $stored_hash
+     * @return bool
+     */
     public function checkPassword(string $password, string $stored_hash)
     {
         return $this->corePH->CheckPassword($password, $stored_hash);

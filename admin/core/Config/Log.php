@@ -37,7 +37,10 @@
 
 namespace Plugin\Pure\Config;
 
-
+/**
+ * Class Log
+ * @package Plugin\Pure\Config
+ */
 class Log
 {
     const PLUGIN_ACTIVATION = "Plugin activation";
@@ -54,6 +57,4 @@ class Log
     const INVALID_APP_TOKEN = "Invalid ".Credential::APP_TOKEN;
     const INVALID_PROOF = "Invalid ".Credential::SERVICE_PUBLIC_KEY." or ".
     Credential::APP_SECRET_KEY;
-
-
 }

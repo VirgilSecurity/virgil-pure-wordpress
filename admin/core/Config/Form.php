@@ -37,7 +37,10 @@
 
 namespace Plugin\Pure\Config;
 
-
+/**
+ * Class Form
+ * @package Plugin\Pure\Config
+ */
 class Form
 {
     const PREFIX = Config::PLUGIN_NAME."_form_";

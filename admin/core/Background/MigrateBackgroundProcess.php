@@ -69,9 +69,11 @@ class MigrateBackgroundProcess extends BaseBackgroundProcess
      * MigrateBackgroundProcess constructor.
      * @param CoreProtocol $protocol
      */
-    public function __construct(CoreProtocol $protocol)
+    public function __construct(CoreProtocol $protocol=null)
     {
-        $this->protocol = $protocol->init();
+        if(!empty($protocol))
+            $this->protocol = $protocol->init();
+
         parent::__construct();
     }
 

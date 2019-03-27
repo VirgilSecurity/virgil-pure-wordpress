@@ -37,15 +37,32 @@
 
 namespace Plugin\Pure\Helpers;
 
-
 use Plugin\Pure\Config\Config;
 
+/**
+ * Class DBQueryHelper
+ * @package Plugin\Pure\Helpers
+ */
 class DBQueryHelper
 {
+    /**
+     * @var \wpdb
+     */
     private $wpdb;
+
+    /**
+     * @var string
+     */
     private $tableLog;
+
+    /**
+     * @var string
+     */
     private $charsetCollate;
 
+    /**
+     * DBQueryHelper constructor.
+     */
     public function __construct()
     {
         global $wpdb;
@@ -55,11 +72,19 @@ class DBQueryHelper
         $this->tableLog = $this->wpdb->prefix . Config::PLUGIN_DB_LOG_TABLE;
     }
 
-    public function getAllLogs()
+    /**
+     * @param int $offset
+     * @param int $limit
+     * @return array|null|object
+     */
+    public function getAllLogs(int $offset = 0, int $limit = 0)
     {
-        return $this->wpdb->get_results("SELECT * FROM {$this->tableLog} ORDER BY id DESC");
+        return $this->wpdb->get_results("SELECT * FROM {$this->tableLog} ORDER BY id DESC LIMIT {$limit} OFFSET {$offset}");
     }
 
+    /**
+     *
+     */
     public function createTableLog()
     {
         $sql = "CREATE TABLE {$this->tableLog} (
@@ -74,22 +99,34 @@ class DBQueryHelper
         dbDelta($sql);
     }
 
+    /**
+     *
+     */
     public function dropTableLog()
     {
         $sql = "DROP TABLE IF EXISTS {$this->tableLog}";
         $this->wpdb->query($sql);
     }
 
+    /**
+     *
+     */
     public function clearTableLog()
     {
         $this->wpdb->query("DELETE FROM {$this->tableLog} WHERE id NOT IN (1)");
     }
 
+    /**
+     *
+     */
     public function clearAllUsersPass()
     {
         $this->wpdb->query("UPDATE wp_users SET user_pass=''");
     }
 
+    /**
+     * @param int $id
+     */
     public function clearUserPass(int $id)
     {
         $this->wpdb->query("UPDATE wp_users SET user_pass='' WHERE ID=$id");

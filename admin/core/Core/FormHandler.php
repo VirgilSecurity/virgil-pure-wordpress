@@ -46,15 +46,37 @@ use Plugin\Pure\Config\Credential;
 use Plugin\Pure\Config\Log;
 use Plugin\Pure\Helpers\DBQueryHelper;
 use Plugin\Pure\Helpers\Redirector;
-use Virgil\PureKit\Protocol\Protocol;
 
+/**
+ * Class FormHandler
+ * @package Plugin\Pure\Core
+ */
 class FormHandler
 {
+    /**
+     * @var CredentialsManager
+     */
     protected $cm;
+
+    /**
+     * @var DBQueryHelper
+     */
     protected $dbq;
+
+    /**
+     * @var \wpdb
+     */
     protected $wpdb;
+
+    /**
+     * @var CoreProtocol
+     */
     private $protocol;
 
+    /**
+     * FormHandler constructor.
+     * @param CoreProtocol|null $protocol
+     */
     public function __construct(CoreProtocol $protocol=null)
     {
         global $wpdb;
@@ -66,6 +88,9 @@ class FormHandler
         $this->protocol = $protocol;
     }
 
+    /**
+     *
+     */
     public function demo()
     {
         update_option(Option::DEMO_MODE, 0);
@@ -73,6 +98,9 @@ class FormHandler
         Logger::log(Log::DEMO_MODE_OFF);
     }
 
+    /**
+     * @throws \GuzzleHttp\Exception\GuzzleException
+     */
     public function credentials()
     {
         $this->cm->addInitialCredentials($_POST[Credential::APP_TOKEN], $_POST[Credential::SERVICE_PUBLIC_KEY],
@@ -100,10 +128,12 @@ class FormHandler
             Redirector::toPageLog();
         }
 
-        update_option(Option::CHECKED_CREDENTIALS, 1);
         Logger::log(Log::INIT_CREDENTIALS);
     }
 
+    /**
+     *
+     */
     public function migrate()
     {
         $users = get_users(array('fields' => array('ID', 'user_pass')));
@@ -126,6 +156,9 @@ class FormHandler
         $migrateBackgroundProcess->save()->dispatch();
     }
 
+    /**
+     *
+     */
     public function update()
     {
         if(!empty($_POST[Credential::UPDATE_TOKEN])) {
@@ -156,6 +189,9 @@ class FormHandler
         }
     }
 
+    /**
+     *
+     */
     public function addUsers()
     {
         for ($i = 0; $i < (int)$_POST['number_of_users']; $i++) {
@@ -169,6 +205,9 @@ class FormHandler
         Logger::log(Log::DEV_ADD_USERS." (".$num.")");
     }
 
+    /**
+     *
+     */
     public function restoreDefaults()
     {
         $this->wpdb->query('DELETE FROM wp_users WHERE id NOT IN (1)');
@@ -182,15 +221,15 @@ class FormHandler
         }
 
         update_option(Option::DEMO_MODE, 1);
-        update_option(Option::CHECKED_CREDENTIALS, 0);
 
         delete_option(Option::MIGRATE_START);
+        delete_option(Option::MIGRATE_FINISH);
         delete_option(Option::UPDATE_START);
         delete_option(Option::UPDATE_FINISH);
-        delete_option('_site_transient_wp_passw0rd_action_migrate_process_lock');
-        delete_option('_site_transient_timeout_wp_passw0rd_action_migrate_process_lock');
         delete_option('_transient_doing_cron');
-        $this->wpdb->query("DELETE FROM wp_options WHERE option_name LIKE 'wp_passw0rd_action_migrate_batch_%'");
+        $this->wpdb->query("DELETE FROM wp_options WHERE option_name LIKE '%migrate_batch_%'");
+        $this->wpdb->query("DELETE FROM wp_options WHERE option_name LIKE '%migrate_process'");
+        $this->wpdb->query("DELETE FROM wp_options WHERE option_name LIKE '%update_process'");
 
         $this->cm->addEmptyCredentials();
 
