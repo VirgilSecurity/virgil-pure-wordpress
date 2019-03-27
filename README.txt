@@ -1,114 +1,67 @@
 === Plugin Name ===
-Contributors: (this should be a list of wordpress.org userid's)
-Donate link: http://example.com/
-Tags: comments, spam
-Requires at least: 3.0.1
-Tested up to: 3.4
-Stable tag: 4.3
+Contributors: virgilsecuritycom
+Donate link:
+Tags: password, crypto, security
+Requires at least: 5.0.0
+Tested up to: 5.1.1
+Stable tag:
 License: GPLv2 or later
-License URI: http://www.gnu.org/licenses/gpl-2.0.html
+License URI: https://github.com/VirgilSecurity/virgil-cli/blob/master/LICENSE
 
-Free tool that protects user passwords from data breaches and both online and offline attacks, and renders stolen passwords useless even if your database has been compromised.  The Pure based on powerful and revolutionary cryptographic technology that provides stronger and more modern security and can be used within any database or login system that uses a password, so it's accessible for business of any industry or size.
+Free tool that protects user passwords from data breaches and both online and offline attacks, and renders stolen passwords useless even if your database has been compromised.
 
 == Description ==
 
-This is the long description.  No limit, and you can use Markdown (as well as in the following sections).
+Free tool that protects user passwords from data breaches and both online and offline attacks, and renders stolen passwords useless even if your database has been compromised. The Pure based on powerful and revolutionary cryptographic technology that provides stronger and more modern security and can be used within any database or login system that uses a password, so it's accessible for business of any industry or size.
 
-For backwards compatibility, if this section is missing, the full length of the short description will be used, and
-Markdown parsed.
+Virgil Security introduces an implementation of the Password-Hardened Encryption (PHE) protocol – a powerful and revolutionary cryptographic technology that provides stronger and more modern security, that secures users' data and lessens the security risks associated with weak passwords.
 
-A few notes about the sections above:
+Virgil WordPress Pure plugin allows developers to interact with Virgil PHE Service to protect users' passwords in a WordPress database from offline/online attacks and makes stolen passwords/data useless if your database has been compromised. Neither Virgil nor attackers know anything about users' passwords/data.
 
-*   "Contributors" is a comma separated list of wp.org/wp-plugins.org usernames
-*   "Tags" is a comma separated list of tags that apply to the plugin
-*   "Requires at least" is the lowest version that the plugin will work on
-*   "Tested up to" is the highest version that you've *successfully used to test the plugin*. Note that it might work on
-higher versions... this is just the highest one you've verified.
-*   Stable tag should indicate the Subversion "tag" of the latest stable version, or "trunk," if you use `/trunk/` for
-stable.
+This technology can be used within any database or login system that uses a password, so it’s accessible for a company of any industry or size.
 
-    Note that the `readme.txt` of the stable tag is the one that is considered the defining one for the plugin, so
-if the `/trunk/readme.txt` file says that the stable tag is `4.3`, then it is `/tags/4.3/readme.txt` that'll be used
-for displaying information about the plugin.  In this situation, the only thing considered from the trunk `readme.txt`
-is the stable tag pointer.  Thus, if you develop in trunk, you can update the trunk `readme.txt` to reflect changes in
-your in-development version, without having that information incorrectly disclosed about the current stable version
-that lacks those changes -- as long as the trunk's `readme.txt` points to the correct stable tag.
-
-    If no stable tag is provided, it is assumed that trunk is stable, but you should specify "trunk" if that's where
-you put the stable version, in order to eliminate any doubt.
+Authors of the PHE protocol: Russell W. F. Lai, Christoph Egger, Manuel Reinert, Sherman S. M. Chow, Matteo Maffei and Dominique Schroder.
 
 == Installation ==
 
-This section describes how to install the plugin and get it working.
+The package is available for PHP version 7.2.
 
-e.g.
+= Add the vsce_phe_php extension before using the plugin =
+* [Download `virgil-crypto-c-{latest version}`](https://cdn.virgilsecurity.com/virgil-crypto-c/php/) archive from the CDN according to your server operating system
+* Place the vsce_phe_php.{so/dll} file from the archive (/lib folder) into the directory with extensions
+* Add the `extension=vsce_phe_php` string in to the php.ini file
+* Restart your web-service (apache or nginx): `sudo service {apache2/nginx} restart`
 
-1. Upload `Virgil_Pure.php` to the `/wp-content/plugins/` directory
-1. Activate the plugin through the 'Plugins' menu in WordPress
-1. Place `<?php do_action('Virgil_Pure_hook'); ?>` in your templates
+Tips:
+* PHP version: `php --version`
+* php.ini: `php --ini | grep "Loaded Configuration File"`
+* Extension `dir: php -i | grep extension_dir`
+
+= Add plugin =
+* [Download the WordPress Virgil_Pure plugin](https://github.com/VirgilSecurity/virgil-pure-wordpress/releases)
+* Navigate to WordPress Dashboard
+* Open "Plugins → Add New" tab
+* Upload the Virgil_Pure.zip file
 
 == Frequently Asked Questions ==
 
-= A question that someone might have =
+= Do users have to change their passwords if the database has been compromised? =
 
-An answer to that question.
+If a database has been stolen, users do not need to change their original passwords. However, you need to rotate all user records in your database. This will use cryptography to disconnect the compromised Pure records from the original passwords, leaving any unauthorized party empty handed.
 
-= What about foo bar? =
+= How much does it cost? =
 
-Answer to foo bar dilemma.
+Pure is a FREE toolkit. All libraries are open source and can be found on GitHub, where they are available for free to any user.
+
+= What if an App Private Key gets lost? =
+
+There is no way to restore the APP_SECRET_KEY. The database becomes inaccessible and therefore useless. So, it makes sense to immediately make a backup of the key in any convenient form.
 
 == Screenshots ==
 
-1. This screen shot description corresponds to screenshot-1.(png|jpg|jpeg|gif). Note that the screenshot is taken from
-the /assets directory or the directory that contains the stable readme.txt (tags or trunk). Screenshots in the /assets
-directory take precedence. For example, `/assets/screenshot-1.png` would win over `/tags/4.3/screenshot-1.png`
-(or jpg, jpeg, gif).
-2. This is the second screen shot
-
 == Changelog ==
 
-= 1.0 =
-* A change since the previous version.
-* Another change.
-
-= 0.5 =
-* List versions from most recent at top to oldest at bottom.
+= 1.0.0 =
+* Init plugin
 
 == Upgrade Notice ==
-
-= 1.0 =
-Upgrade notices describe the reason a user should upgrade.  No more than 300 characters.
-
-= 0.5 =
-This version fixes a security related bug.  Upgrade immediately.
-
-== Arbitrary section ==
-
-You may provide arbitrary sections, in the same format as the ones above.  This may be of use for extremely complicated
-plugins where more information needs to be conveyed that doesn't fit into the categories of "description" or
-"installation."  Arbitrary sections will be shown below the built-in sections outlined above.
-
-== A brief Markdown Example ==
-
-Ordered list:
-
-1. Some feature
-1. Another feature
-1. Something else about the plugin
-
-Unordered list:
-
-* something
-* something else
-* third thing
-
-Here's a link to [WordPress](http://wordpress.org/ "Your favorite software") and one to [Markdown's Syntax Documentation][markdown syntax].
-Titles are optional, naturally.
-
-[markdown syntax]: http://daringfireball.net/projects/markdown/syntax
-            "Markdown is what the parser uses to process much of the readme file"
-
-Markdown uses email style notation for blockquotes and I've been told:
-> Asterisks for *emphasis*. Double it up  for **strong**.
-
-`<?php code(); // goes in backticks ?>`

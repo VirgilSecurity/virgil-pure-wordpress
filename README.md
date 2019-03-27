@@ -43,6 +43,7 @@ The package is available for PHP version 7.2.
 - Navigate to WordPress Dashboard
 - Open "Plugins → Add New" tab
 - Upload the Virgil_Pure.zip file
+- Activate the plugin
 
 ## How To Use Plugin
 
