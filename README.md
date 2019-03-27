@@ -18,61 +18,55 @@ This technology can be used within any database or login system that uses a pass
 - Instant invalidation of stolen database
 - User data encryption with a personal key
 
-
 ## Installation
 
 ### Install WordPress Pure Plugin
 
-- [Download the WordPress Virgil Pure plugin](https://github.com/VirgilSecurity/virgil-pure-wordpress/archive/develop.zip) repository .zip
-- Navigate to WordPress Dashboard
-- Open "Plugins" tab
-- Upload the .zip WordPress Virgil Pure plugin file
-
-### Install PureKit Package
-
-The PureKit is provided as a package named `virgil/purekit`. The package is distributed via Composer. The package is available for PHP version 7.2.
+The package is available for PHP version 7.2.
 
 #### Add the vsce_phe_php extension before using the plugin
 
 * [Download virgil-crypto-c-{latest version} archive from the CDN](https://cdn.virgilsecurity.com/virgil-crypto-c/php/) according to your server operating system
 * Place the *vsce_phe_php.{so/dll}* file from the archive (/lib folder) into the directory with extensions
 * Add the *extension=vsce_phe_php* string in to the php.ini file
-* Restart your web-service (apache or nginx): *sudo service {apache2 / nginx} restart*
+* Restart your web-service (apache or nginx): *sudo service {apache2/nginx} restart*
 
 ##### Tips:
 
-* PHP version: *phpversion() / php --version*
-* OS Version: *PHP_OS*
-* php.ini and extensions directory: *phpinfo() / php -i / php-config --extension_dir*
+* PHP version: *php --version*
+* php.ini: *php --ini | grep Loaded Configuration*
+* Extension dir: *php -i | grep extension_dir*
 
-Also, you can launch the *extension/helper.php* file to get information about a version and extensions.
+#### Add plugin
 
-Now, install PureKit library with the following code:
-```bash
-composer require virgil/purekit
-```
-
+- [Download the WordPress Virgil_Pure plugin](https://github.com/VirgilSecurity/virgil-pure-wordpress/releases)
+- Navigate to WordPress Dashboard
+- Open "Plugins → Add New" tab
+- Upload the Virgil_Pure.zip file
 
 ## How To Use Plugin
 
 ### Set the credentials
 To start working with the plugin, at the plugin tab at your WordPress dashboard you'll need to place some credentials in corresponding fields. In order to do that, go through the following steps:
-- create an account at [Virgil Dashboard](https://dashboard.virgilsecurity.com/),
+- create an account at [Virgil Dashboard](https://dashboard.virgilsecurity.com/)
 - create Pure application
 - copy your Pure application's credentials such as: `APP_TOKEN`, `APP_SECRET_KEY`, `SERVICE_PUBLIC_KEY`
 - paste them into the corresponding fields
 
 ### Migration
 
-Migration is a phase during which the plugin requests cryptographic data from Virgil server to associate users' passwords or their hash (or whatever you use) with cryptographic enrollments provided by the server. Then enrollment records are created and stored in your database instead of users' passwords.
+Migration is a phase during which the plugin requests cryptographic data from Virgil server to associate users' 
+passwords (user_pass) with cryptographic enrollments provided by the server. Then enrollment records are created and 
+stored in your database (wp_usermeta) instead of users' passwords.
 
-> Warning! The plugin replaces (and therefore removes) the default passwords hashes.
+> Warning! The plugin removes the default passwords hashes (it will be blank).
 
 Simply click the "Start migration" button to start migration.
 
 ### Records update (optional)
 
-This function allows you to use a special `update_token` to update all of the enrollment records in your database. This action doesn't requite changing users' passwords or modifying the scheme of the existing table.
+This function allows you to use a special `UPDATE_TOKEN` to update all of the enrollment records in your database. This 
+action doesn't requite changing users' passwords or modifying the scheme of the existing table.
 
 Navigate to your Pure application at [Virgil Dashboard](https://dashboard.virgilsecurity.com/), get your update token and insert it into the field at the Virgil Pure plugin tab. 
 
