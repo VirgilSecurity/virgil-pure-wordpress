@@ -34,7 +34,7 @@ The package is available for PHP version 7.2.
 ##### Tips:
 
 * PHP version: *php --version*
-* php.ini: *php --ini | grep Loaded Configuration*
+* php.ini: *php --ini | grep "Loaded Configuration File"*
 * Extension dir: *php -i | grep extension_dir*
 
 #### Add plugin
