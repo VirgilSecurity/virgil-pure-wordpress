@@ -10,7 +10,7 @@ use Plugin\Pure\Helpers\StatusHelper;
         <p class="virgil-phe-demo-desc">
             In demo mode, no data in your database will be altered. To demonstrate how Virgil Pure works, a new
             column will be created to hold the newly protected password data. When you're ready to go live, your
-            password hashes will be translated into cryptographically protected data. <a href="#">Learn more here</a>
+            password hashes will be translated into cryptographically protected data.
         </p>
 
         <?php if(!StatusHelper::isAllUsersMigrated()) { ?>

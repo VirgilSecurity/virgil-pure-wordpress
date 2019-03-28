@@ -13,5 +13,5 @@
     <p class="virgil-phe-global-faq-answer">There is no way to restore the  APP_SECRET_KEY. The database becomes
         inaccessible and therefore useless. So, it makes sense to immediately make a backup of the key in any convenient form.</p>
     <hr>
-    <p class="virgil-phe-global-faq-answer"><a href="#">Learn more from our documentation</a></p>
+    <p class="virgil-phe-global-faq-answer"><a href="https://developer.virgilsecurity.com/docs/use-cases/v1/passwords-and-data-protection?_ga=2.124234441.238283218.1553788809-677779594.1553687510" target="_blank">Learn more from our documentation</a></p>
 </div>
