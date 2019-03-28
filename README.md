@@ -1,26 +1,29 @@
-# Virgil WordPress Plugin Pure PHP
+# Virgil Pure WordPress Plugin PHP
 
 [Introduction](#introduction) | [Features](#features) | [Installation](#installation) | [How To Use Plugin](#how-to-use-plugin) | [License](#license) | [Support](#support)
 
 ## Introduction
-<img src="https://cdn.virgilsecurity.com/assets/images/github/logos/pure_grey_logo.png" align="left" hspace="0" vspace="0"></a>[Virgil Security](https://virgilsecurity.com) introduces an implementation of the [Password-Hardened Encryption (PHE) protocol](https://virgilsecurity.com/wp-content/uploads/2018/11/PHE-Whitepaper-2018.pdf) – a powerful and revolutionary cryptographic technology that provides stronger and more modern security, that secures users' data and lessens the security risks associated with weak passwords.
+<img src="https://cdn.virgilsecurity.com/assets/images/github/logos/pure_plugin.png" align="left" hspace="0" vspace="0"></a>[Virgil Security](https://virgilsecurity.com) introduces an implementation of the [Password-Hardened Encryption (PHE) protocol](https://virgilsecurity.com/wp-content/uploads/2018/11/PHE-Whitepaper-2018.pdf) – a [powerful and revolutionary](https://virgilsecurity.com/announcing-purekit/) cryptographic technology that provides stronger and more modern security, that secures users' data and lessens the security risks associated with weak passwords.
 
-Virgil WordPress Pure plugin allows developers to interact with Virgil PHE Service to protect users' passwords in a WordPress database from offline/online attacks and makes stolen passwords/data useless if your database has been compromised. Neither Virgil nor attackers know anything about users' passwords/data.
+ Virgil Pure Wordpress Plugin is a free tool that protects user passwords from data breaches and both online and offline attacks, and renders stolen passwords useless even if your database has been compromised. The Pure based on powerful and revolutionary cryptographic technology that provides stronger and more modern security and can be used within any database or login system that uses a password, so it's accessible for business of any industry or size.
 
-This technology can be used within any database or login system that uses a password, so it’s accessible for a company of any industry or size.
-
-**Authors of the PHE protocol**: Russell W. F. Lai, Christoph Egger, Manuel Reinert, Sherman S. M. Chow, Matteo Maffei and Dominique Schroder.
 
 ## Features
+
+### Available
 - Zero knowledge of users' passwords
-- Passwords & data protection from online attacks
-- Passwords & data protection from offline attacks
+- Passwords protection from online and offline attacks
 - Instant invalidation of stolen database
+
+### Coming soon
 - User data encryption with a personal key
+- Plugin deactivation and restoration of the previous authorization system
 
 ## Installation
 
-### Install WordPress Pure Plugin
+The plugin is currently unavailable at the WP Store but you can get it by downloading it from the official repository.
+
+### Install Virgil Pure WordPress Plugin using GitHub
 
 The package is available for PHP version 7.2.
 
@@ -47,7 +50,7 @@ The package is available for PHP version 7.2.
 
 ## How To Use Plugin
 
-### Set the credentials
+### Setup Credentials
 To start working with the plugin, at the plugin tab at your WordPress dashboard you'll need to place some credentials in corresponding fields. In order to do that, go through the following steps:
 - create an account at [Virgil Dashboard](https://dashboard.virgilsecurity.com/)
 - create Pure application
@@ -64,12 +67,28 @@ stored in your database (wp_usermeta) instead of users' passwords.
 
 Simply click the "Start migration" button to start migration.
 
-### Records update (optional)
+### Records Update (optional)
 
-This function allows you to use a special `UPDATE_TOKEN` to update all of the enrollment records in your database. This 
-action doesn't requite changing users' passwords or modifying the scheme of the existing table.
+This function allows you to use a special `UPDATE_TOKEN` to update all of the enrollment records in your database. This action doesn't requite changing users' passwords or modifying the scheme of the existing table.
 
-Navigate to your Pure application at [Virgil Dashboard](https://dashboard.virgilsecurity.com/), get your update token and insert it into the field at the Virgil Pure plugin tab. 
+Navigate to your Pure application panel at [Virgil Dashboard](https://dashboard.virgilsecurity.com/), press "BEGIN ROTATION PROCESS", then “SHOW UPDATE TOKEN” button to get the `update_token`. Insert the `update_token` into the field at the Virgil Pure plugin tab. 
+
+## F.A.Q.
+
+#### What is Demo mode?
+
+Demo mode is a mode in which no data in your database will be altered. To demonstrate how Virgil Pure works, a new column will be created to hold the newly protected password data. When you're ready to go live, your password hashes will be translated into cryptographically protected data.
+
+It is required to migrate all users before switching demo mod off.
+
+#### Do users have to change their passwords if the database has been compromised? 
+If a database has been stolen, users do not need to change their original passwords. However, you need to rotate all user records in your database. This will use cryptography to disconnect the compromised Pure records from the original passwords, leaving any unauthorized party empty handed.
+
+#### How much does it cost? 
+Pure is a FREE toolkit. All libraries are open source and can be found on GitHub, where they are available for free to any user.
+
+#### What if an App Private Key gets lost?
+There is no way to restore the `APP_SECRET_KEY`. The database becomes inaccessible and therefore useless. So, it makes sense to immediately make a backup of the key in any convenient form.
 
 ## License
 See [LICENSE](https://github.com/VirgilSecurity/virgil-cli/tree/master/LICENSE) for details.
