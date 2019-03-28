@@ -8,7 +8,7 @@ Virgil Pure Wordpress Plugin is a free tool that protects user passwords from da
 
 The Pure based on a powerful and revolutionary cryptographic technology that provides stronger and more modern security and can be used within any database or login system that uses a password, so it's accessible for business of any industry or size.
 
-Learn more about the Pure technology here: https://virgilsecurity.com/announcing-purekit/
+Learn more about the [Pure technology here](https://virgilsecurity.com/announcing-purekit/).
 
 
 ## Features
@@ -74,7 +74,8 @@ Simply click the "Start migration" button to start migration.
 
 This function allows you to use a special `UPDATE_TOKEN` to update all of the enrollment records in your database. This action doesn't requite changing users' passwords or modifying the scheme of the existing table.
 
-Navigate to your Pure application panel at [Virgil Dashboard](https://dashboard.virgilsecurity.com/), press "BEGIN ROTATION PROCESS", then “SHOW UPDATE TOKEN” button to get the `update_token`. Insert the `update_token` into the field at the Virgil Pure plugin tab. 
+Navigate to your Pure application panel at [Virgil Dashboard](https://dashboard.virgilsecurity.com/), press "BEGIN 
+ROTATION PROCESS", then “SHOW UPDATE TOKEN” button to get the `UPDATE_TOKEN`. Insert the `UPDATE_TOKEN` into the field at the Virgil Pure plugin tab. 
 
 ## F.A.Q.
 

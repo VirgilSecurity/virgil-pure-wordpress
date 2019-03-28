@@ -3,7 +3,7 @@
 /**
  * Plugin Name:       Virgil Pure
  * Plugin URI:        http://virgilsecurity.com/
- * Description:  Free tool that protects user passwords from data breaches and both online and offline attacks, and renders stolen passwords useless even if your database has been compromised.  The Pure based on <a href="#" target="_blank">powerful and revolutionary cryptographic technology</a> that provides stronger and more modern security and can be used within any database or login system that uses a password, so it's accessible for business of any industry or size.
+ * Description:  Free tool that protects user passwords from data breaches and both online and offline attacks, and renders stolen passwords useless even if your database has been compromised.  The Pure based on <a href="https://virgilsecurity.com/announcing-purekit/" target="_blank">powerful and revolutionary cryptographic technology</a> that provides stronger and more modern security and can be used within any database or login system that uses a password, so it's accessible for business of any industry or size.
  * Version:           0.1.0
  * Author:            Virgil Security
  * Author URI:        http://virgilsecurity.com/

@@ -12,15 +12,11 @@ Free tool that protects user passwords from data breaches and both online and of
 
 == Description ==
 
-Free tool that protects user passwords from data breaches and both online and offline attacks, and renders stolen passwords useless even if your database has been compromised. The Pure based on powerful and revolutionary cryptographic technology that provides stronger and more modern security and can be used within any database or login system that uses a password, so it's accessible for business of any industry or size.
+Virgil Pure Wordpress Plugin is a free tool that protects user passwords from data breaches and both online and offline attacks, and renders stolen passwords useless even if your database has been compromised.
 
-Virgil Security introduces an implementation of the Password-Hardened Encryption (PHE) protocol – a powerful and revolutionary cryptographic technology that provides stronger and more modern security, that secures users' data and lessens the security risks associated with weak passwords.
+The Pure based on a powerful and revolutionary cryptographic technology that provides stronger and more modern security and can be used within any database or login system that uses a password, so it's accessible for business of any industry or size.
 
-Virgil WordPress Pure plugin allows developers to interact with Virgil PHE Service to protect users' passwords in a WordPress database from offline/online attacks and makes stolen passwords/data useless if your database has been compromised. Neither Virgil nor attackers know anything about users' passwords/data.
-
-This technology can be used within any database or login system that uses a password, so it’s accessible for a company of any industry or size.
-
-Authors of the PHE protocol: Russell W. F. Lai, Christoph Egger, Manuel Reinert, Sherman S. M. Chow, Matteo Maffei and Dominique Schroder.
+Learn more about the Pure technology here: https://virgilsecurity.com/announcing-purekit/
 
 == Installation ==
 
@@ -35,7 +31,7 @@ The package is available for PHP version 7.2.
 Tips:
 * PHP version: `php --version`
 * php.ini: `php --ini | grep "Loaded Configuration File"`
-* Extension `dir: php -i | grep extension_dir`
+* Extension dir: `php -i | grep extension_dir`
 
 = Add plugin =
 * [Download the WordPress Virgil_Pure plugin](https://github.com/VirgilSecurity/virgil-pure-wordpress/releases)
@@ -44,6 +40,12 @@ Tips:
 * Upload the Virgil_Pure.zip file
 
 == Frequently Asked Questions ==
+
+= What is Demo mode? =
+
+Demo mode is a mode in which no data in your database will be altered. To demonstrate how Virgil Pure works, a new column will be created to hold the newly protected password data. When you're ready to go live, your password hashes will be translated into cryptographically protected data.
+
+It is required to migrate all users before switching demo mod off.
 
 = Do users have to change their passwords if the database has been compromised? =
 
