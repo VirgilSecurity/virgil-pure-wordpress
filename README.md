@@ -13,20 +13,20 @@ Learn more about the Pure technology [here](https://virgilsecurity.com/announcin
 
 ## Features
 
-### Available
+#### Available
 - Zero knowledge of users' passwords
 - Passwords protection from online and offline attacks
 - Instant invalidation of stolen database
 
-### Coming soon
+#### Coming soon
 - User data encryption with a personal key
 - Plugin deactivation and restoration of the previous authorization system
 
 ## Installation
 
-The plugin is currently unavailable at the WP Store but you can get it by downloading it from the official repository.
+The plugin is currently unavailable at the WP Store but you can get it by downloading from this official repository.
 
-### Install Virgil Pure WordPress Plugin using GitHub
+### Install Virgil Pure WordPress Plugin from the GitHub
 
 The package is available for PHP version 7.2.
 
@@ -66,7 +66,7 @@ Migration is a phase during which the plugin requests cryptographic data from Vi
 passwords (user_pass) with cryptographic enrollments provided by the server. Then enrollment records are created and 
 stored in your database (wp_usermeta) instead of users' passwords.
 
-> Warning! The plugin removes the default passwords hashes (it will be blank).
+> Note! The plugin removes the default passwords hashes ONLY when you turn off DEMO mode.
 
 Simply click the "Start migration" button to start migration.
 
@@ -79,19 +79,19 @@ ROTATION PROCESS", then “SHOW UPDATE TOKEN” button to get the `UPDATE_TOKEN`
 
 ## F.A.Q.
 
-#### What is Demo mode?
+#### - What is Demo mode?
 
 Demo mode is a mode in which no data in your database will be altered. To demonstrate how Virgil Pure works, a new column will be created to hold the newly protected password data. When you're ready to go live, your password hashes will be translated into cryptographically protected data.
 
 It is required to migrate all users before switching demo mod off.
 
-#### Do users have to change their passwords if the database has been compromised? 
+#### - Do users have to change their passwords if the database has been compromised? 
 If a database has been stolen, users do not need to change their original passwords. However, you need to rotate all user records in your database. This will use cryptography to disconnect the compromised Pure records from the original passwords, leaving any unauthorized party empty handed.
 
-#### How much does it cost? 
+#### - How much does it cost? 
 Pure is a FREE toolkit. All libraries are open source and can be found on GitHub, where they are available for free to any user.
 
-#### What if an App Private Key gets lost?
+#### - What if an App Private Key gets lost?
 There is no way to restore the `APP_SECRET_KEY`. The database becomes inaccessible and therefore useless. So, it makes sense to immediately make a backup of the key in any convenient form.
 
 ## License
