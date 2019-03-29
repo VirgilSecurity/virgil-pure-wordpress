@@ -1,4 +1,4 @@
-# Virgil Pure WordPress Plugin PHP
+# Virgil Pure WordPress Plugin
 
 [Introduction](#introduction) | [Features](#features) | [Installation](#installation) | [How To Use Plugin](#how-to-use-plugin) | [F.A.Q](#faq) | [License](#license) | [Support](#support)
 
@@ -8,7 +8,7 @@ Virgil Pure Wordpress Plugin is a free tool that protects user passwords from da
 
 The Pure based on a powerful and revolutionary cryptographic technology that provides stronger and more modern security and can be used within any database or login system that uses a password, so it's accessible for business of any industry or size.
 
-Learn more about the Pure technology [here](https://virgilsecurity.com/announcing-purekit/).
+Learn more about the Pure technology [here](https://virgilsecurity.com/announcing-purekit).
 
 
 ## Features
@@ -95,7 +95,7 @@ Pure is a FREE toolkit. All libraries are open source and can be found on GitHub
 There is no way to restore the `APP_SECRET_KEY`. The database becomes inaccessible and therefore useless. So, it makes sense to immediately make a backup of the key in any convenient form.
 
 ## License
-See [LICENSE](https://github.com/VirgilSecurity/virgil-cli/tree/master/LICENSE) for details.
+See [LICENSE](https://github.com/VirgilSecurity/virgil-pure-wordpress/tree/master/LICENSE) for details.
 
 ## Support
 Our developer support team is here to help you. Find out more information on our [Help Center](https://help.virgilsecurity.com/).
