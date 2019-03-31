@@ -1,0 +1,434 @@
+/* Global */
+
+@font-face {
+    font-family: Muller;
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+    src: local('Muller'),
+    url('https://cdn.virgilsecurity.com/assets/fonts/Muller/muller-regular.eot'),
+    url('https://cdn.virgilsecurity.com/assets/fonts/Muller/muller-regular.eot?#iefix') format('embedded-opentype'),
+    url('https://cdn.virgilsecurity.com/assets/fonts/Muller/muller-regular.woff2') format('woff2'),
+    url('https://cdn.virgilsecurity.com/assets/fonts/Muller/muller-regular.woff') format('woff'),
+    url('https://cdn.virgilsecurity.com/assets/fonts/Muller/muller-regular.ttf') format('truetype');
+}
+
+@font-face {
+    font-family: Muller;
+    font-weight: 500;
+    font-style: normal;
+    font-display: swap;
+    src: local('Muller'),
+    url('https://cdn.virgilsecurity.com/assets/fonts/Muller/muller-medium.eot'),
+    url('https://cdn.virgilsecurity.com/assets/fonts/Muller/muller-medium.eot?#iefix') format('embedded-opentype'),
+    url('https://cdn.virgilsecurity.com/assets/fonts/Muller/muller-medium.woff2') format('woff2'),
+    url('https://cdn.virgilsecurity.com/assets/fonts/Muller/muller-medium.woff') format('woff'),
+    url('https://cdn.virgilsecurity.com/assets/fonts/Muller/muller-medium.ttf') format('truetype');
+}
+
+@font-face {
+    font-family: Muller;
+    font-weight: 700;
+    font-style: normal;
+    font-display: swap;
+    src: local('Muller'),
+    url('https://cdn.virgilsecurity.com/assets/fonts/Muller/muller-bold.eot'),
+    url('https://cdn.virgilsecurity.com/assets/fonts/Muller/muller-bold.eot?#iefix') format('embedded-opentype'),
+    url('https://cdn.virgilsecurity.com/assets/fonts/Muller/muller-bold.woff2') format('woff2'),
+    url('https://cdn.virgilsecurity.com/assets/fonts/Muller/muller-bold.woff') format('woff'),
+    url('https://cdn.virgilsecurity.com/assets/fonts/Muller/muller-bold.ttf') format('truetype');
+}
+
+*,
+*::before,
+*::after {
+    box-sizing: inherit;
+}
+
+.virgil-phe-global-container {
+    margin-top: 20px;
+    font-family: Muller, sans-serif;
+    max-width: 760px;
+    font-size: 14px;
+    background-color: #F1F1F1;
+    color: #333;
+}
+
+.virgil-phe-global-logo-container {
+    display: flex;
+    height: 76px;
+}
+
+.virgil-phe-global-logo {
+    flex: 1 1 auto;
+    width: auto;
+    height: 100%;
+}
+
+p.virgil-phe-global-logo-text {
+    margin-left: 30px;
+    margin-top: 0px;
+    font-size: 14px;
+    line-height: 19px;
+}
+
+.virgil-phe-global-section {
+    margin-top: 20px;
+    padding-bottom: 20px;
+}
+
+.virgil-phe-global-info-p {
+    margin-bottom: 20px;
+    font-size: 16px;
+}
+
+.virgil-phe-global-container * {
+    box-sizing: border-box;
+}
+
+.virgil-phe-global-section-title {
+    font-size: 14px;
+    color: #0000CC;
+    text-transform: uppercase;
+    margin: 0;
+    letter-spacing: 0.05em;
+}
+
+.virgil-phe-global-page-title {
+    font-size: 24px;
+    text-transform: uppercase;
+    margin: 0;
+    margin-bottom: 20px;
+    letter-spacing: 0.05em;
+}
+
+.virgil-phe-global-line {
+    margin: 0;
+    border-top: 2px solid #0000CC;
+    margin-bottom: 10px;
+}
+
+.virgil-phe-global-button {
+    letter-spacing: 0.05em;
+    font-family: Muller, sans-serif;
+    font-weight: 500;
+    height: 40px;
+    text-transform: uppercase;
+    border: 0;
+    border-radius: 3px;
+    font-size: 14px;
+    padding: 10px 30px;
+    transition: 0.2s background;
+}
+
+.virgil-phe-global-button:disabled {
+    background-color: #0000FF;
+    color: white;
+    opacity: 0.5;
+}
+
+.virgil-phe-global-button:disabled:hover {
+    background-color: #0000FF;
+    color: white;
+    opacity: 0.5;
+    cursor: wait;
+}
+
+.virgil-phe-global-button:hover {
+    background-color: #0000FF;
+    cursor: pointer;
+}
+
+.virgil-phe-global-submit {
+    background-color: #0000CC;
+    color: white;
+}
+
+.virgil-phe-global-field-label {
+    display: block;
+    margin-bottom: 8px;
+    opacity: 0.33;
+    text-transform: uppercase;
+    font-weight: 700;
+    font-size: 11px;
+}
+
+.virgil-phe-global-field-error {
+    display: block;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+    font-weight: 700;
+    font-size: 11px;
+    color: #F44336;
+    margin-top: 6px;
+}
+
+.virgil-phe-global-field-input {
+    width: 100%;
+    border: 0;
+    border-radius: 3px;
+    height: 32px;
+    padding: 10px 6px;
+}
+
+.virgil-phe-global-field-input-error {
+    border: 1px solid #F44336;
+}
+
+/* DEMO */
+
+.virgil-phe-demo-container {
+    background-color: #0000CC;
+    padding: 15px 25px 15px 15px;
+    border-radius: 3px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: white;
+    margin-bottom: 30px;
+    margin-top: 20px;
+}
+
+.virgil-phe-demo-content {
+    width: 100%;
+}
+
+.virgil-phe-demo-title {
+    letter-spacing: 0.05em;
+    margin: 0;
+    text-transform: uppercase;
+    font-size: 14px;
+    margin-bottom: 5px;
+    color: white;
+}
+
+.virgil-phe-demo-desc {
+    opacity: 0.75;
+    margin-top: 0.5em;
+    margin-bottom: 0;
+    font-size: 14px;
+}
+
+.virgil-phe-demo-desc a {
+    color: white;
+}
+
+.virgil-phe-demo-button {
+    margin-top: 10px;
+    color: #0000CC;
+}
+
+.virgil-phe-demo-button:hover {
+    background-color: rgba(255, 255, 255, 0.9)
+}
+
+/* FAILED */
+
+.virgil-phe-failed-container {
+    background-color: #F44336;
+    padding: 15px 25px 15px 15px;
+    border-radius: 3px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: white;
+    margin-bottom: 30px;
+}
+
+.virgil-phe-failed-content {
+    max-width: 100%;
+}
+
+.virgil-phe-failed-title {
+    letter-spacing: 0.05em;
+    margin: 0;
+    text-transform: uppercase;
+    font-size: 14px;
+    margin-bottom: 5px;
+    color: white;
+}
+
+.virgil-phe-failed-desc {
+    opacity: 0.75;
+    margin-top: 0.5em;
+    margin-bottom: 0;
+    font-size: 14px;
+}
+
+.virgil-phe-failed-desc a {
+    color: white;
+}
+
+.virgil-phe-failed-button {
+    color: #F44336;
+}
+
+.virgil-phe-failed-button:hover {
+    background-color: rgba(255, 255, 255, 0.9)
+}
+
+/* INFO */
+
+.virgil-phe-info-table {
+    table-layout: auto;
+    text-align: left;
+}
+
+.virgil-phe-info-table td, .virgil-phe-info-table th {
+    word-wrap: break-word;
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+
+.virgil-phe-info-table th {
+    color: #333;
+    opacity: 0.33;
+    text-transform: uppercase;
+    font-size: 11px;
+}
+
+.virgil-phe-info-table-key {
+    font-family: Muller;
+    font-size: 11px;
+    text-transform: uppercase;
+    font-weight: bold;
+    opacity: 0.4;
+    padding-right: 30px;
+}
+
+.virgil-phe-info-table-value {
+    font-family: Muller;
+    /*font-size: 16px;*/
+}
+
+.virgil-phe-global-faq-question {
+    font-family: Muller;
+    font-size: 18px;
+    color: #0000CC;
+}
+
+.virgil-phe-global-faq-answer {
+    font-family: Muller;
+    font-size: 16px;
+}
+
+/* Credentials */
+
+.virgil-phe-credentials-form > div {
+    margin-bottom: 20px;
+}
+
+/* Migration */
+
+.virgil-phe-migration-container {
+    font-size: 16px;
+}
+
+p.virgil-phe-migration-users {
+    margin-bottom: 20px;
+    font-size: 16px;
+}
+
+p.virgil-phe-migration-count {
+    opacity: 0.3;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    margin-top: 6px;
+}
+
+.virgil-phe-global-credentials-ol {
+    margin-left: 18px;
+    font-size: 16px;
+}
+
+/* LOG */
+
+.virgil-phe-log-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.virgil-phe-log-table td, .virgil-phe-log-table th {
+    text-align: left;
+}
+
+.virgil-phe-log-table-tr-error {
+    color: red;
+}
+
+.virgil-phe-log-table-head th {
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: #0000CC;
+    border-bottom: 2px solid #0000CC;
+}
+
+.virgil-phe-log-table tr > td {
+    border-bottom: 1px solid lightgray;
+    padding: 10px 20px 10px 0;
+}
+
+.virgil-phe-log-table tr > td:last-child {
+    text-align: left;
+    padding-left: 0px;
+    padding-right: 0px;
+}
+
+.virgil-phe-log-table th:last-child {
+    text-align: left;
+}
+
+.virgil-phe-log-table tr:last-child > td {
+    border-bottom: 0;
+}
+
+.virgil-phe-log-table-date {
+    width: 175px;
+}
+
+.virgil-phe-log-margin-bottom {
+    margin-bottom: 40px;
+}
+
+.virgil-phe-log-paginator {
+    border: 1px solid lightgray;
+    height: 40px;
+    border-radius: 3px;
+    display: inline-flex;
+    font-weight: 500;
+}
+
+.virgil-phe-log-paginator-page {
+    padding: 11px 15px;
+    text-transform: uppercase;
+}
+
+.virgil-phe-log-paginator .page-numbers {
+    font-size: 14px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-decoration: none;
+    background: none;
+    min-width: 40px;
+    padding: 0 10px;
+    height: 100%;
+    border-left: 1px solid lightgray;
+    border-right: 0;
+    border-top: 0;
+    border-bottom: 0;
+}
+
+.virgil-phe-log-paginator .current {
+    background-color: #0000CC;
+    border: 0;
+    color: white;
+}
+
+/* ROTATE */
+
+p.virgil-phe-rotate-desc {
+    margin-bottom: 20px;
+    font-size: 16px;
+}
