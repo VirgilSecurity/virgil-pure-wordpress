@@ -64,13 +64,13 @@ Then restart your server!
 Our web stack is: *Linux, nginx, php7.2-fpm*
 
 Exec *virgil-test.php*:
-![screenshot-1](./_help/screenshot-1.png)
+![scr-1](./_help/scr-1.png)
 
 Then go to the command line:
-![screenshot-2](./_help/screenshot-2.png)
+![scr-2](./_help/scr-2.png)
 
 And reload page:
-![screenshot-3](./_help/screenshot-3.png)
+![scr-3](./_help/scr-3.png)
 
 #### Add plugin
 
