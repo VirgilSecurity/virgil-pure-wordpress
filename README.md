@@ -3,7 +3,7 @@
 [Introduction](#introduction) | [Features](#features) | [Installation](#installation) | [How To Use Plugin](#how-to-use-plugin) | [F.A.Q](#faq) | [License](#license) | [Support](#support)
 
 ## Introduction
-<img src="https://cdn.virgilsecurity.com/assets/images/github/logos/pure_plugin.png" align="left" hspace="0" vspace="0"></a>
+<img src="https://cdn.virgilsecurity.com/assets/images/github/logos/pure_plugin.png" align="left" hspace="0" vspace="0">
 Virgil Pure Wordpress Plugin is a free tool that protects user passwords from data breaches and both online and offline attacks, and renders stolen passwords useless even if your database has been compromised. 
 
 The Pure based on a powerful and revolutionary cryptographic technology that provides stronger and more modern security and can be used within any database or login system that uses a password, so it's accessible for business of any industry or size.
@@ -32,16 +32,45 @@ The package is available for PHP version 7.2.
 
 #### Add the vsce_phe_php extension before using the plugin
 
-* [Download virgil-crypto-c-{latest version} archive from the CDN](https://cdn.virgilsecurity.com/virgil-crypto-c/php/) according to your server operating system
-* Place the *vsce_phe_php.{so/dll}* file from the archive (/lib folder) into the directory with extensions
-* Add the *extension=vsce_phe_php* string in to the php.ini file
-* Restart your web-service (apache or nginx): *sudo service {apache2/nginx} restart*
+Download, unzip and execute on your server [virgil-test.php](https://github.com/VirgilSecurity/virgil-pure-wordpress/_help/virgil-test.php) file.
+- [virgil-test.zip](https://github.com/VirgilSecurity/virgil-pure-wordpress/releases/download/v0.1.0/virgil-test.zip)
 
-##### Tips:
+Download and unzip *vsce_phe_php* extension according to your server operating system:
+- [Linux](https://github.com/VirgilSecurity/virgil-pure-wordpress/releases/download/v0.1.0/vsce_phe_php_for_linux.zip)
+- [Darwin](https://github.com/VirgilSecurity/virgil-pure-wordpress/releases/download/v0.1.0/vsce_phe_php_for_darwin.zip)
+- [Windows](https://github.com/VirgilSecurity/virgil-pure-wordpress/releases/download/v0.1.0/vsce_phe_php_for_windows.zip)
 
-* PHP version: *php --version*
-* php.ini: *php --ini | grep "Loaded Configuration File"*
-* Extension dir: *php -i | grep extension_dir*
+Make sure you have access to edit the php.ini file. For example, use *root*
+
+    $ sudo su
+
+Add the *extension=vsce_phe_php* string in to the php.ini file 
+
+    $ echo "extension=vsce_phe_php” >> (PATH_TO_PHP.INI)
+ 
+Copy extension file to the extensions directory.
+For the Linux/Darwin:
+ 
+    $ cp vsce_phe_php.so (PATH_TO_EXTENSION_DIR)
+    
+Or for the Windows:
+
+    $ cp vsce_phe_php.dll (PATH_TO_EXTENSION_DIR)
+    
+Then restart your server!
+
+##### Example
+
+Our web stack is: *Linux, nginx, php7.2-fpm*
+
+Exec *virgil-test.php*:
+![screenshot-1](./_help/screenshot-1.png)
+
+Then go to the command line:
+![screenshot-2](./_help/screenshot-2.png)
+
+And reload page:
+![screenshot-3](./_help/screenshot-3.png)
 
 #### Add plugin
 
