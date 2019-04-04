@@ -1,7 +1,7 @@
 <?php
 
-use Plugin\Pure\Config\Option;
-use Plugin\Pure\Helpers\DBQueryHelper;
+use VirgilSecurityPure\Config\Option;
+use VirgilSecurityPure\Helpers\DBQueryHelper;
 
 /**
  * Class Virgil_Pure_Deactivator

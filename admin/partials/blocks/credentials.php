@@ -1,7 +1,7 @@
 <?php
 
-use Plugin\Pure\Config\Form;
-use Plugin\Pure\Config\Credential;
+use VirgilSecurityPure\Config\Form;
+use VirgilSecurityPure\Config\Credential;
 
 ?>
 

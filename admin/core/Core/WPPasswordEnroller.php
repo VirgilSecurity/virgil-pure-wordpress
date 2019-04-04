@@ -35,14 +35,14 @@
  * Lead Maintainer: Virgil Security Inc. <support@virgilsecurity.com>
  */
 
-namespace Plugin\Pure\Core;
+namespace VirgilSecurityPure\Core;
 
-use Plugin\Pure\Config\Option;
+use VirgilSecurityPure\Config\Option;
 use WP_User;
 
 /**
  * Class WPPasswordEnroller
- * @package Plugin\Pure\Core
+ * @package VirgilSecurityPure\Core
  */
 class WPPasswordEnroller
 {

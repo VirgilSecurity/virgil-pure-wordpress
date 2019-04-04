@@ -35,18 +35,18 @@
  * Lead Maintainer: Virgil Security Inc. <support@virgilsecurity.com>
  */
 
-namespace Plugin\Pure\Background;
+namespace VirgilSecurityPure\Background;
 
-use Plugin\Pure\Config\Config;
-use Plugin\Pure\Config\Log;
-use Plugin\Pure\Config\Option;
-use Plugin\Pure\Core\CoreProtocol;
-use Plugin\Pure\Core\Logger;
-use Plugin\Pure\Core\passw0rdHash;
+use VirgilSecurityPure\Config\Config;
+use VirgilSecurityPure\Config\Log;
+use VirgilSecurityPure\Config\Option;
+use VirgilSecurityPure\Core\CoreProtocol;
+use VirgilSecurityPure\Core\Logger;
+use VirgilSecurityPure\Core\passw0rdHash;
 
 /**
  * Class MigrateBackgroundProcess
- * @package Plugin\Pure\Background
+ * @package VirgilSecurityPure\Background
  */
 class MigrateBackgroundProcess extends BaseBackgroundProcess
 {

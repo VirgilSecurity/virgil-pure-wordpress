@@ -1,18 +1,18 @@
 <?php
 
-use Plugin\Pure\Background\MigrateBackgroundProcess;
-use Plugin\Pure\Background\UpdateBackgroundProcess;
-use Plugin\Pure\Config\Config;
-use Plugin\Pure\Config\Form;
-use Plugin\Pure\Config\Option;
-use Plugin\Pure\Core\CoreProtocol;
-use Plugin\Pure\Core\FormHandler;
-use Plugin\Pure\Core\passw0rdHash;
-use Plugin\Pure\Core\PluginValidator;
-use Plugin\Pure\Core\WPPasswordEnroller;
-use Plugin\Pure\Helpers\DBQueryHelper;
-use Plugin\Pure\Helpers\Redirector;
-use Plugin\Pure\Helpers\StatusHelper;
+use VirgilSecurityPure\Background\MigrateBackgroundProcess;
+use VirgilSecurityPure\Background\UpdateBackgroundProcess;
+use VirgilSecurityPure\Config\Config;
+use VirgilSecurityPure\Config\Form;
+use VirgilSecurityPure\Config\Option;
+use VirgilSecurityPure\Core\CoreProtocol;
+use VirgilSecurityPure\Core\FormHandler;
+use VirgilSecurityPure\Core\passw0rdHash;
+use VirgilSecurityPure\Core\PluginValidator;
+use VirgilSecurityPure\Core\WPPasswordEnroller;
+use VirgilSecurityPure\Helpers\DBQueryHelper;
+use VirgilSecurityPure\Helpers\Redirector;
+use VirgilSecurityPure\Helpers\StatusHelper;
 
 /**
  * Class Virgil_Pure_Admin

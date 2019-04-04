@@ -35,14 +35,14 @@
  * Lead Maintainer: Virgil Security Inc. <support@virgilsecurity.com>
  */
 
-namespace Plugin\Pure\Helpers;
+namespace VirgilSecurityPure\Helpers;
 
-use Plugin\Pure\Config\Config;
-use Plugin\Pure\Config\Option;
+use VirgilSecurityPure\Config\Config;
+use VirgilSecurityPure\Config\Option;
 
 /**
  * Class ConfigHelper
- * @package Plugin\Pure\Helpers
+ * @package VirgilSecurityPure\Helpers
  */
 class ConfigHelper
 {

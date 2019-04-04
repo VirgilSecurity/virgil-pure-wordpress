@@ -35,13 +35,13 @@
  * Lead Maintainer: Virgil Security Inc. <support@virgilsecurity.com>
  */
 
-namespace Plugin\Pure\Core;
+namespace VirgilSecurityPure\Core;
 
-use Plugin\Pure\Config\Config;
+use VirgilSecurityPure\Config\Config;
 
 /**
  * Class Logger
- * @package Plugin\Pure\Core
+ * @package VirgilSecurityPure\Core
  */
 class Logger
 {

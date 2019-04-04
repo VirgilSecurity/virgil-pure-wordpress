@@ -35,16 +35,16 @@
  * Lead Maintainer: Virgil Security Inc. <support@virgilsecurity.com>
  */
 
-namespace Plugin\Pure\Core;
+namespace VirgilSecurityPure\Core;
 
-use Plugin\Pure\Config\Config;
-use Plugin\Pure\Config\Credential;
-use Plugin\Pure\Config\Option;
-use Plugin\Pure\Helpers\InfoHelper;
+use VirgilSecurityPure\Config\Config;
+use VirgilSecurityPure\Config\Credential;
+use VirgilSecurityPure\Config\Option;
+use VirgilSecurityPure\Helpers\InfoHelper;
 
 /**
  * Class PageBuilder
- * @package Plugin\Pure\Core
+ * @package VirgilSecurityPure\Core
  */
 class PageBuilder
 {

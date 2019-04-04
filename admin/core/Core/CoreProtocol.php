@@ -35,16 +35,16 @@
  * Lead Maintainer: Virgil Security Inc. <support@virgilsecurity.com>
  */
 
-namespace Plugin\Pure\Core;
+namespace VirgilSecurityPure\Core;
 
-use Plugin\Pure\Config\Credential;
-use Plugin\Pure\Helpers\Redirector;
+use VirgilSecurityPure\Config\Credential;
+use VirgilSecurityPure\Helpers\Redirector;
 use Virgil\PureKit\Protocol\Protocol;
 use Virgil\PureKit\Protocol\ProtocolContext;
 
 /**
  * Class CoreProtocol
- * @package Plugin\Pure\Core
+ * @package VirgilSecurityPure\Core
  */
 class CoreProtocol
 {
@@ -53,19 +53,19 @@ class CoreProtocol
      */
     public function init(): ?Protocol
     {
-        $p = null;
+        $protocol = null;
 
         try {
             if(!empty($_ENV[Credential::APP_TOKEN]) && !empty($_ENV[Credential::APP_SECRET_KEY]) && !empty
                 ($_ENV[Credential::SERVICE_PUBLIC_KEY]))
 
-                $p = $this->createProtocol();
+                $protocol = $this->createProtocol();
 
         } catch (\Exception $e) {
             if(0==$e->getCode()) {
                 Logger::log("Invalid credentials", 0);
-                $cm = new CredentialsManager();
-                $cm->addUpdateTokenToOldCredentials("");
+                $credentialsManager = new CredentialsManager();
+                $credentialsManager->addUpdateTokenToOldCredentials("");
             }
             else {
                 Logger::log($e->getMessage(),0);
@@ -73,7 +73,7 @@ class CoreProtocol
             Redirector::toPageLog();
         }
 
-        return $p;
+        return $protocol;
     }
 
     /**

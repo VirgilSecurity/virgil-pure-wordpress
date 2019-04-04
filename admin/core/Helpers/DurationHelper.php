@@ -35,11 +35,11 @@
  * Lead Maintainer: Virgil Security Inc. <support@virgilsecurity.com>
  */
 
-namespace Plugin\Pure\Helpers;
+namespace VirgilSecurityPure\Helpers;
 
 /**
  * Class DurationHelper
- * @package Plugin\Pure\Helpers
+ * @package VirgilSecurityPure\Helpers
  */
 class DurationHelper
 {

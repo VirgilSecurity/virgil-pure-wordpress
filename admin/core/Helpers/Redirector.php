@@ -35,13 +35,13 @@
  * Lead Maintainer: Virgil Security Inc. <support@virgilsecurity.com>
  */
 
-namespace Plugin\Pure\Helpers;
+namespace VirgilSecurityPure\Helpers;
 
-use Plugin\Pure\Config\Config;
+use VirgilSecurityPure\Config\Config;
 
 /**
  * Class Redirector
- * @package Plugin\Pure\Helpers
+ * @package VirgilSecurityPure\Helpers
  */
 class Redirector
 {

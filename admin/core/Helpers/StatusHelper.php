@@ -35,13 +35,13 @@
  * Lead Maintainer: Virgil Security Inc. <support@virgilsecurity.com>
  */
 
-namespace Plugin\Pure\Helpers;
+namespace VirgilSecurityPure\Helpers;
 
-use Plugin\Pure\Config\Option;
+use VirgilSecurityPure\Config\Option;
 
 /**
  * Class StatusHelper
- * @package Plugin\Pure\Helpers
+ * @package VirgilSecurityPure\Helpers
  */
 class StatusHelper
 {

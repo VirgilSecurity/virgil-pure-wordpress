@@ -35,7 +35,7 @@
  * Lead Maintainer: Virgil Security Inc. <support@virgilsecurity.com>
  */
 
-namespace Plugin\Pure\Core;
+namespace VirgilSecurityPure\Core;
 
 class CredentialExploder
 {

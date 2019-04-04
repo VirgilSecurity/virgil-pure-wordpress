@@ -1,8 +1,8 @@
 <?php
 
-use Plugin\Pure\Helpers\InfoHelper;
-use Plugin\Pure\Config\Form;
-use Plugin\Pure\Background\MigrateBackgroundProcess;
+use VirgilSecurityPure\Helpers\InfoHelper;
+use VirgilSecurityPure\Config\Form;
+use VirgilSecurityPure\Background\MigrateBackgroundProcess;
 
 $total = InfoHelper::getTotalUsers();
 $migrated = InfoHelper::getMigrated();

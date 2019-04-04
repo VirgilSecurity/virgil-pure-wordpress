@@ -35,17 +35,17 @@
  * Lead Maintainer: Virgil Security Inc. <support@virgilsecurity.com>
  */
 
-namespace Plugin\Pure\Core;
+namespace VirgilSecurityPure\Core;
 
 use Dotenv\Dotenv;
-use Plugin\Pure\Config\Credential;
-use Plugin\Pure\Helpers\CredentialsChecker;
-use Plugin\Pure\Helpers\ENVFormatter;
-use Plugin\Pure\Helpers\Redirector;
+use VirgilSecurityPure\Config\Credential;
+use VirgilSecurityPure\Helpers\CredentialsChecker;
+use VirgilSecurityPure\Helpers\ENVFormatter;
+use VirgilSecurityPure\Helpers\Redirector;
 
 /**
  * Class CredentialsManager
- * @package Plugin\Pure\Core
+ * @package VirgilSecurityPure\Core
  */
 class CredentialsManager
 {
@@ -57,7 +57,7 @@ class CredentialsManager
     public function addEmptyCredentials(): bool
     {
         $formatString = ENVFormatter::formatData("", "", "", "");
-        file_put_contents(PLUGIN_PURE_CORE_ENV_FILE, $formatString);
+        file_put_contents(VIRGIL_PURE_CORE_ENV_FILE, $formatString);
         $this->updateENV();
         return true;
     }
@@ -116,7 +116,7 @@ class CredentialsManager
         }
 
         $formatString = ENVFormatter::formatData($appToken, $servicePK, $appSK, $ut);
-        file_put_contents(PLUGIN_PURE_CORE_ENV_FILE, $formatString);
+        file_put_contents(VIRGIL_PURE_CORE_ENV_FILE, $formatString);
 
         $this->updateENV();
 
@@ -138,6 +138,6 @@ class CredentialsManager
      */
     private function updateENV()
     {
-        return (new Dotenv(PLUGIN_PURE_CORE))->overload();
+        return (new Dotenv(VIRGIL_PURE_CORE))->overload();
     }
 }

@@ -2,9 +2,9 @@
 
 /**
  * Plugin Name:       Virgil Pure
- * Plugin URI:        http://virgilsecurity.com/
+ * Plugin URI:        https://github.com/VirgilSecurity/virgil-pure-wordpress
  * Description:  Free tool that protects user passwords from data breaches and both online and offline attacks, and renders stolen passwords useless even if your database has been compromised.  The Pure based on <a href="https://virgilsecurity.com/announcing-purekit" target="_blank">powerful and revolutionary cryptographic technology</a> that provides stronger and more modern security and can be used within any database or login system that uses a password, so it's accessible for business of any industry or size.
- * Version:           0.1.0
+ * Version:           0.1.1
  * Author:            Virgil Security
  * Author URI:        http://virgilsecurity.com/
  * License:           GPL-2.0+
@@ -17,25 +17,25 @@ use Dotenv\Dotenv;
 
 require plugin_dir_path(__FILE__) . 'admin/core/vendor/autoload.php';
 
-if (!defined('PLUGIN_PURE_CORE')) {
-    define('PLUGIN_PURE_CORE', __DIR__ . DIRECTORY_SEPARATOR .'admin'. DIRECTORY_SEPARATOR. 'core');
+if (!defined('VIRGIL_PURE_CORE')) {
+    define('VIRGIL_PURE_CORE', __DIR__ . DIRECTORY_SEPARATOR .'admin'. DIRECTORY_SEPARATOR. 'core');
 }
 
-if (!defined('PLUGIN_PURE_CORE_ENV_FILE')) {
-    define('PLUGIN_PURE_CORE_ENV_FILE', PLUGIN_PURE_CORE . DIRECTORY_SEPARATOR .'.env');
+if (!defined('VIRGIL_PURE_CORE_ENV_FILE')) {
+    define('VIRGIL_PURE_CORE_ENV_FILE', VIRGIL_PURE_CORE . DIRECTORY_SEPARATOR .'.env');
 }
 
-if(!is_file(PLUGIN_PURE_CORE_ENV_FILE)) {
-    copy(PLUGIN_PURE_CORE_ENV_FILE."-example", PLUGIN_PURE_CORE_ENV_FILE);
+if(!is_file(VIRGIL_PURE_CORE_ENV_FILE)) {
+    copy(VIRGIL_PURE_CORE_ENV_FILE."-example", VIRGIL_PURE_CORE_ENV_FILE);
 }
 
-(new Dotenv(PLUGIN_PURE_CORE))->overload();
+(new Dotenv(VIRGIL_PURE_CORE))->overload();
 
 if (!defined('WPINC')) {
     die;
 }
 
-define('VIRGIL_PURE_VERSION', '0.1.0');
+define('VIRGIL_PURE_VERSION', '0.1.1');
 
 function activate_Virgil_Pure()
 {

@@ -35,14 +35,14 @@
  * Lead Maintainer: Virgil Security Inc. <support@virgilsecurity.com>
  */
 
-namespace Plugin\Pure\Core;
+namespace VirgilSecurityPure\Core;
 
-use Plugin\Pure\Config\Config;
-use Plugin\Pure\Config\Credential;
+use VirgilSecurityPure\Config\Config;
+use VirgilSecurityPure\Config\Credential;
 
 /**
  * Class PluginValidator
- * @package Plugin\Pure\Core
+ * @package VirgilSecurityPure\Core
  */
 class PluginValidator
 {

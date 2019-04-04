@@ -35,21 +35,21 @@
  * Lead Maintainer: Virgil Security Inc. <support@virgilsecurity.com>
  */
 
-namespace Plugin\Pure\Core;
+namespace VirgilSecurityPure\Core;
 
-use Plugin\Pure\Config\Config;
+use VirgilSecurityPure\Config\Config;
 
 /**
  * Class AuthChecker
- * @package Plugin\Pure\Core
+ * @package VirgilSecurityPure\Core
  */
 class AuthChecker
 {
     public function check(): bool {
         try {
-            $p = new CoreProtocol();
-            $p = $p->init();
-            $p->enrollAccount(Config::TEST_ENROLLMENT);
+            $protocol = new CoreProtocol();
+            $protocol = $protocol->init();
+            $protocol->enrollAccount(Config::TEST_ENROLLMENT);
         }
         catch (\Exception $e) {
             return false;
