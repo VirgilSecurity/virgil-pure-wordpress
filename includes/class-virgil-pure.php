@@ -65,7 +65,7 @@ class Virgil_Pure {
 
 		$plugin_admin = new Virgil_Pure_Admin( $this->get_Virgil_Pure(), $this->get_version() );
 
-		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_styles' );
+		$this->loader->add_action('admin_enqueue_scripts', $plugin_admin, 'enqueue_styles');
 		$this->loader->add_action('admin_menu', $plugin_admin, 'virgil_pure_menu');
 		$this->loader->add_action('admin_post_virgil_pure', $plugin_admin, 'virgil_pure_form_handler');
 		$this->loader->add_action('plugins_loaded', $plugin_admin, 'virgil_pure_init_background_processes');

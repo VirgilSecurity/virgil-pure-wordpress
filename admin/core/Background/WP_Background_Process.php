@@ -5,7 +5,7 @@
  * @package WP-Background-Processing
  */
 
-namespace Plugin\Pure\Background;
+namespace VirgilSecurityPure\Background;
 
 use stdClass;
 

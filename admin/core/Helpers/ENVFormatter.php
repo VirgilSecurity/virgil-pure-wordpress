@@ -35,10 +35,10 @@
  * Lead Maintainer: Virgil Security Inc. <support@virgilsecurity.com>
  */
 
-namespace Plugin\Pure\Helpers;
+namespace VirgilSecurityPure\Helpers;
 
-use Plugin\Pure\Config\Credential;
-use Plugin\Pure\Config\Option;
+use VirgilSecurityPure\Config\Credential;
+use VirgilSecurityPure\Config\Option;
 
 /**
  * Class ENVFormatter

@@ -35,11 +35,11 @@
  * Lead Maintainer: Virgil Security Inc. <support@virgilsecurity.com>
  */
 
-namespace Plugin\Pure\Background;
+namespace VirgilSecurityPure\Background;
 
 /**
  * Class BaseBackgroundProcess
- * @package Plugin\Pure\Background
+ * @package VirgilSecurityPure\Background
  */
 abstract class BaseBackgroundProcess extends WP_Background_Process
 {

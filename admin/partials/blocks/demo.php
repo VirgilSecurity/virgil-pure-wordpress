@@ -1,7 +1,7 @@
 <?php
-use Plugin\Pure\Config\Form;
-use Plugin\Pure\Helpers\InfoHelper;
-use Plugin\Pure\Helpers\StatusHelper;
+use VirgilSecurityPure\Config\Form;
+use VirgilSecurityPure\Helpers\InfoHelper;
+use VirgilSecurityPure\Helpers\StatusHelper;
 ?>
 
 <div class="virgil-phe-demo-container">

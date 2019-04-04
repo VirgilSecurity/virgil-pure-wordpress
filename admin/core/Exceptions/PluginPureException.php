@@ -35,11 +35,11 @@
  * Lead Maintainer: Virgil Security Inc. <support@virgilsecurity.com>
  */
 
-namespace Plugin\Pure\Exceptions;
+namespace VirgilSecurityPure\Exceptions;
 
 /**
  * Class PluginPureException
- * @package Plugin\Pure\Exceptions
+ * @package VirgilSecurityPure\Exceptions
  */
 class PluginPureException extends \Exception
 {

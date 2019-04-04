@@ -1,6 +1,6 @@
 <?php
 
-use Plugin\Pure\Core\LogPagination;
+use VirgilSecurityPure\Core\LogPagination;
 
 $lp = new LogPagination();
 ?>

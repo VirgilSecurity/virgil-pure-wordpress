@@ -35,10 +35,10 @@
  * Lead Maintainer: Virgil Security Inc. <support@virgilsecurity.com>
  */
 
-namespace Plugin\Pure\Helpers;
+namespace VirgilSecurityPure\Helpers;
 
-use Plugin\Pure\Config\Credential;
-use Plugin\Pure\Exceptions\PluginPureException;
+use VirgilSecurityPure\Config\Credential;
+use VirgilSecurityPure\Exceptions\PluginPureException;
 use Virgil\PureKit\Exceptions\InputCredentialsCheckerException;
 
 class CredentialsChecker

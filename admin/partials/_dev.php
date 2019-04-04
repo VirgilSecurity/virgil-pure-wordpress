@@ -1,5 +1,5 @@
 <?php
-use Plugin\Pure\Config\Form;
+use VirgilSecurityPure\Config\Form;
 ?>
 
 <div class="virgil-phe-global-container">

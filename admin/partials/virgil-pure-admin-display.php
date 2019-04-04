@@ -1,7 +1,7 @@
 <div class="virgil-phe-global-container">
 
     <?php
-    use Plugin\Pure\Core\PageBuilder;
+    use VirgilSecurityPure\Core\PageBuilder;
     require_once 'blocks/header.php';
 
     $pb = new PageBuilder();

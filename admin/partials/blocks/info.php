@@ -1,13 +1,15 @@
 <?php
 
-use Plugin\Pure\Helpers\ConfigHelper;
-use Plugin\Pure\Helpers\InfoHelper;
+use VirgilSecurityPure\Helpers\ConfigHelper;
+use VirgilSecurityPure\Helpers\InfoHelper;
+use VirgilSecurityPure\Config\Config;
 
 $systemInfoArr = [
-    'SERVER OS' => InfoHelper::getOSVersion(),
-    'PHP VERSION' => InfoHelper::getPHPVersion(),
-    'PHP EXTENSION' => InfoHelper::getExtensionDir() . DIRECTORY_SEPARATOR .
-        InfoHelper::getExtensionName() .InfoHelper::getExtensionExtension(),
+    'EXTENSION NAME' => Config::EXTENSION_NAME,
+    'OS' => PHP_OS,
+    'PHP' => PHP_MAJOR_VERSION.".".PHP_MINOR_VERSION,
+    'PATH TO EXTENSION DIR' => PHP_EXTENSION_DIR,
+    'PATH TO PHP.INI' => php_ini_loaded_file(),
 ];
 
 $pluginInfoArr = [

@@ -35,11 +35,11 @@
  * Lead Maintainer: Virgil Security Inc. <support@virgilsecurity.com>
  */
 
-namespace Plugin\Pure\Config;
+namespace VirgilSecurityPure\Config;
 
 /**
  * Class Option
- * @package Plugin\Pure\Config
+ * @package VirgilSecurityPure\Config
  */
 class Option
 {

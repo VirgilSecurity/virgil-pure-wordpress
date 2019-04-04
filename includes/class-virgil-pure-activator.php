@@ -1,9 +1,9 @@
 <?php
 
-use Plugin\Pure\Config\Log;
-use Plugin\Pure\Config\Option;
-use Plugin\Pure\Core\Logger;
-use Plugin\Pure\Helpers\DBQueryHelper;
+use VirgilSecurityPure\Config\Log;
+use VirgilSecurityPure\Config\Option;
+use VirgilSecurityPure\Core\Logger;
+use VirgilSecurityPure\Helpers\DBQueryHelper;
 
 /**
  * Class Virgil_Pure_Activator

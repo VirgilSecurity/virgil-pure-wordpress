@@ -5,7 +5,7 @@
  * @package WP-Background-Processing
  */
 
-namespace Plugin\Pure\Background;
+namespace VirgilSecurityPure\Background;
 
 /**
  * Abstract WP_Async_Request class.

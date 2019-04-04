@@ -17,19 +17,19 @@ use Dotenv\Dotenv;
 
 require plugin_dir_path(__FILE__) . 'admin/core/vendor/autoload.php';
 
-if (!defined('PLUGIN_PURE_CORE')) {
-    define('PLUGIN_PURE_CORE', __DIR__ . DIRECTORY_SEPARATOR .'admin'. DIRECTORY_SEPARATOR. 'core');
+if (!defined('VIRGIL_PURE_CORE')) {
+    define('VIRGIL_PURE_CORE', __DIR__ . DIRECTORY_SEPARATOR .'admin'. DIRECTORY_SEPARATOR. 'core');
 }
 
-if (!defined('PLUGIN_PURE_CORE_ENV_FILE')) {
-    define('PLUGIN_PURE_CORE_ENV_FILE', PLUGIN_PURE_CORE . DIRECTORY_SEPARATOR .'.env');
+if (!defined('VIRGIL_PURE_CORE_ENV_FILE')) {
+    define('VIRGIL_PURE_CORE_ENV_FILE', VIRGIL_PURE_CORE . DIRECTORY_SEPARATOR .'.env');
 }
 
-if(!is_file(PLUGIN_PURE_CORE_ENV_FILE)) {
-    copy(PLUGIN_PURE_CORE_ENV_FILE."-example", PLUGIN_PURE_CORE_ENV_FILE);
+if(!is_file(VIRGIL_PURE_CORE_ENV_FILE)) {
+    copy(VIRGIL_PURE_CORE_ENV_FILE."-example", VIRGIL_PURE_CORE_ENV_FILE);
 }
 
-(new Dotenv(PLUGIN_PURE_CORE))->overload();
+(new Dotenv(VIRGIL_PURE_CORE))->overload();
 
 if (!defined('WPINC')) {
     die;

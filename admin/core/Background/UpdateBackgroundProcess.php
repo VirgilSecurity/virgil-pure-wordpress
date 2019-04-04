@@ -35,20 +35,20 @@
  * Lead Maintainer: Virgil Security Inc. <support@virgilsecurity.com>
  */
 
-namespace Plugin\Pure\Background;
+namespace VirgilSecurityPure\Background;
 
-use Plugin\Pure\Config\Credential;
-use Plugin\Pure\Config\Log;
-use Plugin\Pure\Config\Option;
-use Plugin\Pure\Core\CoreProtocol;
-use Plugin\Pure\Core\CredentialsManager;
-use Plugin\Pure\Core\Logger;
-use Plugin\Pure\Config\Config;
+use VirgilSecurityPure\Config\Credential;
+use VirgilSecurityPure\Config\Log;
+use VirgilSecurityPure\Config\Option;
+use VirgilSecurityPure\Core\CoreProtocol;
+use VirgilSecurityPure\Core\CredentialsManager;
+use VirgilSecurityPure\Core\Logger;
+use VirgilSecurityPure\Config\Config;
 use Virgil\PureKit\Protocol\RecordUpdater;
 
 /**
  * Class UpdateBackgroundProcess
- * @package Plugin\Pure\Background
+ * @package VirgilSecurityPure\Background
  */
 class UpdateBackgroundProcess extends BaseBackgroundProcess
 {
