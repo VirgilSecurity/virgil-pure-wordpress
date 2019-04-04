@@ -2,9 +2,9 @@
 
 /**
  * Plugin Name:       Virgil Pure
- * Plugin URI:        http://virgilsecurity.com/
+ * Plugin URI:        https://github.com/VirgilSecurity/virgil-pure-wordpress
  * Description:  Free tool that protects user passwords from data breaches and both online and offline attacks, and renders stolen passwords useless even if your database has been compromised.  The Pure based on <a href="https://virgilsecurity.com/announcing-purekit" target="_blank">powerful and revolutionary cryptographic technology</a> that provides stronger and more modern security and can be used within any database or login system that uses a password, so it's accessible for business of any industry or size.
- * Version:           0.1.0
+ * Version:           0.1.1
  * Author:            Virgil Security
  * Author URI:        http://virgilsecurity.com/
  * License:           GPL-2.0+
@@ -35,7 +35,7 @@ if (!defined('WPINC')) {
     die;
 }
 
-define('VIRGIL_PURE_VERSION', '0.1.0');
+define('VIRGIL_PURE_VERSION', '0.1.1');
 
 function activate_Virgil_Pure()
 {
