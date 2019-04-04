@@ -57,20 +57,26 @@ Or for the Windows:
 
     $ cp vsce_phe_php.dll (PATH_TO_EXTENSION_DIR)
     
-Then restart your server!
+Then restart your server or php-fpm service!
 
-##### Example
+#### Example
 
 Our web stack is: *Linux, nginx, php7.2-fpm*
 
 Exec *virgil-test.php*:
-![scr-1](./_help/scr-1.png)
+
+<p><img src="https://raw.githubusercontent.com/VirgilSecurity/virgil-pure-wordpress/develop/_help/scr-1.png" 
+width="60%"></p>
 
 Then go to the command line:
-![scr-2](./_help/scr-2.png)
+
+<p><img src="https://raw.githubusercontent.com/VirgilSecurity/virgil-pure-wordpress/develop/_help/scr-2.png" 
+width="60%"></p>
 
 And reload page:
-![scr-3](./_help/scr-3.png)
+
+<p><img src="https://raw.githubusercontent.com/VirgilSecurity/virgil-pure-wordpress/develop/_help/scr-3.png" 
+width="60%"></p>
 
 #### Add plugin
 
