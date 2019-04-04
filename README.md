@@ -30,7 +30,7 @@ The plugin is currently unavailable at the WP Store but you can get it by downlo
 
 The package is available for PHP version 7.2.
 
-#### Add the vsce_phe_php extension before using the plugin
+#### **Step #1.** Add the vsce_phe_php extension into your server before using the plugin
 
 Download, unzip and execute on your server [virgil-test.php](https://github.com/VirgilSecurity/virgil-pure-wordpress/_help/virgil-test.php) file.
 - [virgil-test.zip](https://github.com/VirgilSecurity/virgil-pure-wordpress/releases/download/v0.1.0/virgil-test.zip)
@@ -57,31 +57,30 @@ Or for the Windows:
 
     $ cp vsce_phe_php.dll (PATH_TO_EXTENSION_DIR)
     
-Then restart your server or php-fpm service!
+Then, restart your server or php-fpm service!
 
-#### Example
+#### Installation example
 
 Our web stack is: *Linux, nginx, php7.2-fpm*
 
-Exec *virgil-test.php*:
+- Execute the *virgil-test.php* to find out your path to php.ini file and path to the extension directory:
+    <p><img src="https://raw.githubusercontent.com/VirgilSecurity/virgil-pure-wordpress/develop/_help/s-1.png" 
+    width="60%"></p> 
 
-<p><img src="https://raw.githubusercontent.com/VirgilSecurity/virgil-pure-wordpress/develop/_help/s-1.png" width="60%"></p>
+- Then, go to the command line interface (CLI) to specify the paths from the previous step:
+    <p><img src="https://raw.githubusercontent.com/VirgilSecurity/virgil-pure-wordpress/develop/_help/s-2.png" width="60%"></p>
 
-Then go to the command line:
+- Reload the page in your browser to see that extension is loaded (`IS_EXTENSION_LOADED => TRUE`):
+    <p><img src="https://raw.githubusercontent.com/VirgilSecurity/virgil-pure-wordpress/develop/_help/s-3.png" width="60%"></p>
+    
+So, now we can add the Virgil Pure Plugin to your server.
 
-<p><img src="https://raw.githubusercontent.com/VirgilSecurity/virgil-pure-wordpress/develop/_help/s-2.png" width="60%"></p>
-
-And reload page:
-
-<p><img src="https://raw.githubusercontent.com/VirgilSecurity/virgil-pure-wordpress/develop/_help/s-3.png" width="60%"></p>
-
-#### Add plugin
-
+#### **Step #2.** Add Pure plugin
 - [Download the WordPress Virgil_Pure plugin](https://github.com/VirgilSecurity/virgil-pure-wordpress/releases)
-- Navigate to WordPress Dashboard
+- Navigate to the WordPress Dashboard
 - Open "Plugins → Add New" tab
 - Upload the Virgil_Pure.zip file
-- Activate the plugin
+- Activate the Plugin
 
 ## How To Use Plugin
 
