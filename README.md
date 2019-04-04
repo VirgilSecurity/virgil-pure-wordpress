@@ -32,28 +32,31 @@ The package is available for PHP version 7.2.
 
 #### Step #1. Add the vsce_phe_php extension into your server before using the plugin
 
-[Download](https://github.com/VirgilSecurity/virgil-pure-wordpress/releases), unzip and execute on your server [virgil-test.php](/_help/virgil-test.php) file.
+- [Download](https://github.com/VirgilSecurity/virgil-pure-wordpress/releases), unzip and execute on your server [virgil-test.php](/_help/virgil-test.php) file.
 
-[Download](https://github.com/VirgilSecurity/virgil-pure-wordpress/releases) and unzip *vsce_phe_php* extension according to your server operating system.
+- [Download](https://github.com/VirgilSecurity/virgil-pure-wordpress/releases) and unzip *vsce_phe_php* extension according to your server operating system.
 
-Make sure you have access to edit the php.ini file. For example, use *root*
-
+- Make sure you have access to edit the php.ini file. For example, use *root*
+    ```
     $ sudo su
-
-Add the *extension=vsce_phe_php* string in to the php.ini file 
-
+    ```
+- Add the *extension=vsce_phe_php* string in to the php.ini file 
+    ```
     $ echo "extension=vsce_phe_php” >> (PATH_TO_PHP.INI)
- 
-Copy extension file to the extensions directory.
-For the Linux/Darwin:
- 
-    $ cp vsce_phe_php.so (PATH_TO_EXTENSION_DIR)
+    ```
     
-Or for the Windows:
-
-    $ cp vsce_phe_php.dll (PATH_TO_EXTENSION_DIR)
+- Copy extension file to the extensions directory.
+    - For the Linux/Darwin:
+    ```
+     $ cp vsce_phe_php.so (PATH_TO_EXTENSION_DIR)
+    ```
     
-Then, restart your server or php-fpm service!
+    - Or for the Windows:
+    ```
+     $ cp vsce_phe_php.dll (PATH_TO_EXTENSION_DIR)
+    ```
+    
+- Then, restart your server or php-fpm service!
 
 #### Installation example
 
