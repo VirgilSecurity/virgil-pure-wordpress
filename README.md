@@ -71,7 +71,8 @@ Our web stack is: *Linux, nginx, php7.2-fpm*
     <p><img src="https://raw.githubusercontent.com/VirgilSecurity/virgil-pure-wordpress/develop/_help/s-2.png" width="60%"></p>
 
 - Reload the page in your browser to see that extension is loaded (`IS_EXTENSION_LOADED => TRUE`):
-    <p><img src="https://raw.githubusercontent.com/VirgilSecurity/virgil-pure-wordpress/develop/_help/s-3.png" width="60%"></p>
+    <p><img src="https://raw.githubusercontent.com/VirgilSecurity/virgil-pure-wordpress/develop/_help/s-3.png" 
+    width="60%"></p>
     
 So, now we can add the Virgil Pure Plugin to your server.
 
@@ -81,6 +82,11 @@ So, now we can add the Virgil Pure Plugin to your server.
 - Open "Plugins → Add New" tab
 - Upload the Virgil_Pure.zip file
 - Activate the Plugin
+
+As a result, you activated the Pure Plugin:
+<p><img src="https://raw.githubusercontent.com/VirgilSecurity/virgil-pure-wordpress/develop/_help/s-4.png" width="60%"></p>
+
+Now, follow this README file to setup the Pure Plugin.
 
 ## How To Use Plugin
 
