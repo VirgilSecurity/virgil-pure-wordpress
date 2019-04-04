@@ -3,13 +3,13 @@
 [Introduction](#introduction) | [Features](#features) | [Installation](#installation) | [How To Use Plugin](#how-to-use-plugin) | [F.A.Q](#faq) | [License](#license) | [Support](#support)
 
 ## Introduction
-<img src="https://cdn.virgilsecurity.com/assets/images/github/logos/pure_plugin.png" align="left" hspace="0" vspace="0">
+<p><img src="https://cdn.virgilsecurity.com/assets/images/github/logos/pure_plugin.png" align="left" hspace="0" vspace="0"></p>
+
 Virgil Pure Wordpress Plugin is a free tool that protects user passwords from data breaches and both online and offline attacks, and renders stolen passwords useless even if your database has been compromised. 
 
 The Pure based on a powerful and revolutionary cryptographic technology that provides stronger and more modern security and can be used within any database or login system that uses a password, so it's accessible for business of any industry or size.
 
 Learn more about the Pure technology [here](https://virgilsecurity.com/announcing-purekit).
-
 
 ## Features
 
@@ -65,15 +65,15 @@ Our web stack is: *Linux, nginx, php7.2-fpm*
 
 Exec *virgil-test.php*:
 
-![](./_help/s-1.png)
+<p><img src="https://raw.githubusercontent.com/VirgilSecurity/virgil-pure-wordpress/develop/_help/s-1.png" width="60%"></p>
 
 Then go to the command line:
 
-![](./_help/s-2.png)
+<p><img src="https://raw.githubusercontent.com/VirgilSecurity/virgil-pure-wordpress/develop/_help/s-2.png" width="60%"></p>
 
 And reload page:
 
-![](./_help/s-3.png)
+<p><img src="https://raw.githubusercontent.com/VirgilSecurity/virgil-pure-wordpress/develop/_help/s-3.png" width="60%"></p>
 
 #### Add plugin
 
