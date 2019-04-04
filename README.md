@@ -65,18 +65,15 @@ Our web stack is: *Linux, nginx, php7.2-fpm*
 
 Exec *virgil-test.php*:
 
-<p><img src="https://raw.githubusercontent.com/VirgilSecurity/virgil-pure-wordpress/develop/_help/scr-1.png" 
-width="60%"></p>
+![](./_help/s-1.png)
 
 Then go to the command line:
 
-<p><img src="https://raw.githubusercontent.com/VirgilSecurity/virgil-pure-wordpress/develop/_help/scr-2.png" 
-width="60%"></p>
+![](./_help/s-2.png)
 
 And reload page:
 
-<p><img src="https://raw.githubusercontent.com/VirgilSecurity/virgil-pure-wordpress/develop/_help/scr-3.png" 
-width="60%"></p>
+![](./_help/s-3.png)
 
 #### Add plugin
 
