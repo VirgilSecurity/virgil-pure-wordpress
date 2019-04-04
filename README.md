@@ -30,15 +30,11 @@ The plugin is currently unavailable at the WP Store but you can get it by downlo
 
 The package is available for PHP version 7.2.
 
-#### **Step #1.** Add the vsce_phe_php extension into your server before using the plugin
+#### Step #1. Add the vsce_phe_php extension into your server before using the plugin
 
-Download, unzip and execute on your server [virgil-test.php](https://github.com/VirgilSecurity/virgil-pure-wordpress/_help/virgil-test.php) file.
-- [virgil-test.zip](https://github.com/VirgilSecurity/virgil-pure-wordpress/releases/download/v0.1.0/virgil-test.zip)
+[Download](https://github.com/VirgilSecurity/virgil-pure-wordpress/releases/download/v0.1.1/virgil-test.zip), unzip and execute on your server [virgil-test.php](https://github.com/VirgilSecurity/virgil-pure-wordpress/_help/virgil-test.php) file.
 
-Download and unzip *vsce_phe_php* extension according to your server operating system:
-- [Linux](https://github.com/VirgilSecurity/virgil-pure-wordpress/releases/download/v0.1.0/vsce_phe_php_for_linux.zip)
-- [Darwin](https://github.com/VirgilSecurity/virgil-pure-wordpress/releases/download/v0.1.0/vsce_phe_php_for_darwin.zip)
-- [Windows](https://github.com/VirgilSecurity/virgil-pure-wordpress/releases/download/v0.1.0/vsce_phe_php_for_windows.zip)
+[Download](https://github.com/VirgilSecurity/virgil-pure-wordpress/releases) and unzip *vsce_phe_php* extension according to your server operating system.
 
 Make sure you have access to edit the php.ini file. For example, use *root*
 
@@ -63,7 +59,7 @@ Then, restart your server or php-fpm service!
 
 Our web stack is: *Linux, nginx, php7.2-fpm*
 
-- Execute the *virgil-test.php* to find out your path to php.ini file and path to the extension directory:
+- Execute the [virgil-test.php](https://github.com/VirgilSecurity/virgil-pure-wordpress/_help/virgil-test.php) to find out your path to php.ini file and path to the extension directory:
     <p><img src="https://raw.githubusercontent.com/VirgilSecurity/virgil-pure-wordpress/develop/_help/s-1.png" 
     width="60%"></p> 
 
@@ -76,7 +72,7 @@ Our web stack is: *Linux, nginx, php7.2-fpm*
     
 So, now we can add the Virgil Pure Plugin to your server.
 
-#### **Step #2.** Add Pure plugin
+#### Step #2. Add Pure plugin
 - [Download the WordPress Virgil_Pure plugin](https://github.com/VirgilSecurity/virgil-pure-wordpress/releases)
 - Navigate to the WordPress Dashboard
 - Open "Plugins → Add New" tab
