@@ -45,7 +45,9 @@ class Config
 {
     const EXTENSION_NAME = 'vsce_phe_php';
 
-    const PLUGIN_NAME = 'Virgil_Pure';
+    const PLUGIN_NAME = 'virgil-pure';
+    const PLUGIN_NAME_UNDERSCORE = 'virgil_pure';
+
     const PLUGIN_FULL_NAME = self::PLUGIN_NAME.DIRECTORY_SEPARATOR.self::PLUGIN_NAME.'.php';
 
     const MAIN_PAGE = 'Virgil_Pure';
@@ -60,7 +62,7 @@ class Config
 
     const TEST_ENROLLMENT = 'test-enrollment';
 
-    const PLUGIN_DB_LOG_TABLE = self::PLUGIN_NAME.'_log';
+    const PLUGIN_DB_LOG_TABLE = self::PLUGIN_NAME_UNDERSCORE.'_log';
 
     const BACKGROUND_ACTION_MIGRATE = self::PLUGIN_NAME."_action_migrate";
     const BACKGROUND_ACTION_UPDATE = self::PLUGIN_NAME."_action_update";

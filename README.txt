@@ -61,6 +61,10 @@ There is no way to restore the APP_SECRET_KEY. The database becomes inaccessible
 
 == Changelog ==
 
+= 0.1.2 =
+* Fix activation error
+* Minor fixes
+
 = 0.1.1 =
 * Fix namespaces
 
