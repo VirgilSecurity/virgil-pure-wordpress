@@ -13,6 +13,7 @@ use VirgilSecurityPure\Core\WPPasswordEnroller;
 use VirgilSecurityPure\Helpers\DBQueryHelper;
 use VirgilSecurityPure\Helpers\Redirector;
 use VirgilSecurityPure\Helpers\StatusHelper;
+use Virgil\PureKit\Protocol\Protocol;
 
 /**
  * Class Virgil_Pure_Admin
@@ -30,7 +31,7 @@ class Virgil_Pure_Admin
     private $version;
 
     /**
-     * @var CoreProtocol
+     * @var Protocol
      */
     private $protocol;
 
@@ -61,9 +62,11 @@ class Virgil_Pure_Admin
      */
     public function __construct($Virgil_Pure, $version)
     {
-        $this->protocol = new CoreProtocol();
+        $cp = new CoreProtocol();
+
+        $this->protocol = $cp->init();
         $this->dbqh = new DBQueryHelper();
-        $this->fh = new FormHandler($this->protocol);
+        $this->fh = new FormHandler($cp);
         $this->ph = new passw0rdHash();
         $this->pv = new PluginValidator();
 
@@ -170,8 +173,7 @@ class Virgil_Pure_Admin
                 $userPass = base64_decode($userPass);
 
                 try {
-                    $p = $this->protocol->init();
-                    $p->verifyPassword($inputHash, $userPass);
+                    $this->protocol->verifyPassword($inputHash, $userPass);
                     $check = true;
 
                 } catch (\Exception $e) {

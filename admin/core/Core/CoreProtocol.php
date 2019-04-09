@@ -51,7 +51,7 @@ class CoreProtocol
     /**
      * @return null|Protocol
      */
-    public function init(): ?Protocol
+    public function init()
     {
         $protocol = null;
 

@@ -37,10 +37,10 @@
 
 namespace VirgilSecurityPure\Background;
 
+use Virgil\PureKit\Protocol\Protocol;
 use VirgilSecurityPure\Config\Credential;
 use VirgilSecurityPure\Config\Log;
 use VirgilSecurityPure\Config\Option;
-use VirgilSecurityPure\Core\CoreProtocol;
 use VirgilSecurityPure\Core\CredentialsManager;
 use VirgilSecurityPure\Core\Logger;
 use VirgilSecurityPure\Config\Config;
@@ -63,7 +63,7 @@ class UpdateBackgroundProcess extends BaseBackgroundProcess
     private $credentialsManager;
 
     /**
-     * @var CoreProtocol
+     * @var Protocol
      */
     private $protocol;
 
@@ -74,9 +74,9 @@ class UpdateBackgroundProcess extends BaseBackgroundProcess
 
     /**
      * UpdateBackgroundProcess constructor.
-     * @param CoreProtocol $protocol
+     * @param Protocol $protocol
      */
-    public function __construct(CoreProtocol $protocol)
+    public function __construct(Protocol $protocol)
     {
         $this->protocol = $protocol;
         $this->credentialsManager = new CredentialsManager();
@@ -132,16 +132,14 @@ class UpdateBackgroundProcess extends BaseBackgroundProcess
                 (Option::UPDATE_START), 2);
             Logger::log(Log::FINISH_UPDATE . " (records ver.: $v, duration: $duration sec.)");
 
-            $protocol = $this->protocol->init();
 
-            $nk = $protocol->getNewRawKeys();
+            $nk = $this->protocol->getNewRawKeys();
 
             $newAppSecretKey = Credential::APP_SECRET_KEY_PREFIX."." . $v . "." . base64_encode($nk[0]);
             $newServicePublicKey = Credential::SERVICE_PUBLIC_KEY_PREFIX."." . $v . "." . base64_encode($nk[1]);
 
             $this->credentialsManager->addRotatedCredentials($newServicePublicKey, $newAppSecretKey);
 
-            unset($protocol);
             unset($this->protocol);
 
             delete_option(Option::UPDATE_START);

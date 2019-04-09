@@ -380,16 +380,16 @@
         },
         {
             "name": "virgil/purekit",
-            "version": "v2.1.0",
+            "version": "v2.1.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/VirgilSecurity/virgil-purekit-php.git",
-                "reference": "49608edad87863c9012233880de78dc9a09657ba"
+                "reference": "fcf6eabb49d147bbbea7889cf4351f4fd1c607e5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/VirgilSecurity/virgil-purekit-php/zipball/49608edad87863c9012233880de78dc9a09657ba",
-                "reference": "49608edad87863c9012233880de78dc9a09657ba",
+                "url": "https://api.github.com/repos/VirgilSecurity/virgil-purekit-php/zipball/fcf6eabb49d147bbbea7889cf4351f4fd1c607e5",
+                "reference": "fcf6eabb49d147bbbea7889cf4351f4fd1c607e5",
                 "shasum": ""
             },
             "require": {
@@ -422,7 +422,7 @@
             ],
             "description": "Virgil Security introduces an implementation of the Password-Hardened Encryption (PHE) protocol that provides developers with a technology to protect users passwords from offline/online attacks and make stolen passwords useless even if your database has been compromised.",
             "homepage": "https://passw0rd.io/",
-            "time": "2019-03-20T14:09:36+00:00"
+            "time": "2019-04-08T16:46:25+00:00"
         },
         {
             "name": "vlucas/phpdotenv",
