@@ -63,7 +63,7 @@ class passw0rdHash
      * @param string $type
      * @return null|string
      */
-    public function get(string $userPass, string $type): ?string
+    public function get(string $userPass, string $type)
     {
         $res = null;
 

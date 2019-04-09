@@ -16,7 +16,8 @@ Free tool that protects user passwords from data breaches and both online and of
 Virgil Pure Wordpress Plugin is a free tool that protects user passwords from data breaches and both online and offline
 attacks, and renders stolen passwords useless even if your database has been compromised.
 
-The Pure based on a powerful and revolutionary cryptographic technology that provides stronger and more modern security and can be used within any database or login system that uses a password, so it's accessible for business of any industry or size.
+Virgil Pure is based on a powerful and revolutionary cryptographic technology that provides stronger and more modern
+security and can be used within any database or login system that uses a password, so it's accessible for business of any industry or size.
 
 Learn more about the Pure technology [here](https://virgilsecurity.com/announcing-purekit)
 

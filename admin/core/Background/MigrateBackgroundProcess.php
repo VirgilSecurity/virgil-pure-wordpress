@@ -37,10 +37,10 @@
 
 namespace VirgilSecurityPure\Background;
 
+use Virgil\PureKit\Protocol\Protocol;
 use VirgilSecurityPure\Config\Config;
 use VirgilSecurityPure\Config\Log;
 use VirgilSecurityPure\Config\Option;
-use VirgilSecurityPure\Core\CoreProtocol;
 use VirgilSecurityPure\Core\Logger;
 use VirgilSecurityPure\Core\passw0rdHash;
 
@@ -67,13 +67,11 @@ class MigrateBackgroundProcess extends BaseBackgroundProcess
 
     /**
      * MigrateBackgroundProcess constructor.
-     * @param CoreProtocol $protocol
+     * @param Protocol $protocol
      */
-    public function __construct(CoreProtocol $protocol=null)
+    public function __construct(Protocol $protocol=null)
     {
-        if(!empty($protocol))
-            $this->protocol = $protocol->init();
-
+        $this->protocol = $protocol;
         parent::__construct();
     }
 

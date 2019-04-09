@@ -17,8 +17,7 @@ use VirgilSecurityPure\Config\Credential;
     <ol type="1" class="virgil-phe-global-credentials-ol">
         <li>Navigate to <a href="https://dashboard.virgilsecurity.com" target="_blank">dashboard.virgilsecurity.com</a>, sign up for a free account, and create a new Pure application.</li>
         <li>You can generate all three credentials either in the browser or via CLI.</li>
-        <li>Copy and paste them into the corresponding fields below. Be sure to save the <?= Credential::APP_SECRET_KEY ?> in a safe place
-            .</li>
+        <li>Copy and paste them into the corresponding fields below. Be sure to save the <?= Credential::APP_SECRET_KEY ?> in a safe place.</li>
     </ol>
 
     <form class="virgil-phe-credentials-form" action="<?php echo esc_url(admin_url('admin-post.php')); ?>"

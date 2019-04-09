@@ -37,6 +37,7 @@
 
 namespace VirgilSecurityPure\Core;
 
+use Virgil\PureKit\Protocol\Protocol;
 use VirgilSecurityPure\Config\Option;
 use WP_User;
 
@@ -46,15 +47,22 @@ use WP_User;
  */
 class WPPasswordEnroller
 {
+    /**
+     * @var Protocol
+     */
     private $protocol;
+
+    /**
+     * @var passw0rdHash
+     */
     private $passw0rdHash;
 
     /**
      * WPPasswordEnroller constructor.
-     * @param CoreProtocol $protocol
+     * @param Protocol $protocol
      * @param passw0rdHash $passw0rdHash
      */
-    public function __construct(CoreProtocol $protocol, passw0rdHash $passw0rdHash)
+    public function __construct(Protocol $protocol, passw0rdHash $passw0rdHash)
     {
         $this->protocol = $protocol;
         $this->passw0rdHash = $passw0rdHash;
@@ -72,8 +80,7 @@ class WPPasswordEnroller
         $hash = $this->passw0rdHash->get($user->user_pass, 'hash');
         $params = $this->passw0rdHash->get($user->user_pass, 'params');
 
-        $p = $this->protocol->init();
-        $enrollment = $p->enrollAccount($hash);
+        $enrollment = $this->protocol->enrollAccount($hash);
         $record = base64_encode($enrollment[0]);
 
         update_user_meta($user->ID, Option::RECORD, $record);

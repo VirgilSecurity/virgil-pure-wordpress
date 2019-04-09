@@ -71,13 +71,13 @@ class FormHandler
     /**
      * @var CoreProtocol
      */
-    private $protocol;
+    private $coreProtocol;
 
     /**
      * FormHandler constructor.
-     * @param CoreProtocol|null $protocol
+     * @param CoreProtocol $coreProtocol
      */
-    public function __construct(CoreProtocol $protocol=null)
+    public function __construct(CoreProtocol $coreProtocol)
     {
         global $wpdb;
         $this->wpdb = $wpdb;
@@ -85,7 +85,7 @@ class FormHandler
         $this->cm = new CredentialsManager();
         $this->dbq = new DBQueryHelper();
 
-        $this->protocol = $protocol;
+        $this->coreProtocol = $coreProtocol;
     }
 
     /**
@@ -107,8 +107,8 @@ class FormHandler
         $_POST[Credential::APP_SECRET_KEY]);
 
         try {
-            $p = $this->protocol->init();
-            $p->enrollAccount(Config::TEST_ENROLLMENT);
+            $protocol = $this->coreProtocol->init();
+            $protocol->enrollAccount(Config::TEST_ENROLLMENT);
         }
         catch(ClientException $e) {
             if(401==$e->getCode()) {
@@ -138,7 +138,7 @@ class FormHandler
     {
         $users = get_users(array('fields' => array('ID', 'user_pass')));
 
-        $migrateBackgroundProcess = new MigrateBackgroundProcess($this->protocol);
+        $migrateBackgroundProcess = new MigrateBackgroundProcess($this->coreProtocol->init());
 
         update_option(Option::MIGRATE_START, microtime(true));
 
@@ -172,7 +172,7 @@ class FormHandler
             Logger::log(Log::START_UPDATE);
 
             try {
-                $updateBackgroundProcess = new UpdateBackgroundProcess($this->protocol);
+                $updateBackgroundProcess = new UpdateBackgroundProcess($this->coreProtocol->init());
 
                 foreach ($users as $user) {
                     $updateBackgroundProcess->push_to_queue( $user );
