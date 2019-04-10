@@ -13,7 +13,7 @@ Free tool that protects user passwords from data breaches and both online and of
 
 == Description ==
 
-Virgil Pure Wordpress Plugin is a free tool that protects user passwords from data breaches and both online and offline
+Virgil Pure WordPress Plugin is a free tool that protects user passwords from data breaches and both online and offline
 attacks, and renders stolen passwords useless even if your database has been compromised.
 
 Virgil Pure is based on a powerful and revolutionary cryptographic technology that provides stronger and more modern
@@ -23,18 +23,30 @@ Learn more about the Pure technology [here](https://virgilsecurity.com/announcin
 
 == Installation ==
 
-The package is available for PHP version 7.2.
+Currently the plugin is available only for PHP7.2!
 
-= Step #1. Add the vsce_phe_php extension before using the plugin =
+In order to install the Pure Plugin you need to go through the following steps:
+* add the "vsce_phe_php" extension into your server
+* and then install the Plugin from the [WordPress Plugin Directory](https://wordpress.org/plugins/virgil-pure/) or from
+[official GitHub repository](https://github.com/VirgilSecurity/virgil-pure-wordpress)
+
+= Step #1. Add the "vsce_phe_php" extension into your server before using the Plugin =
 [How to add vsce_phe_php extension](https://github.com/VirgilSecurity/virgil-pure-wordpress#step-1-add-the-vsce_phe_php-extension-into-your-server-before-using-the-plugin)
 
-= Step #2. Add plugin =
-* [Download the WordPress Virgil_Pure plugin](https://github.com/VirgilSecurity/virgil-pure-wordpress/releases)
-* Navigate to WordPress Dashboard
-* Open "Plugins → Add New" tab
-* Upload the Virgil_Pure.zip file
+= Step #2. Install Virgil Pure WordPress Plugin =
 
-* Or install the plugin through the WordPress plugins screen directly.
+From the WordPress Plugin Directory:
+* Navigate to the WordPress Dashboard
+* Open "Plugins → Add New" tab
+* Find "Virgil Pure" on the WordPress Plugin Directory
+* Install and activate the Plugin
+
+Or from the official GitHub repository:
+* [Download the virgil_pure.zip file](https://github.com/VirgilSecurity/virgil-pure-wordpress/releases)
+* Navigate to the WordPress Dashboard
+* Open "Plugins → Add New" tab
+* Upload the virgil-pure.zip file
+* Install and activate the Plugin
 
 == Frequently Asked Questions ==
 
