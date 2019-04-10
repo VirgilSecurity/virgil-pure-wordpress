@@ -5,7 +5,8 @@
 ## Introduction
 <p><img src="https://cdn.virgilsecurity.com/assets/images/github/logos/pure_plugin.png" align="left" hspace="0" vspace="0"></p>
 
-Virgil Pure Wordpress Plugin is a free tool that protects user passwords from data breaches and both online and offline attacks, and renders stolen passwords useless even if your database has been compromised. 
+[Virgil Pure Wordpress Plugin](https://wordpress.org/plugins/virgil-pure) is a free tool that protects user passwords from data breaches and both online and 
+offline attacks, and renders stolen passwords useless even if your database has been compromised. 
 
 Virgil Pure is based on a powerful and revolutionary cryptographic technology that provides stronger and more modern security and can be used within any database or login system that uses a password, so it's accessible for business of any industry or size.
 
@@ -25,6 +26,10 @@ Learn more about the Pure technology [here](https://virgilsecurity.com/announcin
 ## Installation
 
 Currently the plugin is available only for **PHP7.2**! 
+
+In order to install the Pure Plugin you need to go through the following steps:
+- add the "vsce_phe_php" extension into your server
+- and then install the Plugin from the [WordPress Plugin Directory](#from-the-wordpress-plugin-directory) or from [this repository](#from-this-repository)
 
 ### Step #1. Add the "vsce_phe_php" extension into your server before using the Plugin
 
