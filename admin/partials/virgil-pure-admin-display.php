@@ -29,6 +29,9 @@
 
     if ($pb->faqBlock())
         require_once 'blocks/faq.php';
+
+    if ($pb->recoveryBlock())
+        require_once 'blocks/recovery.php';
     ?>
 
 </div>

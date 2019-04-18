@@ -123,6 +123,14 @@ class PageBuilder
     /**
      * @return bool
      */
+    public function recoveryBlock(): bool
+    {
+        return true;
+    }
+
+    /**
+     * @return bool
+     */
     public function infoBlock(): bool
     {
         return $this->isMainPage()||$this->disabledBlock();

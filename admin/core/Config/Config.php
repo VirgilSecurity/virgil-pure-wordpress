@@ -56,6 +56,7 @@ class Config
     const ACTION_PAGE = self::MAIN_PAGE.'_Action';
     const LOG_PAGE = self::MAIN_PAGE.'_Log';
     const FAQ_PAGE = self::MAIN_PAGE.'_FAQ';
+    const RECOVERY_PAGE = self::MAIN_PAGE.'_Recovery';
     const DEV_PAGE = self::MAIN_PAGE.'_Dev';
 
     const CAPABILITY = 'administrator';

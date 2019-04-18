@@ -109,6 +109,10 @@ class Virgil_Pure_Admin
         if ($extLoaded) {
             add_submenu_page(Config::ACTION_PAGE, 'Log', 'Log', Config::CAPABILITY, Config::LOG_PAGE, array($this, 'virgil_pure_page_builder'));
             add_submenu_page(Config::ACTION_PAGE, 'FAQ', 'FAQ', Config::CAPABILITY, Config::FAQ_PAGE, array($this, 'virgil_pure_page_builder'));
+            add_submenu_page(Config::ACTION_PAGE, 'Recovery', 'Recovery', Config::CAPABILITY,
+                Config::RECOVERY_PAGE,
+                array
+            ($this, 'virgil_pure_page_builder'));
             if($devMode)
                 add_submenu_page(Config::ACTION_PAGE, 'Dev', '* Dev', Config::CAPABILITY, Config::DEV_PAGE, array($this, 'virgil_pure_page_dev'));
 
