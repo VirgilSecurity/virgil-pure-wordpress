@@ -38,6 +38,7 @@
 namespace VirgilSecurityPure\Core;
 
 use GuzzleHttp\Exception\ClientException;
+use Virgil\CryptoImpl\VirgilCrypto;
 use VirgilSecurityPure\Background\MigrateBackgroundProcess;
 use VirgilSecurityPure\Background\UpdateBackgroundProcess;
 use VirgilSecurityPure\Config\Config;
@@ -74,17 +75,23 @@ class FormHandler
     private $coreProtocol;
 
     /**
+     * @var VirgilCryptoWrapper
+     */
+    private $virgilCryptoWrapper;
+
+    /**
      * FormHandler constructor.
      * @param CoreProtocol $coreProtocol
+     * @param VirgilCryptoWrapper $virgilCryptoWrapper
      */
-    public function __construct(CoreProtocol $coreProtocol)
+    public function __construct(CoreProtocol $coreProtocol, VirgilCryptoWrapper $virgilCryptoWrapper)
     {
         global $wpdb;
         $this->wpdb = $wpdb;
-
         $this->cm = new CredentialsManager();
         $this->dbq = new DBQueryHelper();
 
+        $this->virgilCryptoWrapper = $virgilCryptoWrapper;
         $this->coreProtocol = $coreProtocol;
     }
 
@@ -93,9 +100,18 @@ class FormHandler
      */
     public function demo()
     {
-        update_option(Option::DEMO_MODE, 0);
-        $this->dbq->clearAllUsersPass();
-        Logger::log(Log::DEMO_MODE_OFF);
+        if(!get_option(Option::RECOVERY_PUBLIC_KEY)) {
+            Logger::log(Log::DEMO_MODE_NO_RECOVERY_KEYS, 0);
+        } else {
+            update_option(Option::DEMO_MODE, 0);
+            $this->dbq->clearAllUsersPass();
+            Logger::log(Log::DEMO_MODE_OFF);
+        }
+    }
+
+    public function downloadRecoveryPrivateKey()
+    {
+        $this->virgilCryptoWrapper->downloadPrivateKey();
     }
 
     /**
@@ -226,6 +242,7 @@ class FormHandler
         delete_option(Option::MIGRATE_FINISH);
         delete_option(Option::UPDATE_START);
         delete_option(Option::UPDATE_FINISH);
+        delete_option(Option::RECOVERY_PUBLIC_KEY);
         delete_option('_transient_doing_cron');
         $this->wpdb->query("DELETE FROM wp_options WHERE option_name LIKE '%migrate_batch_%'");
         $this->wpdb->query("DELETE FROM wp_options WHERE option_name LIKE '%migrate_process'");

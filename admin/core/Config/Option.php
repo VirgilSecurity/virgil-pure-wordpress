@@ -53,4 +53,7 @@ class Option
 
     const RECORD = Config::PLUGIN_NAME.'_record';
     const PARAMS = Config::PLUGIN_NAME.'_params';
+
+    const RECOVERY_PUBLIC_KEY = Config::PLUGIN_NAME.'_recovery_public_key';
+    const RECOVERY_PRIVATE_KEY = Config::PLUGIN_NAME.'_recovery_private_key';
 }

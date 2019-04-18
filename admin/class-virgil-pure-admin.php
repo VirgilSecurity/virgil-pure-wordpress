@@ -1,5 +1,6 @@
 <?php
 
+use Virgil\CryptoImpl\VirgilCrypto;
 use VirgilSecurityPure\Background\MigrateBackgroundProcess;
 use VirgilSecurityPure\Background\UpdateBackgroundProcess;
 use VirgilSecurityPure\Config\Config;
@@ -9,6 +10,7 @@ use VirgilSecurityPure\Core\CoreProtocol;
 use VirgilSecurityPure\Core\FormHandler;
 use VirgilSecurityPure\Core\passw0rdHash;
 use VirgilSecurityPure\Core\PluginValidator;
+use VirgilSecurityPure\Core\VirgilCryptoWrapper;
 use VirgilSecurityPure\Core\WPPasswordEnroller;
 use VirgilSecurityPure\Helpers\DBQueryHelper;
 use VirgilSecurityPure\Helpers\Redirector;
@@ -56,19 +58,28 @@ class Virgil_Pure_Admin
     private $pv;
 
     /**
+     * @var VirgilCryptoWrapper
+     */
+    private $vcw;
+
+    /**
      * Virgil_Pure_Admin constructor.
      * @param $Virgil_Pure
      * @param $version
+     * @throws \Virgil\CryptoImpl\VirgilCryptoException
      */
     public function __construct($Virgil_Pure, $version)
     {
         $cp = new CoreProtocol();
 
+        $vcw = new VirgilCryptoWrapper();
+
         $this->protocol = $cp->init();
         $this->dbqh = new DBQueryHelper();
-        $this->fh = new FormHandler($cp);
+        $this->fh = new FormHandler($cp, $vcw);
         $this->ph = new passw0rdHash();
         $this->pv = new PluginValidator();
+
 
         $this->Virgil_Pure = $Virgil_Pure;
         $this->version = $version;
@@ -116,6 +127,10 @@ class Virgil_Pure_Admin
                 switch ($_POST[Form::TYPE]) {
                     case Form::DEMO:
                         $this->fh->demo();
+                        break;
+
+                    case Form::DOWNLOAD_RECOVERY_PRIVATE_KEY:
+                        $this->fh->downloadRecoveryPrivateKey();
                         break;
 
                     case Form::CREDENTIALS:

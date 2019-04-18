@@ -35,28 +35,62 @@
  * Lead Maintainer: Virgil Security Inc. <support@virgilsecurity.com>
  */
 
-namespace VirgilSecurityPure\Config;
+namespace VirgilSecurityPure\Core;
+
+use Virgil\CryptoImpl\VirgilCrypto;
+use VirgilSecurityPure\Config\Option;
 
 /**
- * Class Log
- * @package VirgilSecurityPure\Config
+ * Class VirgilCryptoWrapper
+ * @package VirgilSecurityPure\Core
  */
-class Log
+class VirgilCryptoWrapper
 {
-    const PLUGIN_ACTIVATION = "Plugin activation";
-    const DEMO_MODE_OFF = "Switch demo mode off";
-    const INIT_CREDENTIALS = "Init credentials";
-    const START_MIGRATION = "Start of the migration process";
-    const FINISH_MIGRATION = "The end of the migration process";
-    const START_UPDATE = "Start of the update process";
-    const FINISH_UPDATE = "The end of the update process";
+    /**
+     * @var \Virgil\CryptoImpl\VirgilKeyPair
+     */
+    private $keyPair;
 
-    const DEV_ADD_USERS = "Add users";
-    const DEV_RESTORE_DEFAULTS = "Restore defaults";
+    /**
+     * VirgilCryptoWrapper constructor.
+     * @throws \Virgil\CryptoImpl\VirgilCryptoException
+     */
+    public function __construct() {
+        $vc = new VirgilCrypto();
+        $this->keyPair = $vc->generateKeys();
+    }
 
-    const INVALID_APP_TOKEN = "Invalid ".Credential::APP_TOKEN;
-    const INVALID_PROOF = "Invalid ".Credential::SERVICE_PUBLIC_KEY." or ".
-    Credential::APP_SECRET_KEY;
+    /**
+     * @param bool $base64Encode
+     * @return string
+     */
+    public function getPublicKey(bool $base64Encode = false):string {
+        return $base64Encode ? base64_encode($this->keyPair->getPublicKey()->getValue()) : $this->getPublicKey()->getValue();
+    }
 
-    const DEMO_MODE_NO_RECOVERY_KEYS = "Download Recovery Private Key";
+    /**
+     * @param bool $base64Encode
+     * @return string
+     */
+    public function getPrivateKey(bool $base64Encode = false):string {
+        return $base64Encode ? base64_encode($this->keyPair->getPrivateKey()->getValue()) : $this->getPrivateKey()->getValue();
+    }
+
+    /**
+     *
+     */
+    public function downloadPrivateKey() {
+        $prefix = get_bloginfo('name');
+        $file = $prefix.'_recovery_private_key.txt';
+
+        header('Content-Type: application/octet-stream');
+        header("Content-Transfer-Encoding: Binary");
+        header('Content-type: text/plain');
+        header("Content-disposition: attachment; filename=$file");
+        echo $this->getPrivateKey(true);
+
+        update_option(Option::RECOVERY_PUBLIC_KEY, $this->getPublicKey(true));
+        Logger::log($file." downloaded");
+        exit;
+    }
 }

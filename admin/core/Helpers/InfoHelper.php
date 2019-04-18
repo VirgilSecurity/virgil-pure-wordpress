@@ -77,7 +77,7 @@ class InfoHelper
     /**
      * @return string
      */
-    public static function getExtensionExtension(): string {
+    public static function getExtensionType(): string {
         $ee = 'Windows'==self::getOSVersion() ? 'dll' : 'so';
         return ".".$ee;
     }

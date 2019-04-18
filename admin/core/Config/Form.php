@@ -45,7 +45,7 @@ class Form
 {
     const PREFIX = Config::PLUGIN_NAME."_form_";
 
-    const ALL = [self::DEMO, self::CREDENTIALS, self::MIGRATE, self::UPDATE,
+    const ALL = [self::DEMO, self::DOWNLOAD_RECOVERY_PRIVATE_KEY, self::CREDENTIALS, self::MIGRATE, self::UPDATE,
         self::DEV_ADD_USERS, self::DEV_RESTORE_DEFAULTS];
 
     const NONCE = self::PREFIX.'nonce';
@@ -53,6 +53,7 @@ class Form
     const TYPE = 'form_type';
 
     const DEMO = self::PREFIX.'demo';
+    const DOWNLOAD_RECOVERY_PRIVATE_KEY = self::PREFIX.'download_recovery_private_key';
     const CREDENTIALS = self::PREFIX.'credentials';
     const MIGRATE = self::PREFIX.'migrate';
     const UPDATE = self::PREFIX.'update';
