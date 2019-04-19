@@ -2,6 +2,7 @@
 
 use Virgil\CryptoImpl\VirgilCrypto;
 use VirgilSecurityPure\Background\MigrateBackgroundProcess;
+use VirgilSecurityPure\Background\RecoveryBackgroundProcess;
 use VirgilSecurityPure\Background\UpdateBackgroundProcess;
 use VirgilSecurityPure\Config\Config;
 use VirgilSecurityPure\Config\Form;
@@ -72,11 +73,11 @@ class Virgil_Pure_Admin
     {
         $cp = new CoreProtocol();
 
-        $vcw = new VirgilCryptoWrapper();
+        $this->vcw = new VirgilCryptoWrapper();
 
         $this->protocol = $cp->init();
         $this->dbqh = new DBQueryHelper();
-        $this->fh = new FormHandler($cp, $vcw);
+        $this->fh = new FormHandler($cp, $this->vcw);
         $this->ph = new passw0rdHash();
         $this->pv = new PluginValidator();
 
@@ -242,6 +243,7 @@ class Virgil_Pure_Admin
             new MigrateBackgroundProcess($this->protocol);
             new UpdateBackgroundProcess($this->protocol);
         }
+        new RecoveryBackgroundProcess();
     }
 
     /**

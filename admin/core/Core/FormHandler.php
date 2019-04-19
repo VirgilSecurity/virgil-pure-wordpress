@@ -40,6 +40,7 @@ namespace VirgilSecurityPure\Core;
 use GuzzleHttp\Exception\ClientException;
 use Virgil\CryptoImpl\VirgilCrypto;
 use VirgilSecurityPure\Background\MigrateBackgroundProcess;
+use VirgilSecurityPure\Background\RecoveryBackgroundProcess;
 use VirgilSecurityPure\Background\UpdateBackgroundProcess;
 use VirgilSecurityPure\Config\Config;
 use VirgilSecurityPure\Config\Option;
@@ -103,9 +104,25 @@ class FormHandler
         if(!get_option(Option::RECOVERY_PUBLIC_KEY)) {
             Logger::log(Log::DEMO_MODE_NO_RECOVERY_KEYS, 0);
         } else {
-            update_option(Option::DEMO_MODE, 0);
-            $this->dbq->clearAllUsersPass();
-            Logger::log(Log::DEMO_MODE_OFF);
+
+            $users = get_users(array('fields' => array('ID', 'user_pass')));
+
+            $recoveryBackgroundProcess = new RecoveryBackgroundProcess();
+
+//            update_option(Option::MIGRATE_START, microtime(true));
+
+//            Logger::log(Log::START_MIGRATION);
+
+            try {
+                foreach ($users as $user) {
+//                    if(empty(get_user_meta($user->ID, Option::RECORD)) && empty(get_user_meta($user->ID, Option::PARAMS)))
+                        $recoveryBackgroundProcess->push_to_queue( $user );
+                }
+            } catch (\Exception $e) {
+                wp_die($e->getMessage());
+            }
+
+            $recoveryBackgroundProcess->save()->dispatch();
         }
     }
 
@@ -234,6 +251,7 @@ class FormHandler
         foreach ($users as $user) {
             delete_user_meta($user->ID, Option::RECORD);
             delete_user_meta($user->ID, Option::PARAMS);
+            delete_user_meta($user->ID, Option::ENCRYPTED);
         }
 
         update_option(Option::DEMO_MODE, 1);
@@ -247,6 +265,7 @@ class FormHandler
         $this->wpdb->query("DELETE FROM wp_options WHERE option_name LIKE '%migrate_batch_%'");
         $this->wpdb->query("DELETE FROM wp_options WHERE option_name LIKE '%migrate_process'");
         $this->wpdb->query("DELETE FROM wp_options WHERE option_name LIKE '%update_process'");
+        $this->wpdb->query("DELETE FROM wp_options WHERE option_name LIKE '%recovery_process'");
 
         $this->cm->addEmptyCredentials();
 

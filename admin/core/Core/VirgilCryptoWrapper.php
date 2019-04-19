@@ -47,6 +47,11 @@ use VirgilSecurityPure\Config\Option;
 class VirgilCryptoWrapper
 {
     /**
+     * @var
+     */
+    private $vc;
+
+    /**
      * @var \Virgil\CryptoImpl\VirgilKeyPair
      */
     private $keyPair;
@@ -56,8 +61,8 @@ class VirgilCryptoWrapper
      * @throws \Virgil\CryptoImpl\VirgilCryptoException
      */
     public function __construct() {
-        $vc = new VirgilCrypto();
-        $this->keyPair = $vc->generateKeys();
+        $this->vc = new VirgilCrypto();
+        $this->keyPair = $this->vc->generateKeys();
     }
 
     /**
@@ -92,5 +97,15 @@ class VirgilCryptoWrapper
         update_option(Option::RECOVERY_PUBLIC_KEY, $this->getPublicKey(true));
         Logger::log($file." downloaded");
         exit;
+    }
+
+    /**
+     * @param string $password
+     * @param string $publicKey
+     * @return string
+     * @throws \Virgil\CryptoImpl\VirgilCryptoException
+     */
+    public function encrypt(string $password, string $publicKey) {
+        return $this->vc->encrypt($password, [$publicKey]);
     }
 }

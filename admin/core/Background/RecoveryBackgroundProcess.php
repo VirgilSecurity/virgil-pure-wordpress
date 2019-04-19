@@ -35,33 +35,48 @@
  * Lead Maintainer: Virgil Security Inc. <support@virgilsecurity.com>
  */
 
-namespace VirgilSecurityPure\Helpers;
+namespace VirgilSecurityPure\Background;
 
-use VirgilSecurityPure\Config\Credential;
+use VirgilSecurityPure\Config\Log;
 use VirgilSecurityPure\Config\Option;
+use VirgilSecurityPure\Core\Logger;
+use VirgilSecurityPure\Config\Config;
+use VirgilSecurityPure\Helpers\DBQueryHelper;
 
-/**
- * Class ENVFormatter
- * @package passw0rd\helper
- */
-class ENVFormatter
+class RecoveryBackgroundProcess extends BaseBackgroundProcess
 {
-    /**
-     * @param string $appToken
-     * @param string $servicePublicKey
-     * @param string $appSecretKey
-     * @param string|null $updateToken
-     * @return string
-     */
-    public static function formatData(string $appToken, string $servicePublicKey, string $appSecretKey, string $updateToken = null): string
-    {
-        $titleAT = Credential::APP_TOKEN;
-        $titlePK = Credential::SERVICE_PUBLIC_KEY;
-        $titleSK = Credential::APP_SECRET_KEY;
-        $titleUT = Credential::UPDATE_TOKEN;
+    protected $action = Config::BACKGROUND_ACTION_RECOVERY;
 
-        $formatData = "$titleAT=\"$appToken\"\n$titlePK=\"$servicePublicKey\"\n$titleSK=\"$appSecretKey\"\n$titleUT=\"$updateToken\"";
+//    public function __construct(Protocol $protocol=null)
+//    {
+//        $this->protocol = $protocol;
+//        parent::__construct();
+//    }
 
-        return $formatData;
+    protected function task( $user ) {
+        update_user_meta($user->ID, Option::ENCRYPTED, $user->user_pass);
+        return false;
+    }
+
+    protected function complete() {
+
+        if($this->is_queue_empty())
+        {
+//            update_option(Option::MIGRATE_FINISH, microtime(true));
+//
+//            $duration = round(get_option(Option::MIGRATE_FINISH)-get_option
+//                (Option::MIGRATE_START), 2);
+//            Logger::log( Log::FINISH_MIGRATION." (duration: $duration sec.)");
+//
+//            delete_option(Option::MIGRATE_START);
+//            delete_option(Option::MIGRATE_FINISH);
+
+            update_option(Option::DEMO_MODE, 0);
+            $this->dbq = new DBQueryHelper();
+            $this->dbq->clearAllUsersPass();
+            Logger::log(Log::DEMO_MODE_OFF);
+        }
+
+        parent::complete();
     }
 }
