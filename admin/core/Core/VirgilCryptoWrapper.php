@@ -38,7 +38,10 @@
 namespace VirgilSecurityPure\Core;
 
 use Virgil\CryptoImpl\VirgilCrypto;
+use Virgil\CryptoImpl\VirgilPublicKey;
+use VirgilSecurityPure\Config\Crypto;
 use VirgilSecurityPure\Config\Option;
+use VirgilSecurityPure\Exceptions\PluginPureException;
 
 /**
  * Class VirgilCryptoWrapper
@@ -66,46 +69,56 @@ class VirgilCryptoWrapper
     }
 
     /**
-     * @param bool $base64Encode
+     * @param int $type
      * @return string
+     * @throws PluginPureException
+     * @throws \Virgil\CryptoImpl\VirgilCryptoException
      */
-    public function getPublicKey(bool $base64Encode = false):string {
-        return $base64Encode ? base64_encode($this->keyPair->getPublicKey()->getValue()) : $this->getPublicKey()->getValue();
+    public function getKey(int $type): string {
+        switch ($type) {
+            case Crypto::PUBLIC_KEY:
+                $keyObject = $this->keyPair->getPublicKey();
+                $keyData = $this->vc->exportPublicKey($keyObject);
+                break;
+            case Crypto::PRIVATE_KEY:
+                $keyObject = $this->keyPair->getPrivateKey();
+                $keyData = $this->vc->exportPrivateKey($keyObject, Crypto::PRIVATE_KEY_PASSWORD);
+                break;
+            default:
+                throw new PluginPureException('Invalid key type.');
+                break;
+        }
+        
+        $res = base64_encode($keyData);
+        return $res;
     }
 
     /**
-     * @param bool $base64Encode
-     * @return string
-     */
-    public function getPrivateKey(bool $base64Encode = false):string {
-        return $base64Encode ? base64_encode($this->keyPair->getPrivateKey()->getValue()) : $this->getPrivateKey()->getValue();
-    }
-
-    /**
-     *
+     * @throws PluginPureException
+     * @throws \Virgil\CryptoImpl\VirgilCryptoException
      */
     public function downloadPrivateKey() {
         $prefix = get_bloginfo('name');
         $file = $prefix.'_recovery_private_key.txt';
+        $pk = $this->getKey(Crypto::PUBLIC_KEY);
 
         header('Content-Type: application/octet-stream');
         header("Content-Transfer-Encoding: Binary");
         header('Content-type: text/plain');
         header("Content-disposition: attachment; filename=$file");
-        echo $this->getPrivateKey(true);
-
-        update_option(Option::RECOVERY_PUBLIC_KEY, $this->getPublicKey(true));
+        echo $pk;
+        update_option(Option::RECOVERY_PUBLIC_KEY, $pk);
         Logger::log($file." downloaded");
         exit;
     }
 
     /**
      * @param string $password
-     * @param string $publicKey
+     * @param VirgilPublicKey $publicKey
      * @return string
      * @throws \Virgil\CryptoImpl\VirgilCryptoException
      */
-    public function encrypt(string $password, string $publicKey) {
-        return $this->vc->encrypt($password, [$publicKey]);
+    public function encrypt(string $password, VirgilPublicKey $publicKey) {
+        return base64_encode($this->vc->encrypt($password, [$publicKey]));
     }
 }

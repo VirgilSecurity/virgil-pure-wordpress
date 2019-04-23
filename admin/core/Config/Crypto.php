@@ -35,60 +35,14 @@
  * Lead Maintainer: Virgil Security Inc. <support@virgilsecurity.com>
  */
 
-namespace VirgilSecurityPure\Background;
+namespace VirgilSecurityPure\Config;
 
-use VirgilSecurityPure\Config\Log;
-use VirgilSecurityPure\Config\Option;
-use VirgilSecurityPure\Core\Logger;
-use VirgilSecurityPure\Config\Config;
-use VirgilSecurityPure\Core\VirgilCryptoWrapper;
-use VirgilSecurityPure\Helpers\DBQueryHelper;
-
-class RecoveryBackgroundProcess extends BaseBackgroundProcess
+class Crypto
 {
-    protected $action = Config::BACKGROUND_ACTION_RECOVERY;
+    const ALL = [self::PUBLIC_KEY, self::PRIVATE_KEY];
 
-    private $dbqh;
+    const PUBLIC_KEY = 1;
+    const PRIVATE_KEY = 2;
 
-    private $vcw;
-
-    private $pk;
-
-    public function __construct(DBQueryHelper $dbqh, VirgilCryptoWrapper $vcw, string $pk = null)
-    {
-        $this->dbqh = $dbqh;
-        $this->vcw = $vcw;
-        $this->pk = $pk;
-        parent::__construct();
-    }
-
-    protected function task($user) {
-        
-        $password = $user->user_pass;
-        $enc = $this->vcw->encrypt($password, $this->pk);
-        
-        update_user_meta($user->ID, Option::ENCRYPTED, $user->user_pass);
-        return false;
-    }
-
-    protected function complete() {
-
-        if($this->is_queue_empty())
-        {
-//            update_option(Option::MIGRATE_FINISH, microtime(true));
-//
-//            $duration = round(get_option(Option::MIGRATE_FINISH)-get_option
-//                (Option::MIGRATE_START), 2);
-//            Logger::log( Log::FINISH_MIGRATION." (duration: $duration sec.)");
-//
-//            delete_option(Option::MIGRATE_START);
-//            delete_option(Option::MIGRATE_FINISH);
-
-            update_option(Option::DEMO_MODE, 0);
-            $this->dbqh->clearAllUsersPass();
-            Logger::log(Log::DEMO_MODE_OFF);
-        }
-
-        parent::complete();
-    }
+    const PRIVATE_KEY_PASSWORD = "wordpress_plugin";
 }

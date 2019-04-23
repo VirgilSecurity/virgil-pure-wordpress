@@ -106,9 +106,10 @@ class FormHandler
         } else {
 
             $users = get_users(array('fields' => array('ID', 'user_pass')));
+            $pk = get_option(Option::RECOVERY_PUBLIC_KEY);
 
-            $recoveryBackgroundProcess = new RecoveryBackgroundProcess();
-
+            $recoveryBackgroundProcess = new RecoveryBackgroundProcess($this->dbq, $this->virgilCryptoWrapper, $pk);
+            
 //            update_option(Option::MIGRATE_START, microtime(true));
 
 //            Logger::log(Log::START_MIGRATION);
@@ -116,7 +117,7 @@ class FormHandler
             try {
                 foreach ($users as $user) {
 //                    if(empty(get_user_meta($user->ID, Option::RECORD)) && empty(get_user_meta($user->ID, Option::PARAMS)))
-                        $recoveryBackgroundProcess->push_to_queue( $user );
+                        $recoveryBackgroundProcess->push_to_queue( $user, $pk);
                 }
             } catch (\Exception $e) {
                 wp_die($e->getMessage());

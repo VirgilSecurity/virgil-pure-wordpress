@@ -23,3 +23,29 @@ use VirgilSecurityPure\Config\Credential;
                value="Restore">
     </form>
 </div>
+
+<?php
+try {
+    $vcw = new \VirgilSecurityPure\Core\VirgilCryptoWrapper();
+    $pk = $vcw->getKeyFromKeyPair(\VirgilSecurityPure\Config\Crypto::PUBLIC_KEY);
+
+    $a = base64_decode($pk);
+    $a = unserialize($a);
+
+
+//    $pks = serialize($pk);
+//    $pksb = base64_encode($pks);
+//
+//    $pkd = unserialize($pks);
+//
+    $msg='dfadsfasdfasdf';
+    $e = $vcw->encrypt($msg, unserialize(base64_decode($pk)));
+
+
+    var_dump($pk, $a);
+    die;
+}
+catch (\Exception $e) {
+    wp_die($e->getMessage());
+}
+?>

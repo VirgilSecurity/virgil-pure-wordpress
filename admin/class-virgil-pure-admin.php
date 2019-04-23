@@ -243,7 +243,7 @@ class Virgil_Pure_Admin
             new MigrateBackgroundProcess($this->protocol);
             new UpdateBackgroundProcess($this->protocol);
         }
-        new RecoveryBackgroundProcess();
+        new RecoveryBackgroundProcess($this->dbqh, $this->vcw);
     }
 
     /**

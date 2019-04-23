@@ -125,7 +125,7 @@ class PageBuilder
      */
     public function recoveryBlock(): bool
     {
-        return true;
+        return $this->isRecoveryPage();
     }
 
     /**
@@ -166,6 +166,14 @@ class PageBuilder
     private function isFAQPage(): bool
     {
         return Config::FAQ_PAGE==$_GET['page'];
+    }
+
+    /**
+     * @return bool
+     */
+    private function isRecoveryPage(): bool
+    {
+        return Config::RECOVERY_PAGE==$_GET['page'];
     }
 
     /**
