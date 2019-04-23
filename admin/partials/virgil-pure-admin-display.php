@@ -32,6 +32,9 @@
 
     if ($pb->recoveryBlock())
         require_once 'blocks/recovery.php';
+
+    if ($pb->demoModeOffBlock())
+        require_once 'blocks/demo_mode_off.php';
     ?>
 
 </div>

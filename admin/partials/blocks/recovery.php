@@ -27,22 +27,12 @@ use VirgilSecurityPure\Config\Credential;
 <?php
 try {
     $vcw = new \VirgilSecurityPure\Core\VirgilCryptoWrapper();
-    $pk = $vcw->getKeyFromKeyPair(\VirgilSecurityPure\Config\Crypto::PUBLIC_KEY);
-
-    $a = base64_decode($pk);
-    $a = unserialize($a);
+    $pk = $vcw->getKey(\VirgilSecurityPure\Config\Crypto::PUBLIC_KEY);
+    $prk = $vcw->getKey(\VirgilSecurityPure\Config\Crypto::PRIVATE_KEY);
 
 
-//    $pks = serialize($pk);
-//    $pksb = base64_encode($pks);
-//
-//    $pkd = unserialize($pks);
-//
-    $msg='dfadsfasdfasdf';
-    $e = $vcw->encrypt($msg, unserialize(base64_decode($pk)));
 
-
-    var_dump($pk, $a);
+    var_dump($pk, $prk);
     die;
 }
 catch (\Exception $e) {

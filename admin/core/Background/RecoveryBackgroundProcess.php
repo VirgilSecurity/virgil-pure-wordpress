@@ -54,19 +54,17 @@ class RecoveryBackgroundProcess extends BaseBackgroundProcess
 
     private $pk;
 
-    public function __construct(DBQueryHelper $dbqh, VirgilCryptoWrapper $vcw, string $pk = null)
+    public function __construct(DBQueryHelper $dbqh, VirgilCryptoWrapper $vcw)
     {
         $this->dbqh = $dbqh;
         $this->vcw = $vcw;
-        $this->pk = $pk;
         parent::__construct();
     }
 
     protected function task($user) {
         
         $password = $user->user_pass;
-        $enc = $this->vcw->encrypt($password, $this->pk);
-        
+
         update_user_meta($user->ID, Option::ENCRYPTED, $user->user_pass);
         return false;
     }

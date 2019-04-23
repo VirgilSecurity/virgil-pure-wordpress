@@ -13,6 +13,7 @@ use VirgilSecurityPure\Core\passw0rdHash;
 use VirgilSecurityPure\Core\PluginValidator;
 use VirgilSecurityPure\Core\VirgilCryptoWrapper;
 use VirgilSecurityPure\Core\WPPasswordEnroller;
+use VirgilSecurityPure\Helpers\ConfigHelper;
 use VirgilSecurityPure\Helpers\DBQueryHelper;
 use VirgilSecurityPure\Helpers\Redirector;
 use VirgilSecurityPure\Helpers\StatusHelper;
@@ -110,10 +111,11 @@ class Virgil_Pure_Admin
         if ($extLoaded) {
             add_submenu_page(Config::ACTION_PAGE, 'Log', 'Log', Config::CAPABILITY, Config::LOG_PAGE, array($this, 'virgil_pure_page_builder'));
             add_submenu_page(Config::ACTION_PAGE, 'FAQ', 'FAQ', Config::CAPABILITY, Config::FAQ_PAGE, array($this, 'virgil_pure_page_builder'));
-            add_submenu_page(Config::ACTION_PAGE, 'Recovery', 'Recovery', Config::CAPABILITY,
-                Config::RECOVERY_PAGE,
-                array
-            ($this, 'virgil_pure_page_builder'));
+            add_submenu_page(Config::ACTION_PAGE, 'Change Mode', 'Change Mode', Config::CAPABILITY,
+                Config::DEMO_MODE_OFF_PAGE, array($this, 'virgil_pure_page_builder'));
+            if(ConfigHelper::isRecoveryKeyExists() && false==(bool)get_option(Option::DEMO_MODE))
+                add_submenu_page(Config::ACTION_PAGE, 'Recovery', 'Recovery', Config::CAPABILITY, Config::RECOVERY_PAGE,
+                    array($this, 'virgil_pure_page_builder'));
             if($devMode)
                 add_submenu_page(Config::ACTION_PAGE, 'Dev', '* Dev', Config::CAPABILITY, Config::DEV_PAGE, array($this, 'virgil_pure_page_dev'));
 

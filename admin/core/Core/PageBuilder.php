@@ -127,6 +127,14 @@ class PageBuilder
     {
         return $this->isRecoveryPage();
     }
+    
+    /**
+     * @return bool
+     */
+    public function demoModeOffBlock(): bool
+    {
+        return $this->isDemoModeOffPage();
+    }
 
     /**
      * @return bool
@@ -150,6 +158,14 @@ class PageBuilder
     private function isMainPage(): bool
     {
         return Config::ACTION_PAGE==$_GET['page'];
+    }
+
+    /**
+     * @return bool
+     */
+    private function isDemoModeOffPage(): bool
+    {
+        return Config::DEMO_MODE_OFF_PAGE==$_GET['page'];
     }
 
     /**
