@@ -40,7 +40,7 @@ namespace VirgilSecurityPure\Core;
 use GuzzleHttp\Exception\ClientException;
 use Virgil\CryptoImpl\VirgilCrypto;
 use VirgilSecurityPure\Background\MigrateBackgroundProcess;
-use VirgilSecurityPure\Background\RecoveryBackgroundProcess;
+use VirgilSecurityPure\Background\EncryptBackgroundProcess;
 use VirgilSecurityPure\Background\UpdateBackgroundProcess;
 use VirgilSecurityPure\Config\Config;
 use VirgilSecurityPure\Config\Option;
@@ -108,7 +108,7 @@ class FormHandler
             $users = get_users(array('fields' => array('ID', 'user_pass')));
             $pk = get_option(Option::RECOVERY_PUBLIC_KEY);
 
-            $recoveryBackgroundProcess = new RecoveryBackgroundProcess($this->dbq, $this->virgilCryptoWrapper, $pk);
+            $recoveryBackgroundProcess = new EncryptBackgroundProcess($this->dbq, $this->virgilCryptoWrapper, $pk);
             
 //            update_option(Option::MIGRATE_START, microtime(true));
 

@@ -39,6 +39,7 @@ namespace VirgilSecurityPure\Core;
 
 use Virgil\CryptoImpl\VirgilCrypto;
 use Virgil\CryptoImpl\VirgilPublicKey;
+use VirgilSecurityPure\Config\Credential;
 use VirgilSecurityPure\Config\Crypto;
 use VirgilSecurityPure\Config\Option;
 use VirgilSecurityPure\Exceptions\PluginPureException;

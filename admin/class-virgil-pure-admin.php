@@ -2,7 +2,7 @@
 
 use Virgil\CryptoImpl\VirgilCrypto;
 use VirgilSecurityPure\Background\MigrateBackgroundProcess;
-use VirgilSecurityPure\Background\RecoveryBackgroundProcess;
+use VirgilSecurityPure\Background\EncryptBackgroundProcess;
 use VirgilSecurityPure\Background\UpdateBackgroundProcess;
 use VirgilSecurityPure\Config\Config;
 use VirgilSecurityPure\Config\Form;
@@ -82,7 +82,6 @@ class Virgil_Pure_Admin
         $this->ph = new passw0rdHash();
         $this->pv = new PluginValidator();
 
-
         $this->Virgil_Pure = $Virgil_Pure;
         $this->version = $version;
     }
@@ -107,12 +106,12 @@ class Virgil_Pure_Admin
 
         add_menu_page(Config::MAIN_PAGE_TITLE, Config::MAIN_PAGE_TITLE, Config::CAPABILITY, Config::ACTION_PAGE);
         add_submenu_page(Config::ACTION_PAGE, $title, $title, Config::CAPABILITY, Config::ACTION_PAGE, array($this, 'virgil_pure_page_builder'));
-
         if ($extLoaded) {
+            if(StatusHelper::isAllUsersMigrated()) {
+                add_submenu_page(Config::ACTION_PAGE, 'Change Mode', 'Change Mode', Config::CAPABILITY, Config::DEMO_MODE_OFF_PAGE, array($this, 'virgil_pure_page_builder'));
+            }
             add_submenu_page(Config::ACTION_PAGE, 'Log', 'Log', Config::CAPABILITY, Config::LOG_PAGE, array($this, 'virgil_pure_page_builder'));
             add_submenu_page(Config::ACTION_PAGE, 'FAQ', 'FAQ', Config::CAPABILITY, Config::FAQ_PAGE, array($this, 'virgil_pure_page_builder'));
-            add_submenu_page(Config::ACTION_PAGE, 'Change Mode', 'Change Mode', Config::CAPABILITY,
-                Config::DEMO_MODE_OFF_PAGE, array($this, 'virgil_pure_page_builder'));
             if(ConfigHelper::isRecoveryKeyExists() && false==(bool)get_option(Option::DEMO_MODE))
                 add_submenu_page(Config::ACTION_PAGE, 'Recovery', 'Recovery', Config::CAPABILITY, Config::RECOVERY_PAGE,
                     array($this, 'virgil_pure_page_builder'));
@@ -244,8 +243,8 @@ class Virgil_Pure_Admin
         if ($this->protocol) {
             new MigrateBackgroundProcess($this->protocol);
             new UpdateBackgroundProcess($this->protocol);
+            new EncryptBackgroundProcess($this->dbqh, $this->vcw);
         }
-        new RecoveryBackgroundProcess($this->dbqh, $this->vcw);
     }
 
     /**

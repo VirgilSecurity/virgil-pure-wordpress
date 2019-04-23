@@ -1,8 +1,11 @@
 <?php
+
 use VirgilSecurityPure\Config\Form;
 use VirgilSecurityPure\Helpers\ConfigHelper;
 use VirgilSecurityPure\Helpers\InfoHelper;
 use VirgilSecurityPure\Helpers\StatusHelper;
+use VirgilSecurityPure\Config\Config;
+
 ?>
 
 <div class="virgil-phe-demo-container">
@@ -11,19 +14,12 @@ use VirgilSecurityPure\Helpers\StatusHelper;
         <p class="virgil-phe-demo-desc">
             In demo mode, no data in your database will be altered. To demonstrate how Virgil Pure works, a new
             column will be created to hold the newly protected password data. When you're ready to go live, your
-            password hashes will be translated into cryptographically protected data.
+            password hashes will be translated into cryptographically protected data.<br>
+            <?php if(!StatusHelper::isAllUsersMigrated()) { ?>
+                To switch demo mod off migrate all users first.
+            <?php } else { ?>
+                <a class="virgil-phe-demo-desc" href="<?= admin_url("/admin.php?page=" . Config::DEMO_MODE_OFF_PAGE) ?>">Change Mode</a>
+            <?php } ?>
         </p>
-
-        <?php if(!StatusHelper::isAllUsersMigrated()) { ?>
-            <p class="virgil-phe-demo-desc">To switch demo mod off migrate all users first.</p>
-        <?php } else { ?>
-            <form action="<?php echo esc_url(admin_url('admin-post.php')); ?>" method="post">
-                <input type="hidden" name="action" value="<?= Form::ACTION ?>">
-                <input type="hidden" name="form_type" value="<?= Form::DEMO ?>">
-                <?php wp_nonce_field('nonce', Form::NONCE) ?>
-                <input type="submit" name="submit" id="submit" class="virgil-phe-global-button virgil-phe-demo-button"
-                       value="Switch demo mode off">
-            </form>
-        <?php } ?>
     </div>
 </div>

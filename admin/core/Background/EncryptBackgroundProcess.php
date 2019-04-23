@@ -37,6 +37,7 @@
 
 namespace VirgilSecurityPure\Background;
 
+use Virgil\CryptoImpl\VirgilPublicKey;
 use VirgilSecurityPure\Config\Log;
 use VirgilSecurityPure\Config\Option;
 use VirgilSecurityPure\Core\Logger;
@@ -44,7 +45,7 @@ use VirgilSecurityPure\Config\Config;
 use VirgilSecurityPure\Core\VirgilCryptoWrapper;
 use VirgilSecurityPure\Helpers\DBQueryHelper;
 
-class RecoveryBackgroundProcess extends BaseBackgroundProcess
+class EncryptBackgroundProcess extends BaseBackgroundProcess
 {
     protected $action = Config::BACKGROUND_ACTION_RECOVERY;
 
@@ -52,20 +53,21 @@ class RecoveryBackgroundProcess extends BaseBackgroundProcess
 
     private $vcw;
 
-    private $pk;
+    private $publicKey;
 
-    public function __construct(DBQueryHelper $dbqh, VirgilCryptoWrapper $vcw)
+    public function __construct(DBQueryHelper $dbqh, VirgilCryptoWrapper $vcw, VirgilPublicKey $publicKey=null)
     {
         $this->dbqh = $dbqh;
         $this->vcw = $vcw;
+        $this->publicKey=$publicKey;
+
         parent::__construct();
     }
 
     protected function task($user) {
         
         $password = $user->user_pass;
-
-        update_user_meta($user->ID, Option::ENCRYPTED, $user->user_pass);
+        update_user_meta($user->ID, Option::ENCRYPTED, $password);
         return false;
     }
 

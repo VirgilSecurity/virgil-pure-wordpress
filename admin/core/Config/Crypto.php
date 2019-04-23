@@ -43,6 +43,6 @@ class Crypto
 
     const PUBLIC_KEY = 1;
     const PRIVATE_KEY = 2;
-
+    
     const PRIVATE_KEY_PASSWORD = "wordpress_plugin";
 }

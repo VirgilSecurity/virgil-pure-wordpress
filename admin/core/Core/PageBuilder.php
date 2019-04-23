@@ -65,7 +65,7 @@ class PageBuilder
         if($this->disabledBlock())
             return false;
 
-        return (bool)get_option(Option::DEMO_MODE);
+        return (bool)get_option(Option::DEMO_MODE)&&!$this->isDemoModeOffPage();
     }
 
     /**
@@ -127,7 +127,7 @@ class PageBuilder
     {
         return $this->isRecoveryPage();
     }
-    
+
     /**
      * @return bool
      */
