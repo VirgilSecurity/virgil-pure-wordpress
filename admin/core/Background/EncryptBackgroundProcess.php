@@ -37,7 +37,7 @@
 
 namespace VirgilSecurityPure\Background;
 
-use Virgil\CryptoImpl\VirgilPublicKey;
+use VirgilSecurityPure\Config\Crypto;
 use VirgilSecurityPure\Config\Log;
 use VirgilSecurityPure\Config\Option;
 use VirgilSecurityPure\Core\Logger;
@@ -52,37 +52,40 @@ class EncryptBackgroundProcess extends BaseBackgroundProcess
     private $dbqh;
 
     private $vcw;
-
-    private $publicKey;
-
-    public function __construct(DBQueryHelper $dbqh, VirgilCryptoWrapper $vcw, VirgilPublicKey $publicKey=null)
+    public function __construct(DBQueryHelper $dbqh, VirgilCryptoWrapper $vcw)
     {
         $this->dbqh = $dbqh;
         $this->vcw = $vcw;
-        $this->publicKey=$publicKey;
 
         parent::__construct();
     }
 
     protected function task($user) {
-        
-        $password = $user->user_pass;
-        update_user_meta($user->ID, Option::ENCRYPTED, $password);
-        return false;
+        $pk = get_option(Option::RECOVERY_PUBLIC_KEY);
+        if($pk) {
+            $virgilPublicKey = $this->vcw->importKey(Crypto::PUBLIC_KEY, $pk);
+
+            $password = $user->user_pass;
+            $encrypted = $this->vcw->encrypt($password, $virgilPublicKey);
+
+            update_user_meta($user->ID, Option::ENCRYPTED, $encrypted);
+            return false;
+        }
+
     }
 
     protected function complete() {
 
         if($this->is_queue_empty())
         {
-//            update_option(Option::MIGRATE_FINISH, microtime(true));
-//
-//            $duration = round(get_option(Option::MIGRATE_FINISH)-get_option
-//                (Option::MIGRATE_START), 2);
-//            Logger::log( Log::FINISH_MIGRATION." (duration: $duration sec.)");
-//
-//            delete_option(Option::MIGRATE_START);
-//            delete_option(Option::MIGRATE_FINISH);
+            update_option(Option::ENCRYPT_FINISH, microtime(true));
+
+            $duration = round(get_option(Option::ENCRYPT_FINISH)-get_option
+                (Option::ENCRYPT_START), 2);
+            Logger::log( Log::FINISH_ENCRYPT." (duration: $duration sec.)");
+
+            delete_option(Option::ENCRYPT_START);
+            delete_option(Option::ENCRYPT_FINISH);
 
             update_option(Option::DEMO_MODE, 0);
             $this->dbqh->clearAllUsersPass();

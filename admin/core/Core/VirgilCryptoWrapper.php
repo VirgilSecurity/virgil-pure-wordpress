@@ -86,7 +86,7 @@ class VirgilCryptoWrapper
                 $keyData = $this->vc->exportPrivateKey($keyObject, Crypto::PRIVATE_KEY_PASSWORD);
                 break;
             default:
-                throw new PluginPureException('Invalid key type.');
+                throw new PluginPureException('Invalid key type (Get key)');
                 break;
         }
         
@@ -114,12 +114,38 @@ class VirgilCryptoWrapper
     }
 
     /**
+     * @param int $type
+     * @param string $key
+     * @return \Virgil\CryptoImpl\VirgilPrivateKey|VirgilPublicKey
+     * @throws PluginPureException
+     * @throws \Virgil\CryptoImpl\VirgilCryptoException
+     */
+    public function importKey(int $type, string $key)
+    {
+        switch ($type) {
+            case Crypto::PUBLIC_KEY:
+                $keyData = base64_decode($key);
+                $keyObject = $this->vc->importPublicKey($keyData);
+                break;
+            case Crypto::PRIVATE_KEY:
+                $keyData = base64_decode($key);
+                $keyObject = $this->vc->importPrivateKey($keyData, Crypto::PRIVATE_KEY_PASSWORD);
+                break;
+            default:
+                throw new PluginPureException('Invalid key type (Import Key)');
+                break;
+        }
+
+        return $keyObject;
+    }
+
+    /**
      * @param string $password
-     * @param VirgilPublicKey $publicKey
+     * @param VirgilPublicKey $virgilPublicKey
      * @return string
      * @throws \Virgil\CryptoImpl\VirgilCryptoException
      */
-    public function encrypt(string $password, VirgilPublicKey $publicKey) {
-        return base64_encode($this->vc->encrypt($password, [$publicKey]));
+    public function encrypt(string $password, VirgilPublicKey $virgilPublicKey): string {
+        return base64_encode($this->vc->encrypt($password, [$virgilPublicKey]));
     }
 }

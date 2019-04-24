@@ -65,7 +65,7 @@ class PageBuilder
         if($this->disabledBlock())
             return false;
 
-        return (bool)get_option(Option::DEMO_MODE)&&!$this->isDemoModeOffPage();
+        return (bool)get_option(Option::DEMO_MODE)&&!$this->isChangeModePage();
     }
 
     /**
@@ -131,9 +131,9 @@ class PageBuilder
     /**
      * @return bool
      */
-    public function demoModeOffBlock(): bool
+    public function changeModeBlock(): bool
     {
-        return $this->isDemoModeOffPage();
+        return $this->isChangeModePage()&&(bool)get_option(Option::DEMO_MODE);
     }
 
     /**
@@ -163,7 +163,7 @@ class PageBuilder
     /**
      * @return bool
      */
-    private function isDemoModeOffPage(): bool
+    private function isChangeModePage(): bool
     {
         return Config::DEMO_MODE_OFF_PAGE==$_GET['page'];
     }

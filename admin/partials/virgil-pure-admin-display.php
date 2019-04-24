@@ -33,8 +33,8 @@
     if ($pb->recoveryBlock())
         require_once 'blocks/recovery.php';
 
-    if ($pb->demoModeOffBlock())
-        require_once 'blocks/demo_mode_off.php';
+    if ($pb->changeModeBlock())
+        require_once 'blocks/change_mode.php';
     ?>
 
 </div>

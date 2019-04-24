@@ -50,6 +50,8 @@ class Option
     const MIGRATE_FINISH = Config::PLUGIN_NAME.'_migrate_finish';
     const UPDATE_START = Config::PLUGIN_NAME.'_update_start';
     const UPDATE_FINISH = Config::PLUGIN_NAME.'_update_finish';
+    const ENCRYPT_START = Config::PLUGIN_NAME.'_encrypt_start';
+    const ENCRYPT_FINISH = Config::PLUGIN_NAME.'_encrypt_finish';
 
     const RECORD = Config::PLUGIN_NAME.'_record';
     const PARAMS = Config::PLUGIN_NAME.'_params';

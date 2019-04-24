@@ -107,7 +107,7 @@ class Virgil_Pure_Admin
         add_menu_page(Config::MAIN_PAGE_TITLE, Config::MAIN_PAGE_TITLE, Config::CAPABILITY, Config::ACTION_PAGE);
         add_submenu_page(Config::ACTION_PAGE, $title, $title, Config::CAPABILITY, Config::ACTION_PAGE, array($this, 'virgil_pure_page_builder'));
         if ($extLoaded) {
-            if(StatusHelper::isAllUsersMigrated()) {
+            if(StatusHelper::isAllUsersMigrated()&&(bool)get_option(Option::DEMO_MODE)) {
                 add_submenu_page(Config::ACTION_PAGE, 'Change Mode', 'Change Mode', Config::CAPABILITY, Config::DEMO_MODE_OFF_PAGE, array($this, 'virgil_pure_page_builder'));
             }
             add_submenu_page(Config::ACTION_PAGE, 'Log', 'Log', Config::CAPABILITY, Config::LOG_PAGE, array($this, 'virgil_pure_page_builder'));
@@ -243,8 +243,8 @@ class Virgil_Pure_Admin
         if ($this->protocol) {
             new MigrateBackgroundProcess($this->protocol);
             new UpdateBackgroundProcess($this->protocol);
-            new EncryptBackgroundProcess($this->dbqh, $this->vcw);
         }
+        new EncryptBackgroundProcess($this->dbqh, $this->vcw);
     }
 
     /**
