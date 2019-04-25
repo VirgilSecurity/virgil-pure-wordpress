@@ -151,6 +151,10 @@ class Virgil_Pure_Admin
                         $this->fh->update();
                         break;
 
+                    case Form::RECOVERY:
+                        $this->fh->recovery();
+                        break;
+
                     case Form::DEV_ADD_USERS:
                         $this->fh->addUsers();
                         break;

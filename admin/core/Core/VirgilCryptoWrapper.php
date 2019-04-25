@@ -38,6 +38,7 @@
 namespace VirgilSecurityPure\Core;
 
 use Virgil\CryptoImpl\VirgilCrypto;
+use Virgil\CryptoImpl\VirgilPrivateKey;
 use Virgil\CryptoImpl\VirgilPublicKey;
 use VirgilSecurityPure\Config\Credential;
 use VirgilSecurityPure\Config\Crypto;
@@ -102,12 +103,13 @@ class VirgilCryptoWrapper
         $prefix = get_bloginfo('name');
         $file = $prefix.'_recovery_private_key.txt';
         $pk = $this->getKey(Crypto::PUBLIC_KEY);
+        $prk = $this->getKey(Crypto::PRIVATE_KEY);
 
         header('Content-Type: application/octet-stream');
         header("Content-Transfer-Encoding: Binary");
         header('Content-type: text/plain');
         header("Content-disposition: attachment; filename=$file");
-        echo $pk;
+        echo $prk;
         update_option(Option::RECOVERY_PUBLIC_KEY, $pk);
         Logger::log($file." downloaded");
         exit;
@@ -145,7 +147,13 @@ class VirgilCryptoWrapper
      * @return string
      * @throws \Virgil\CryptoImpl\VirgilCryptoException
      */
-    public function encrypt(string $password, VirgilPublicKey $virgilPublicKey): string {
+    public function encrypt(string $password, VirgilPublicKey $virgilPublicKey): string
+    {
         return base64_encode($this->vc->encrypt($password, [$virgilPublicKey]));
+    }
+
+    public function decrypt(string $encryptedPassword, VirgilPrivateKey $virgilPrivateKey): string
+    {
+        return $this->vc->decrypt($encryptedPassword, $virgilPrivateKey);
     }
 }

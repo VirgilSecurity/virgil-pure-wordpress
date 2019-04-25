@@ -39,6 +39,7 @@ namespace VirgilSecurityPure\Core;
 
 use GuzzleHttp\Exception\ClientException;
 use Virgil\CryptoImpl\VirgilCrypto;
+use Virgil\CryptoImpl\VirgilCryptoException;
 use VirgilSecurityPure\Background\MigrateBackgroundProcess;
 use VirgilSecurityPure\Background\EncryptBackgroundProcess;
 use VirgilSecurityPure\Background\UpdateBackgroundProcess;
@@ -217,6 +218,49 @@ class FormHandler
         }
         else {
             wp_die("Empty ".Credential::UPDATE_TOKEN);
+        }
+    }
+
+    public function recovery()
+    {
+        if(!empty($_POST[Crypto::RECOVERY_PRIVATE_KEY])) {
+
+            $users = get_users(array('fields' => array('ID')));
+
+            $privateKeyIn = $_POST[Crypto::RECOVERY_PRIVATE_KEY];
+
+            try{
+                $privateKey = $this->virgilCryptoWrapper->importKey(Crypto::PRIVATE_KEY, $privateKeyIn);
+            }
+            catch (\Exception $e) {
+                if($e instanceof VirgilCryptoException) {
+                    Logger::log("Invalid Recovery Private Key", 0);
+                } else {
+                    Logger::log($e->getMessage(), 0);
+                }
+
+                Redirector::toPageLog();
+                exit();
+            }
+
+//            update_option(Option::UPDATE_START, microtime(true));
+//            Logger::log(Log::START_UPDATE);
+
+            try {
+                $updateBackgroundProcess = new UpdateBackgroundProcess($this->coreProtocol->init());
+
+                foreach ($users as $user) {
+                    $updateBackgroundProcess->push_to_queue( $user );
+                }
+
+                $updateBackgroundProcess->save()->dispatch();
+
+            } catch (\Exception $e) {
+                wp_die($e->getMessage());
+            }
+        }
+        else {
+            wp_die("Empty ".Crypto::RECOVERY_PRIVATE_KEY);
         }
     }
 
