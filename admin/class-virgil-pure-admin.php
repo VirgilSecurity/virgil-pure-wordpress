@@ -65,6 +65,8 @@ class Virgil_Pure_Admin
      */
     private $vcw;
 
+    private $cm;
+
     /**
      * Virgil_Pure_Admin constructor.
      * @param $Virgil_Pure
@@ -82,6 +84,7 @@ class Virgil_Pure_Admin
         $this->fh = new FormHandler($cp, $this->vcw);
         $this->ph = new passw0rdHash();
         $this->pv = new PluginValidator();
+        $this->cm = new \VirgilSecurityPure\Core\CredentialsManager();
 
         $this->Virgil_Pure = $Virgil_Pure;
         $this->version = $version;
@@ -250,7 +253,7 @@ class Virgil_Pure_Admin
             new UpdateBackgroundProcess($this->protocol);
         }
         new EncryptBackgroundProcess($this->dbqh, $this->vcw);
-        new RecoveryBackgroundProcess($this->dbqh, $this->vcw);
+        new RecoveryBackgroundProcess($this->dbqh, $this->vcw, $this->cm);
     }
 
     /**

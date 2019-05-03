@@ -38,6 +38,7 @@
 namespace VirgilSecurityPure\Helpers;
 
 use VirgilSecurityPure\Config\Config;
+use VirgilSecurityPure\Config\Option;
 
 /**
  * Class DBQueryHelper
@@ -138,6 +139,15 @@ class DBQueryHelper
     public function clearUserPass(int $id)
     {
         $this->wpdb->query("UPDATE {$this->tableUsers} SET user_pass='' WHERE ID=$id");
+    }
+
+    public function clearPureParams()
+    {
+        $encrypted = Option::ENCRYPTED;
+        $params = Option::PARAMS;
+        $record = Option::RECORD;
+
+        $this->wpdb->query("DELETE FROM {$this->wpdb->usermeta} WHERE meta_key IN ('$encrypted', '$params', '$record')");
     }
 
 

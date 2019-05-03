@@ -40,6 +40,7 @@ namespace VirgilSecurityPure\Background;
 use VirgilSecurityPure\Config\Crypto;
 use VirgilSecurityPure\Config\Log;
 use VirgilSecurityPure\Config\Option;
+use VirgilSecurityPure\Core\CredentialsManager;
 use VirgilSecurityPure\Core\Logger;
 use VirgilSecurityPure\Config\Config;
 use VirgilSecurityPure\Core\VirgilCryptoWrapper;
@@ -51,11 +52,13 @@ class RecoveryBackgroundProcess extends BaseBackgroundProcess
 
     private $vcw;
     private $dbqh;
+    private $credentialsManager;
 
-    public function __construct(DBQueryHelper $dbqh, VirgilCryptoWrapper $vcw)
+    public function __construct(DBQueryHelper $dbqh, VirgilCryptoWrapper $vcw, CredentialsManager $credentialsManager)
     {
         $this->vcw = $vcw;
         $this->dbqh = $dbqh;
+        $this->credentialsManager = $credentialsManager;
 
         parent::__construct();
     }
@@ -87,6 +90,10 @@ class RecoveryBackgroundProcess extends BaseBackgroundProcess
 
             delete_option(Option::RECOVERY_START);
             delete_option(Option::RECOVERY_FINISH);
+            $this->dbqh->clearPureParams();
+            delete_option(Option::RECOVERY_PUBLIC_KEY);
+            update_option(Option::DEMO_MODE, 1);
+            $this->credentialsManager->addEmptyCredentials();
         }
 
         parent::complete();

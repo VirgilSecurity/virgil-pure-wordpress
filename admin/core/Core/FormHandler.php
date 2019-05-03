@@ -247,7 +247,8 @@ class FormHandler
             $users = get_users(array('fields' => array('ID')));
 
             try {
-                $recoveryBackgroundProcess = new RecoveryBackgroundProcess($this->dbq, $this->virgilCryptoWrapper);
+                $recoveryBackgroundProcess = new RecoveryBackgroundProcess($this->dbq, $this->virgilCryptoWrapper,
+                    $this->cm);
 
                 $data['private_key_in'] = $privateKeyIn;
 
