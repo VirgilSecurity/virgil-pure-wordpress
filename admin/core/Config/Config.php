@@ -68,6 +68,7 @@ class Config
 
     const BACKGROUND_ACTION_MIGRATE = self::PLUGIN_NAME."_action_migrate";
     const BACKGROUND_ACTION_UPDATE = self::PLUGIN_NAME."_action_update";
+    const BACKGROUND_ACTION_ENCRYPT = self::PLUGIN_NAME."_action_encrypt";
     const BACKGROUND_ACTION_RECOVERY = self::PLUGIN_NAME."_action_recovery";
 
 }

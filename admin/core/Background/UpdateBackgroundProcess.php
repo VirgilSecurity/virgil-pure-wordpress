@@ -105,7 +105,7 @@ class UpdateBackgroundProcess extends BaseBackgroundProcess
             }
 
             $this->cancel_process();
-            Logger::log($msg);
+            Logger::log($msg, 0);
         }
 
 

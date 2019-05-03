@@ -3,6 +3,7 @@
 use Virgil\CryptoImpl\VirgilCrypto;
 use VirgilSecurityPure\Background\MigrateBackgroundProcess;
 use VirgilSecurityPure\Background\EncryptBackgroundProcess;
+use VirgilSecurityPure\Background\RecoveryBackgroundProcess;
 use VirgilSecurityPure\Background\UpdateBackgroundProcess;
 use VirgilSecurityPure\Config\Config;
 use VirgilSecurityPure\Config\Form;
@@ -249,6 +250,7 @@ class Virgil_Pure_Admin
             new UpdateBackgroundProcess($this->protocol);
         }
         new EncryptBackgroundProcess($this->dbqh, $this->vcw);
+        new RecoveryBackgroundProcess($this->dbqh, $this->vcw);
     }
 
     /**

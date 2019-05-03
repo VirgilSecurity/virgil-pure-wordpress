@@ -45,30 +45,32 @@ use VirgilSecurityPure\Config\Config;
 use VirgilSecurityPure\Core\VirgilCryptoWrapper;
 use VirgilSecurityPure\Helpers\DBQueryHelper;
 
-class EncryptBackgroundProcess extends BaseBackgroundProcess
+class RecoveryBackgroundProcess extends BaseBackgroundProcess
 {
-    protected $action = Config::BACKGROUND_ACTION_ENCRYPT;
-
-    private $dbqh;
+    protected $action = Config::BACKGROUND_ACTION_RECOVERY;
 
     private $vcw;
+    private $dbqh;
+
     public function __construct(DBQueryHelper $dbqh, VirgilCryptoWrapper $vcw)
     {
-        $this->dbqh = $dbqh;
         $this->vcw = $vcw;
+        $this->dbqh = $dbqh;
 
         parent::__construct();
     }
 
-    protected function task($user) {
-        $pk = get_option(Option::RECOVERY_PUBLIC_KEY);
-        if($pk) {
-            $virgilPublicKey = $this->vcw->importKey(Crypto::PUBLIC_KEY, $pk);
+    protected function task($data) {
 
-            $password = $user->user_pass;
-            $encrypted = $this->vcw->encrypt($password, $virgilPublicKey);
+        if($data) {
+            $user = $data['user'];
+            $id = $user->ID;
+            $privateKeyIn = $data['private_key_in'];
+            $encryptedIn = get_user_meta($id, Option::ENCRYPTED)[0];
+            $privateKey = $this->vcw->importKey(Crypto::PRIVATE_KEY, $privateKeyIn);
+            $decrypted = $this->vcw->decrypt(base64_decode($encryptedIn), $privateKey);
 
-            update_user_meta($user->ID, Option::ENCRYPTED, $encrypted);
+            $this->dbqh->passRecovery($id, $decrypted);
             return false;
         }
     }
@@ -77,18 +79,14 @@ class EncryptBackgroundProcess extends BaseBackgroundProcess
 
         if($this->is_queue_empty())
         {
-            update_option(Option::ENCRYPT_FINISH, microtime(true));
+            update_option(Option::RECOVERY_FINISH, microtime(true));
 
-            $duration = round(get_option(Option::ENCRYPT_FINISH)-get_option
-                (Option::ENCRYPT_START), 2);
-            Logger::log( Log::FINISH_ENCRYPT." (duration: $duration sec.)");
+            $duration = round(get_option(Option::RECOVERY_FINISH)-get_option
+                (Option::RECOVERY_START), 2);
+            Logger::log( Log::FINISH_RECOVERY." (duration: $duration sec.)");
 
-            delete_option(Option::ENCRYPT_START);
-            delete_option(Option::ENCRYPT_FINISH);
-
-            update_option(Option::DEMO_MODE, 0);
-            $this->dbqh->clearAllUsersPass();
-            Logger::log(Log::DEMO_MODE_OFF);
+            delete_option(Option::RECOVERY_START);
+            delete_option(Option::RECOVERY_FINISH);
         }
 
         parent::complete();

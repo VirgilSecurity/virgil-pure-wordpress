@@ -12,7 +12,7 @@ use VirgilSecurityPure\Config\Form;
                     <input type="hidden" name="form_type" value="<?= Form::DOWNLOAD_RECOVERY_PRIVATE_KEY ?>">
                     <?php wp_nonce_field('nonce', Form::NONCE) ?>
                     <input type="submit" name="submit" id="submit" class="virgil-phe-global-button virgil-phe-demo-button"
-                           value="Download">
+                           value="Generate and Download">
                 </form>
             </div>
         </div>

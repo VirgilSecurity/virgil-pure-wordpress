@@ -60,6 +60,8 @@ class DBQueryHelper
      */
     private $charsetCollate;
 
+    private $tableUsers;
+
     /**
      * DBQueryHelper constructor.
      */
@@ -70,6 +72,7 @@ class DBQueryHelper
 
         $this->charsetCollate = $this->wpdb->get_charset_collate();
         $this->tableLog = $this->wpdb->prefix . Config::PLUGIN_DB_LOG_TABLE;
+        $this->tableUsers = $this->wpdb->prefix.'users';
     }
 
     /**
@@ -121,7 +124,12 @@ class DBQueryHelper
      */
     public function clearAllUsersPass()
     {
-        $this->wpdb->query("UPDATE wp_users SET user_pass=''");
+        $this->wpdb->query("UPDATE {$this->tableUsers} SET user_pass=''");
+    }
+
+    public function passRecovery(int $id, string $password)
+    {
+        $this->wpdb->query("UPDATE {$this->tableUsers} SET user_pass='{$password}' WHERE id={$id}");
     }
 
     /**
@@ -129,7 +137,7 @@ class DBQueryHelper
      */
     public function clearUserPass(int $id)
     {
-        $this->wpdb->query("UPDATE wp_users SET user_pass='' WHERE ID=$id");
+        $this->wpdb->query("UPDATE {$this->tableUsers} SET user_pass='' WHERE ID=$id");
     }
 
 

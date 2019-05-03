@@ -40,8 +40,10 @@ namespace VirgilSecurityPure\Core;
 use GuzzleHttp\Exception\ClientException;
 use Virgil\CryptoImpl\VirgilCrypto;
 use Virgil\CryptoImpl\VirgilCryptoException;
+use Virgil\CryptoImpl\VirgilPrivateKey;
 use VirgilSecurityPure\Background\MigrateBackgroundProcess;
 use VirgilSecurityPure\Background\EncryptBackgroundProcess;
+use VirgilSecurityPure\Background\RecoveryBackgroundProcess;
 use VirgilSecurityPure\Background\UpdateBackgroundProcess;
 use VirgilSecurityPure\Config\Config;
 use VirgilSecurityPure\Config\Option;
@@ -224,9 +226,6 @@ class FormHandler
     public function recovery()
     {
         if(!empty($_POST[Crypto::RECOVERY_PRIVATE_KEY])) {
-
-            $users = get_users(array('fields' => array('ID')));
-
             $privateKeyIn = $_POST[Crypto::RECOVERY_PRIVATE_KEY];
 
             try{
@@ -243,20 +242,31 @@ class FormHandler
                 exit();
             }
 
-//            update_option(Option::UPDATE_START, microtime(true));
-//            Logger::log(Log::START_UPDATE);
+            update_option(Option::RECOVERY_START, microtime(true));
+            Logger::log(Log::START_RECOVERY);
+            $users = get_users(array('fields' => array('ID')));
 
             try {
-                $updateBackgroundProcess = new UpdateBackgroundProcess($this->coreProtocol->init());
+                $recoveryBackgroundProcess = new RecoveryBackgroundProcess($this->dbq, $this->virgilCryptoWrapper);
+
+                $data['private_key_in'] = $privateKeyIn;
 
                 foreach ($users as $user) {
-                    $updateBackgroundProcess->push_to_queue( $user );
+                    $data['user'] = $user;
+
+                    $recoveryBackgroundProcess->push_to_queue($data);
                 }
 
-                $updateBackgroundProcess->save()->dispatch();
+                $recoveryBackgroundProcess->save()->dispatch();
 
             } catch (\Exception $e) {
-                wp_die($e->getMessage());
+                if($e instanceof VirgilCryptoException) {
+                    Logger::log("Invalid Encrypted Data or Recovery Private Key", 0);
+                } else {
+                    Logger::log($e->getMessage(), 0);
+                }
+                Redirector::toPageLog();
+                exit();
             }
         }
         else {

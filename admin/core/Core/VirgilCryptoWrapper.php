@@ -152,6 +152,12 @@ class VirgilCryptoWrapper
         return base64_encode($this->vc->encrypt($password, [$virgilPublicKey]));
     }
 
+    /**
+     * @param string $encryptedPassword
+     * @param VirgilPrivateKey $virgilPrivateKey
+     * @return string
+     * @throws \Virgil\CryptoImpl\VirgilCryptoException
+     */
     public function decrypt(string $encryptedPassword, VirgilPrivateKey $virgilPrivateKey): string
     {
         return $this->vc->decrypt($encryptedPassword, $virgilPrivateKey);

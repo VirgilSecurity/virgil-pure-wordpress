@@ -52,6 +52,8 @@ class Log
     const FINISH_UPDATE = "The end of the update process";
     const START_ENCRYPT = "Start of the encrypt process";
     const FINISH_ENCRYPT = "The end of the encrypt process";
+    const START_RECOVERY = "Start of the recovery process";
+    const FINISH_RECOVERY = "The end of the recovery process";
 
     const DEV_ADD_USERS = "Add users";
     const DEV_RESTORE_DEFAULTS = "Restore defaults";
