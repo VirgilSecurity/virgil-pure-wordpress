@@ -51,7 +51,7 @@ class ConfigHelper
      */
     public static function isExtensionLoaded(): bool
     {
-        return !extension_loaded(Config::EXTENSION_NAME);
+        return !extension_loaded(Config::EXTENSION_VSCE_PHE_PHP);
     }
 
     /**

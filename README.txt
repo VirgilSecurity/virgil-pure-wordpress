@@ -3,7 +3,7 @@ Contributors: virgilsecuritycom
 Donate link: (none)
 Tags: password-hardened-encryption, aead, pure, cryptography, protect-database
 Requires at least: 5.0
-Tested up to: 5.1
+Tested up to: 5.2
 Stable tag: trunk
 Requires PHP: 7.2
 License: BSD 3-Clause License

@@ -65,7 +65,7 @@ class Virgil_Pure_Admin
     public function virgil_pure_menu()
     {
         $devMode = get_option(Option::DEV_MODE);
-        $extLoaded = extension_loaded(Config::EXTENSION_NAME);
+        $extLoaded = extension_loaded(Config::EXTENSION_VSCE_PHE_PHP);
         
         $title = $extLoaded ? "Action" : "Info";
 

@@ -5,7 +5,8 @@ use VirgilSecurityPure\Helpers\InfoHelper;
 use VirgilSecurityPure\Config\Config;
 
 $systemInfoArr = [
-    'EXTENSION NAME' => Config::EXTENSION_NAME,
+    'EXTENSION VSCE_PHE_PHP' => Config::EXTENSION_VSCE_PHE_PHP,
+    'EXTENSION VIRGIL_CRYPTO_PHP' => Config::EXTENSION_VIRGIL_CRYPTO_PHP,
     'OS' => PHP_OS,
     'PHP' => PHP_MAJOR_VERSION.".".PHP_MINOR_VERSION,
     'PATH TO EXTENSION DIR' => PHP_EXTENSION_DIR,

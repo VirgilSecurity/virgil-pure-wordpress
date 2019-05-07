@@ -43,7 +43,8 @@ namespace VirgilSecurityPure\Config;
  */
 class Config
 {
-    const EXTENSION_NAME = 'vsce_phe_php';
+    const EXTENSION_VSCE_PHE_PHP = 'vsce_phe_php';
+    const EXTENSION_VIRGIL_CRYPTO_PHP = 'virgil_crypto_php';
 
     const PLUGIN_NAME = 'virgil-pure';
     const PLUGIN_NAME_UNDERSCORE = 'virgil_pure';

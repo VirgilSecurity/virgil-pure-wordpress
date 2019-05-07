@@ -86,14 +86,14 @@ class InfoHelper
      * @return string
      */
     public static function getExtensionName(): string {
-        return Config::EXTENSION_NAME;
+        return Config::EXTENSION_VSCE_PHE_PHP;
     }
 
     /**
      * @return bool
      */
     public static function isExtensionLoaded(): bool {
-        return extension_loaded(Config::EXTENSION_NAME);
+        return extension_loaded(Config::EXTENSION_VSCE_PHE_PHP);
     }
 
     /**
