@@ -52,12 +52,10 @@ class EncryptBackgroundProcess extends BaseBackgroundProcess
     private $dbqh;
 
     private $vcw;
-    public function __construct(DBQueryHelper $dbqh, VirgilCryptoWrapper $vcw)
-    {
+
+    public function setDep(DBQueryHelper $dbqh, VirgilCryptoWrapper $vcw) {
         $this->dbqh = $dbqh;
         $this->vcw = $vcw;
-
-        parent::__construct();
     }
 
     protected function task($user) {

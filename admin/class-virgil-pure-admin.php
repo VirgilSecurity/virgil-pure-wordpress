@@ -1,24 +1,14 @@
 <?php
 
-use Virgil\CryptoImpl\VirgilCrypto;
-use VirgilSecurityPure\Background\MigrateBackgroundProcess;
-use VirgilSecurityPure\Background\EncryptBackgroundProcess;
-use VirgilSecurityPure\Background\RecoveryBackgroundProcess;
-use VirgilSecurityPure\Background\UpdateBackgroundProcess;
 use VirgilSecurityPure\Config\Config;
 use VirgilSecurityPure\Config\Form;
 use VirgilSecurityPure\Config\Option;
-use VirgilSecurityPure\Core\CoreProtocol;
-use VirgilSecurityPure\Core\FormHandler;
+use VirgilSecurityPure\Core\CoreFactory;
 use VirgilSecurityPure\Core\passw0rdHash;
-use VirgilSecurityPure\Core\PluginValidator;
-use VirgilSecurityPure\Core\VirgilCryptoWrapper;
 use VirgilSecurityPure\Core\WPPasswordEnroller;
 use VirgilSecurityPure\Helpers\ConfigHelper;
-use VirgilSecurityPure\Helpers\DBQueryHelper;
 use VirgilSecurityPure\Helpers\Redirector;
 use VirgilSecurityPure\Helpers\StatusHelper;
-use Virgil\PureKit\Protocol\Protocol;
 
 /**
  * Class Virgil_Pure_Admin
@@ -26,46 +16,14 @@ use Virgil\PureKit\Protocol\Protocol;
 class Virgil_Pure_Admin
 {
     /**
-     * @var string
+     * @var CoreFactory 
      */
-    private $Virgil_Pure;
+    private $coreFactory;
 
     /**
-     * @var string
+     * @var \VirgilSecurityPure\Core\Core 
      */
-    private $version;
-
-    /**
-     * @var Protocol
-     */
-    private $protocol;
-
-    /**
-     * @var FormHandler
-     */
-    private $fh;
-
-    /**
-     * @var DBQueryHelper
-     */
-    private $dbqh;
-
-    /**
-     * @var passw0rdHash
-     */
-    private $ph;
-
-    /**
-     * @var PluginValidator
-     */
-    private $pv;
-
-    /**
-     * @var VirgilCryptoWrapper
-     */
-    private $vcw;
-
-    private $cm;
+    private $virgilCryptoWrapper;
 
     /**
      * Virgil_Pure_Admin constructor.
@@ -75,16 +33,18 @@ class Virgil_Pure_Admin
      */
     public function __construct($Virgil_Pure, $version)
     {
-        $cp = new CoreProtocol();
+        $this->coreFactory = new CoreFactory();
+        $coreProtocol = $this->coreFactory->buildCore('CoreProtocol');
+        
+        $this->virgilCryptoWrapper = $this->coreFactory->buildCore('VirgilCryptoWrapper');
 
-        $this->vcw = new VirgilCryptoWrapper();
+        $this->protocol = $coreProtocol->init();
+        $this->dbqh = $this->coreFactory->buildCore('DBQuery');
+        $this->fh = $this->coreFactory->buildCore('FormHandler');
+        $this->cm = $this->coreFactory->buildCore('CredentialsManager');
+        $this->pv = $this->coreFactory->buildCore('PluginValidator');
 
-        $this->protocol = $cp->init();
-        $this->dbqh = new DBQueryHelper();
-        $this->fh = new FormHandler($cp, $this->vcw);
-        $this->ph = new passw0rdHash();
-        $this->pv = new PluginValidator();
-        $this->cm = new \VirgilSecurityPure\Core\CredentialsManager();
+        $this->fh->setDep($coreProtocol, $this->virgilCryptoWrapper, $this->cm, $this->dbqh);
 
         $this->Virgil_Pure = $Virgil_Pure;
         $this->version = $version;
@@ -106,6 +66,7 @@ class Virgil_Pure_Admin
     {
         $devMode = get_option(Option::DEV_MODE);
         $extLoaded = extension_loaded(Config::EXTENSION_NAME);
+        
         $title = $extLoaded ? "Action" : "Info";
 
         add_menu_page(Config::MAIN_PAGE_TITLE, Config::MAIN_PAGE_TITLE, Config::CAPABILITY, Config::ACTION_PAGE);
@@ -184,11 +145,11 @@ class Virgil_Pure_Admin
      * @param $hash
      * @param $user_id
      * @return bool
-     * @throws \GuzzleHttp\Exception\GuzzleException
+     * @throws \Virgil\CryptoImpl\VirgilCryptoException
      */
     public function virgil_pure_check_password($check, $password, $hash, $user_id): bool
     {
-        if ($this->pv->check() && $user_id) {
+        if ($this->coreFactory->buildCore('PluginValidator')->check() && $user_id) {
             if (StatusHelper::isAllUsersMigrated()) {
                 $passw0rdHash = new passw0rdHash();
 
@@ -249,16 +210,24 @@ class Virgil_Pure_Admin
     public function virgil_pure_init_background_processes()
     {
         if ($this->protocol) {
-            new MigrateBackgroundProcess($this->protocol);
-            new UpdateBackgroundProcess($this->protocol);
+            $migrateBP = $this->coreFactory->buildBackgroundProcess('Migrate');
+            $migrateBP->setDep($this->protocol);
+
+            $updateBP = $this->coreFactory->buildBackgroundProcess('Update');
+            $updateBP->setDep($this->protocol, $this->cm);
         }
-        new EncryptBackgroundProcess($this->dbqh, $this->vcw);
-        new RecoveryBackgroundProcess($this->dbqh, $this->vcw, $this->cm);
+        
+        $encryptBP = $this->coreFactory->buildBackgroundProcess('Encrypt');
+        $encryptBP->setDep($this->dbqh, $this->virgilCryptoWrapper);
+
+        $recoveryBP = $this->coreFactory->buildBackgroundProcess('Recovery');
+        $recoveryBP->setDep($this->dbqh, $this->virgilCryptoWrapper, $this->cm);
     }
 
     /**
      * @param int $user_id
      * @throws \GuzzleHttp\Exception\GuzzleException
+     * @throws \Virgil\CryptoImpl\VirgilCryptoException
      * @throws \Virgil\PureKit\Exceptions\ProtocolException
      */
     public function virgil_pure_profile_update(int $user_id)
@@ -270,6 +239,7 @@ class Virgil_Pure_Admin
     /**
      * @param WP_User $user
      * @throws \GuzzleHttp\Exception\GuzzleException
+     * @throws \Virgil\CryptoImpl\VirgilCryptoException
      * @throws \Virgil\PureKit\Exceptions\ProtocolException
      */
     public function virgil_pure_password_reset(WP_User $user)
@@ -281,13 +251,14 @@ class Virgil_Pure_Admin
     /**
      * @param int $userId
      * @throws \GuzzleHttp\Exception\GuzzleException
+     * @throws \Virgil\CryptoImpl\VirgilCryptoException
      * @throws \Virgil\PureKit\Exceptions\ProtocolException
      */
     private function enroll(int $userId)
     {
         $user = get_user_by('id', $userId);
 
-        $wppe = new WPPasswordEnroller($this->protocol, $this->ph);
+        $wppe = new WPPasswordEnroller($this->protocol, $this->coreFactory->buildCore('passwordHash'));
         $wppe->enroll($user);
 
         $this->dbqh->clearUserPass($user->ID);

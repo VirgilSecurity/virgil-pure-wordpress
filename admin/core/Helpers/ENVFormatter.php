@@ -38,7 +38,6 @@
 namespace VirgilSecurityPure\Helpers;
 
 use VirgilSecurityPure\Config\Credential;
-use VirgilSecurityPure\Config\Option;
 
 /**
  * Class ENVFormatter

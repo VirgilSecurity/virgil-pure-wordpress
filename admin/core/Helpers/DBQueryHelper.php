@@ -39,12 +39,13 @@ namespace VirgilSecurityPure\Helpers;
 
 use VirgilSecurityPure\Config\Config;
 use VirgilSecurityPure\Config\Option;
+use VirgilSecurityPure\Core\Core;
 
 /**
  * Class DBQueryHelper
  * @package VirgilSecurityPure\Helpers
  */
-class DBQueryHelper
+class DBQueryHelper implements Core
 {
     /**
      * @var \wpdb

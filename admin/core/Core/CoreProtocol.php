@@ -46,7 +46,7 @@ use Virgil\PureKit\Protocol\ProtocolContext;
  * Class CoreProtocol
  * @package VirgilSecurityPure\Core
  */
-class CoreProtocol
+class CoreProtocol implements Core
 {
     /**
      * @return null|Protocol

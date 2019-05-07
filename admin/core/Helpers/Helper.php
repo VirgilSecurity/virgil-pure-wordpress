@@ -35,27 +35,10 @@
  * Lead Maintainer: Virgil Security Inc. <support@virgilsecurity.com>
  */
 
-namespace VirgilSecurityPure\Background;
+namespace VirgilSecurityPure\Helpers;
 
-use VirgilSecurityPure\Core\Core;
 
-/**
- * Class BaseBackgroundProcess
- * @package VirgilSecurityPure\Background
- */
-abstract class BaseBackgroundProcess extends WP_Background_Process
+interface Helper
 {
-    /**
-     * BaseBackgroundProcess constructor.
-     */
-    public function __construct()
-    {
-        parent::__construct();
-    }
 
-    /**
-     * @param mixed $item
-     * @return mixed
-     */
-    abstract protected function task($item);
 }

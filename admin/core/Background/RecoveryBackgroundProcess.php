@@ -53,14 +53,11 @@ class RecoveryBackgroundProcess extends BaseBackgroundProcess
     private $vcw;
     private $dbqh;
     private $credentialsManager;
-
-    public function __construct(DBQueryHelper $dbqh, VirgilCryptoWrapper $vcw, CredentialsManager $credentialsManager)
-    {
+    
+    public function setDep(DBQueryHelper $dbqh, VirgilCryptoWrapper $vcw, CredentialsManager $credentialsManager) {
         $this->vcw = $vcw;
         $this->dbqh = $dbqh;
         $this->credentialsManager = $credentialsManager;
-
-        parent::__construct();
     }
 
     protected function task($data) {

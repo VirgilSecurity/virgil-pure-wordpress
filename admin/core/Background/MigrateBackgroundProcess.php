@@ -65,14 +65,9 @@ class MigrateBackgroundProcess extends BaseBackgroundProcess
      */
     protected $action = Config::BACKGROUND_ACTION_MIGRATE;
 
-    /**
-     * MigrateBackgroundProcess constructor.
-     * @param Protocol $protocol
-     */
-    public function __construct(Protocol $protocol=null)
+    public function setDep(Protocol $protocol)
     {
         $this->protocol = $protocol;
-        parent::__construct();
     }
 
     /**

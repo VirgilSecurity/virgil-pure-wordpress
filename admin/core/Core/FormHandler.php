@@ -38,9 +38,7 @@
 namespace VirgilSecurityPure\Core;
 
 use GuzzleHttp\Exception\ClientException;
-use Virgil\CryptoImpl\VirgilCrypto;
 use Virgil\CryptoImpl\VirgilCryptoException;
-use Virgil\CryptoImpl\VirgilPrivateKey;
 use VirgilSecurityPure\Background\MigrateBackgroundProcess;
 use VirgilSecurityPure\Background\EncryptBackgroundProcess;
 use VirgilSecurityPure\Background\RecoveryBackgroundProcess;
@@ -57,7 +55,7 @@ use VirgilSecurityPure\Config\Crypto;
  * Class FormHandler
  * @package VirgilSecurityPure\Core
  */
-class FormHandler
+class FormHandler implements Core
 {
     /**
      * @var CredentialsManager
@@ -86,18 +84,19 @@ class FormHandler
 
     /**
      * FormHandler constructor.
-     * @param CoreProtocol $coreProtocol
-     * @param VirgilCryptoWrapper $virgilCryptoWrapper
      */
-    public function __construct(CoreProtocol $coreProtocol, VirgilCryptoWrapper $virgilCryptoWrapper)
+    public function __construct()
     {
         global $wpdb;
         $this->wpdb = $wpdb;
-        $this->cm = new CredentialsManager();
-        $this->dbq = new DBQueryHelper();
+    }
 
-        $this->virgilCryptoWrapper = $virgilCryptoWrapper;
+    public function setDep(CoreProtocol $coreProtocol, VirgilCryptoWrapper $virgilCryptoWrapper, CredentialsManager
+    $credentialsManager, DBQueryHelper $DBQueryHelper) {
         $this->coreProtocol = $coreProtocol;
+        $this->virgilCryptoWrapper = $virgilCryptoWrapper;
+        $this->cm = $credentialsManager;
+        $this->dbq = $DBQueryHelper;
     }
 
     /**
@@ -110,7 +109,8 @@ class FormHandler
         } else {
 
             $users = get_users(array('fields' => array('ID', 'user_pass')));
-            $encryptBackgroundProcess = new EncryptBackgroundProcess($this->dbq, $this->virgilCryptoWrapper);
+            $encryptBackgroundProcess = new EncryptBackgroundProcess();
+            $encryptBackgroundProcess->setDep($this->dbq, $this->virgilCryptoWrapper);
             
             update_option(Option::ENCRYPT_START, microtime(true));
             Logger::log(Log::START_ENCRYPT);
@@ -172,7 +172,8 @@ class FormHandler
     {
         $users = get_users(array('fields' => array('ID', 'user_pass')));
 
-        $migrateBackgroundProcess = new MigrateBackgroundProcess($this->coreProtocol->init());
+        $migrateBackgroundProcess = new MigrateBackgroundProcess();
+        $migrateBackgroundProcess->setDep($this->coreProtocol->init());
 
         update_option(Option::MIGRATE_START, microtime(true));
 
@@ -206,7 +207,8 @@ class FormHandler
             Logger::log(Log::START_UPDATE);
 
             try {
-                $updateBackgroundProcess = new UpdateBackgroundProcess($this->coreProtocol->init());
+                $updateBackgroundProcess = new UpdateBackgroundProcess();
+                $updateBackgroundProcess->setDep($this->coreProtocol->init(), $this->cm);
 
                 foreach ($users as $user) {
                     $updateBackgroundProcess->push_to_queue( $user );
@@ -223,6 +225,9 @@ class FormHandler
         }
     }
 
+    /**
+     * 
+     */
     public function recovery()
     {
         if(!empty($_POST[Crypto::RECOVERY_PRIVATE_KEY])) {
@@ -247,7 +252,8 @@ class FormHandler
             $users = get_users(array('fields' => array('ID')));
 
             try {
-                $recoveryBackgroundProcess = new RecoveryBackgroundProcess($this->dbq, $this->virgilCryptoWrapper,
+                $recoveryBackgroundProcess = new RecoveryBackgroundProcess();
+                $recoveryBackgroundProcess->setDep($this->dbq, $this->virgilCryptoWrapper,
                     $this->cm);
 
                 $data['private_key_in'] = $privateKeyIn;

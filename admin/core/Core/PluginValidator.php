@@ -44,7 +44,7 @@ use VirgilSecurityPure\Config\Credential;
  * Class PluginValidator
  * @package VirgilSecurityPure\Core
  */
-class PluginValidator
+class PluginValidator implements Core
 {
     /**
      * @return bool
