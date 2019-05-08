@@ -49,14 +49,6 @@ class ConfigHelper
     /**
      * @return bool
      */
-    public static function isExtensionLoaded(): bool
-    {
-        return !extension_loaded(Config::EXTENSION_VSCE_PHE_PHP);
-    }
-
-    /**
-     * @return bool
-     */
     public static function isDevMode(): bool
     {
         return (bool) get_option(Option::DEV_MODE);

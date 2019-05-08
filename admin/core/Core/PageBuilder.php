@@ -53,7 +53,7 @@ class PageBuilder
      */
     public function disabledBlock(): bool
     {
-        return !extension_loaded(Config::EXTENSION_VSCE_PHE_PHP);
+        return !extension_loaded(Config::EXTENSION_VSCE_PHE_PHP)||!extension_loaded(Config::EXTENSION_VIRGIL_CRYPTO_PHP);
     }
 
     /**

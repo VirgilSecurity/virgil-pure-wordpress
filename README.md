@@ -25,7 +25,7 @@ Learn more about the Pure technology [here](https://virgilsecurity.com/announcin
 
 ## Installation
 
-Currently the plugin is available only for **PHP7.2**! 
+Currently the plugin is available only for PHP **7.2** and **7.3** versions! 
 
 In order to install the Pure Plugin you need to go through the following steps:
 - add the "vsce_phe_php" extension into your server

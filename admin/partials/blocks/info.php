@@ -18,7 +18,9 @@ $pluginInfoArr = [
     'CREDENTIALS' => InfoHelper::getEnvFilePath(),
 ];
 
-$infoArr = ConfigHelper::isExtensionLoaded() ? $systemInfoArr : $pluginInfoArr;
+$infoArr = !extension_loaded(Config::EXTENSION_VIRGIL_CRYPTO_PHP) && !extension_loaded(Config::EXTENSION_VSCE_PHE_PHP) ?
+    $systemInfoArr :
+    $pluginInfoArr;
 
 ?>
 
