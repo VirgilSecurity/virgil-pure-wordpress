@@ -4,7 +4,7 @@ use VirgilSecurityPure\Config\Config;
 
 <div class="virgil-phe-failed-container">
     <div class="virgil-phe-failed-content">
-        <h2 class="virgil-phe-failed-title">EXTENSION MISSING</h2>
+        <h2 class="virgil-phe-failed-title">EXTENSIONS MISSING</h2>
         <p class="virgil-phe-failed-desc">
             <?php
             foreach (Config::EXTENSIONS as $extension) {
