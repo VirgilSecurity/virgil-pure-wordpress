@@ -37,6 +37,7 @@
 
 namespace VirgilSecurityPure\Background;
 
+use Virgil\CryptoImpl\VirgilCryptoException;
 use VirgilSecurityPure\Config\Crypto;
 use VirgilSecurityPure\Config\Log;
 use VirgilSecurityPure\Config\Option;
@@ -68,7 +69,14 @@ class RecoveryBackgroundProcess extends BaseBackgroundProcess
             $privateKeyIn = $data['private_key_in'];
             $encryptedIn = get_user_meta($id, Option::ENCRYPTED)[0];
             $privateKey = $this->vcw->importKey(Crypto::PRIVATE_KEY, $privateKeyIn);
-            $decrypted = $this->vcw->decrypt(base64_decode($encryptedIn), $privateKey);
+            try {
+                $decrypted = $this->vcw->decrypt(base64_decode($encryptedIn), $privateKey);
+            }
+            catch (VirgilCryptoException $exception) {
+                $this->complete();
+                Logger::log("Invalid ".Crypto::RECOVERY_PRIVATE_KEY, 0);
+                return false;
+            }
 
             $this->dbqh->passRecovery($id, $decrypted);
             return false;

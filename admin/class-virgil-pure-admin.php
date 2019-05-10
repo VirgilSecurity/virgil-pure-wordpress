@@ -1,6 +1,7 @@
 <?php
 
 use VirgilSecurityPure\Config\Config;
+use VirgilSecurityPure\Config\Crypto;
 use VirgilSecurityPure\Config\Form;
 use VirgilSecurityPure\Config\Option;
 use VirgilSecurityPure\Core\CoreFactory;
@@ -151,7 +152,7 @@ class Virgil_Pure_Admin
     {
         if ($this->coreFactory->buildCore('PluginValidator')->check() && $user_id) {
             if (StatusHelper::isAllUsersMigrated()) {
-                $passw0rdHash = new passw0rdHash();
+                $passw0rdHash = $this->coreFactory->buildCore('passw0rdHash');
 
                 $salt = get_user_meta($user_id, Option::PARAMS)[0];
 
@@ -232,8 +233,10 @@ class Virgil_Pure_Admin
      */
     public function virgil_pure_profile_update(int $user_id)
     {
-        if ($this->pv->check()&&!empty(get_user_by('id', $user_id)->user_pass))
+        if ($this->pv->check()&&!empty(get_user_by('id', $user_id)->user_pass)) {
+            $this->encrypt($user_id);
             $this->enroll($user_id);
+        }
     }
 
     /**
@@ -244,23 +247,45 @@ class Virgil_Pure_Admin
      */
     public function virgil_pure_password_reset(WP_User $user)
     {
-        if($this->pv->check())
-        $this->enroll($user->ID);
+        if($this->pv->check()) {
+            $this->encrypt($user->ID);
+            $this->enroll($user->ID);
+        }
     }
 
     /**
      * @param int $userId
-     * @throws \GuzzleHttp\Exception\GuzzleException
      * @throws \Virgil\CryptoImpl\VirgilCryptoException
-     * @throws \Virgil\PureKit\Exceptions\ProtocolException
      */
     private function enroll(int $userId)
     {
         $user = get_user_by('id', $userId);
 
-        $wppe = new WPPasswordEnroller($this->protocol, $this->coreFactory->buildCore('passwordHash'));
+        $wppe = $this->coreFactory->buildCore('WPPasswordEnroller');
+        $wppe->setDep($this->protocol, $this->coreFactory->buildCore('passwordHash'));
+
         $wppe->enroll($user);
 
-        $this->dbqh->clearUserPass($user->ID);
+        if(0==(int)get_option(Option::DEMO_MODE))
+            $this->dbqh->clearUserPass($user->ID);
+    }
+
+    /**
+     * @param int $userId
+     * @return bool
+     */
+    private function encrypt(int $userId)
+    {
+        $user = get_user_by('id', $userId);
+        $pk = get_option(Option::RECOVERY_PUBLIC_KEY);
+        if($pk) {
+            $virgilPublicKey = $this->virgilCryptoWrapper->importKey(Crypto::PUBLIC_KEY, $pk);
+
+            $password = $user->user_pass;
+            $encrypted = $this->virgilCryptoWrapper->encrypt($password, $virgilPublicKey);
+
+            update_user_meta($user->ID, Option::ENCRYPTED, $encrypted);
+            return false;
+        }
     }
 }

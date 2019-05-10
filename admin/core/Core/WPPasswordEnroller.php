@@ -45,7 +45,7 @@ use WP_User;
  * Class WPPasswordEnroller
  * @package VirgilSecurityPure\Core
  */
-class WPPasswordEnroller
+class WPPasswordEnroller implements Core
 {
     /**
      * @var Protocol
@@ -57,13 +57,12 @@ class WPPasswordEnroller
      */
     private $passw0rdHash;
 
+
     /**
-     * WPPasswordEnroller constructor.
      * @param Protocol $protocol
      * @param passw0rdHash $passw0rdHash
      */
-    public function __construct(Protocol $protocol, passw0rdHash $passw0rdHash)
-    {
+    public function setDep(Protocol $protocol, passw0rdHash $passw0rdHash) {
         $this->protocol = $protocol;
         $this->passw0rdHash = $passw0rdHash;
     }

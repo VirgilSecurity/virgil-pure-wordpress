@@ -64,9 +64,6 @@ class CoreFactory
             case 'VirgilCryptoWrapper':
                 return new VirgilCryptoWrapper();
                 break;
-            case 'passwordHash':
-                return new passw0rdHash();
-                break;
             case 'PluginValidator':
                 return new PluginValidator();
                 break;
@@ -78,6 +75,12 @@ class CoreFactory
                 break;
             case 'FormHandler':
                 return new FormHandler();
+                break;
+            case 'WPPasswordEnroller':
+                return new WPPasswordEnroller();
+                break;
+            case 'passw0rdHash':
+                return new passw0rdHash();
                 break;
             default:
                 $this->throwError($class);
