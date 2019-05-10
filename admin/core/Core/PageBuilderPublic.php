@@ -38,20 +38,18 @@
 namespace VirgilSecurityPure\Core;
 
 use VirgilSecurityPure\Config\Config;
-use VirgilSecurityPure\Config\Credential;
 use VirgilSecurityPure\Config\Option;
-use VirgilSecurityPure\Helpers\InfoHelper;
 
 /**
  * Class PageBuilder
  * @package VirgilSecurityPure\Core
  */
-class PageBuilder
+class PageBuilderPublic extends PageBuilderProtected
 {
     /**
      * @return bool
      */
-    public function disabledBlock(): bool
+    public function disabled(): bool
     {
         return !extension_loaded(Config::EXTENSION_VSCE_PHE_PHP)||!extension_loaded(Config::EXTENSION_VIRGIL_CRYPTO_PHP);
     }
@@ -59,9 +57,9 @@ class PageBuilder
     /**
      * @return bool
      */
-    public function demoModeBlock(): bool
+    public function demo(): bool
     {
-        if($this->disabledBlock())
+        if($this->disabled())
             return false;
 
         return (bool)get_option(Option::DEMO_MODE)&&!$this->isChangeModePage();
@@ -70,9 +68,9 @@ class PageBuilder
     /**
      * @return bool
      */
-    public function credentialsBlock(): bool
+    public function credentials(): bool
     {
-        if($this->disabledBlock())
+        if($this->disabled())
             return false;
 
         return (!$this->isCredentialsSet()&&$this->isMainPage());
@@ -81,9 +79,9 @@ class PageBuilder
     /**
      * @return bool
      */
-    public function migrateBlock(): bool
+    public function migrate(): bool
     {
-        if($this->disabledBlock())
+        if($this->disabled())
             return false;
 
         return ($this->isCredentialsSet()&&$this->isMainPage()&&!$this->isAllUsersMigrated());
@@ -92,9 +90,9 @@ class PageBuilder
     /**
      * @return bool
      */
-    public function updateBlock(): bool
+    public function update(): bool
     {
-        if($this->disabledBlock())
+        if($this->disabled())
             return false;
 
         return ($this->isCredentialsSet()&&$this->isMainPage()&&$this->isAllUsersMigrated());
@@ -103,9 +101,9 @@ class PageBuilder
     /**
      * @return bool
      */
-    public function logBlock(): bool
+    public function log(): bool
     {
-        if($this->disabledBlock())
+        if($this->disabled())
             return false;
 
         return $this->isLogPage();
@@ -114,7 +112,7 @@ class PageBuilder
     /**
      * @return bool
      */
-    public function faqBlock(): bool
+    public function faq(): bool
     {
         return $this->isFAQPage();
     }
@@ -122,7 +120,7 @@ class PageBuilder
     /**
      * @return bool
      */
-    public function recoveryBlock(): bool
+    public function recovery(): bool
     {
         return $this->isRecoveryPage();
     }
@@ -130,7 +128,7 @@ class PageBuilder
     /**
      * @return bool
      */
-    public function changeModeBlock(): bool
+    public function change_mode(): bool
     {
         return $this->isChangeModePage()&&(bool)get_option(Option::DEMO_MODE);
     }
@@ -138,65 +136,8 @@ class PageBuilder
     /**
      * @return bool
      */
-    public function infoBlock(): bool
+    public function info(): bool
     {
-        return $this->isMainPage()||$this->disabledBlock();
-    }
-
-    /**
-     * @return bool
-     */
-    private function isAllUsersMigrated(): bool
-    {
-        return 100==(int)InfoHelper::getMigratedPercents();
-    }
-
-    /**
-     * @return bool
-     */
-    private function isMainPage(): bool
-    {
-        return Config::ACTION_PAGE==$_GET['page'];
-    }
-
-    /**
-     * @return bool
-     */
-    private function isChangeModePage(): bool
-    {
-        return Config::DEMO_MODE_OFF_PAGE==$_GET['page'];
-    }
-
-    /**
-     * @return bool
-     */
-    private function isLogPage(): bool
-    {
-        return Config::LOG_PAGE==$_GET['page'];
-    }
-
-    /**
-     * @return bool
-     */
-    private function isFAQPage(): bool
-    {
-        return Config::FAQ_PAGE==$_GET['page'];
-    }
-
-    /**
-     * @return bool
-     */
-    private function isRecoveryPage(): bool
-    {
-        return Config::RECOVERY_PAGE==$_GET['page'];
-    }
-
-    /**
-     * @return bool
-     */
-    private function isCredentialsSet(): bool
-    {
-        return(!empty($_ENV[Credential::APP_TOKEN])&&!empty($_ENV[Credential::APP_SECRET_KEY])&&!empty
-            ($_ENV[Credential::SERVICE_PUBLIC_KEY]));
+        return $this->isMainPage()||$this->disabled();
     }
 }
