@@ -25,34 +25,34 @@ Learn more about the Pure technology [here](https://virgilsecurity.com/announcin
 
 ## Installation
 
-Currently the plugin is available only for PHP **7.2** and **7.3** versions! 
+Currently the plugin is available only for **PHP7.2** and **PHP7.3**! 
 
 In order to install the Pure Plugin you need to go through the following steps:
-- add the "vsce_phe_php" extension into your server
+- add the crypto extensions into your server
 - and then install the Plugin from the [WordPress Plugin Directory](#from-the-wordpress-plugin-directory) or from [this repository](#from-this-repository)
 
-### Step #1. Add the "vsce_phe_php" extension into your server before using the Plugin
+### Step #1. Add the crypto extensions into your server before using the Plugin
 
 - [Download](https://github.com/VirgilSecurity/virgil-pure-wordpress/releases), unzip and execute on your server [virgil-test.php](/_help/virgil-test.php) file.
 
-- [Download](https://github.com/VirgilSecurity/virgil-pure-wordpress/releases) and unzip *vsce_phe_php* extension according to your server operating system.
+- [Download](https://github.com/VirgilSecurity/virgil-pure-wordpress/releases) and unzip *extensions.zip* archive according to your server operating system and PHP version.
 
-- Make sure you have access to edit the php.ini file. For example, use *root*
+- Make sure you have access to edit the php.ini file (for example, use *root* for the Linux/Darwin).
     ```
     $ sudo su
     ```
-- Add the *extension=vsce_phe_php* string in to the php.ini file 
-    ```
-    $ echo "extension=vsce_phe_php” >> (PATH_TO_PHP.INI)
-    ```
-- Copy extension file to the extensions directory.
+- Copy extensions file to the extensions directory.
     - For the Linux/Darwin:
     ```
-     $ cp vsce_phe_php.so (PATH_TO_EXTENSION_DIR)
+     $ path="(PATH_TO_EXTENSIONS_DIR)" && cp vsce_phe_php.so $path && cp virgil_crypto_php.so $path
     ```
     - Or for the Windows:
     ```
-     $ cp vsce_phe_php.dll (PATH_TO_EXTENSION_DIR)
+     $ set path=(PATH_TO_EXTENSIONS_DIR) && copy vsce_phe_php.dll %path% && copy virgil_crypto_php.dll %path%
+    ```
+- Add the extensions in to the php.ini file 
+    ```
+    $ echo -e "extension=vsce_phe_php\nextension=virgil_crypto_php” >> (PATH_TO_PHP.INI)
     ```
     
 - Then, restart your server or php-fpm service!
@@ -70,7 +70,8 @@ the php.ini file:
     <p><img src="https://raw.githubusercontent.com/VirgilSecurity/virgil-pure-wordpress/master/_help/s-2.png" 
     width="60%"></p>
 
-- Reload the page in your browser to see that extension is loaded (`IS_EXTENSION_LOADED => TRUE`):
+- Reload the page in your browser to see that extension is loaded (`IS_VSCE_PHE_PHP_EXTENSION_LOADED => true` and 
+`IS_VIRGIL_CRYPTO_PHP_EXTENSION_LOADED => true`):
     <p><img src="https://raw.githubusercontent.com/VirgilSecurity/virgil-pure-wordpress/master/_help/s-3.png" 
     width="60%"></p>
     
@@ -120,7 +121,17 @@ Simply click the "Start migration" button to start migration.
 This function allows you to use a special `UPDATE_TOKEN` to update all of the enrollment records in your database. This action doesn't requite changing users' passwords or modifying the scheme of the existing table.
 
 Navigate to your Pure application panel at [Virgil Dashboard](https://dashboard.virgilsecurity.com/), press "BEGIN 
-ROTATION PROCESS", then “SHOW UPDATE TOKEN” button to get the `UPDATE_TOKEN`. Insert the `UPDATE_TOKEN` into the field at the Virgil Pure plugin tab. 
+ROTATION PROCESS", then “SHOW UPDATE TOKEN” button to get the `UPDATE_TOKEN`. Insert the `UPDATE_TOKEN` into the field at the Virgil Pure plugin tab.
+
+### Recovery (optional)
+
+Before you switch off Demo Mode, you’ll need to generate a recovery key so that the password hashes that are currently in your database can be recovered if you ever need to deactivate the Pure plugin. Your recovery key will encrypt the password hashes, and will store the encrypted values in a new table in your database. 
+
+The recovery key utilizes a public and private key pair. The public key will be stored in your database and the 
+private key must be stored by you securely on another external device. [Please read our FAQ section](#faq) for best 
+practices and more information. 
+
+When you need to deactivate the Pure plugin, you can go through the Recovery process via the Wordpress dashboard or CLI and use the recovery key to restore the original password hashes.
 
 ## F.A.Q.
 

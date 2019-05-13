@@ -23,13 +23,13 @@ Learn more about the Pure technology [here](https://virgilsecurity.com/announcin
 
 == Installation ==
 
-Currently the plugin is available only for PHP7.2!
+Currently the plugin is available only for PHP7.2 and PHP7.3!
 
 In order to install the Pure Plugin you need to go through the following steps:
 * add the "vsce_phe_php" extension into your server
 * and then install the Plugin from the [WordPress Plugin Directory](https://wordpress.org/plugins/virgil-pure/) or from the [official GitHub repository](https://github.com/VirgilSecurity/virgil-pure-wordpress)
 
-= Step #1. Add the "vsce_phe_php" extension into your server before using the Plugin =
+= Step #1. Add the crypto extensions into your server before using the Plugin =
 [How to add vsce_phe_php extension](https://github.com/VirgilSecurity/virgil-pure-wordpress#step-1-add-the-vsce_phe_php-extension-into-your-server-before-using-the-plugin)
 
 = Step #2. Install Virgil Pure WordPress Plugin =
@@ -72,6 +72,10 @@ There is no way to restore the APP_SECRET_KEY. The database becomes inaccessible
 (none)
 
 == Changelog ==
+
+= 0.2.0 =
+* Add recovery feature
+* Minor fixes
 
 = 0.1.2 =
 * Fix activation error

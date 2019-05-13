@@ -5,8 +5,6 @@ use VirgilSecurityPure\Config\Crypto;
 use VirgilSecurityPure\Config\Form;
 use VirgilSecurityPure\Config\Option;
 use VirgilSecurityPure\Core\CoreFactory;
-use VirgilSecurityPure\Core\passw0rdHash;
-use VirgilSecurityPure\Core\WPPasswordEnroller;
 use VirgilSecurityPure\Helpers\ConfigHelper;
 use VirgilSecurityPure\Helpers\Redirector;
 use VirgilSecurityPure\Helpers\StatusHelper;
@@ -57,7 +55,7 @@ class Virgil_Pure_Admin
     public function enqueue_styles()
     {
         wp_enqueue_style($this->Virgil_Pure, plugin_dir_url(__FILE__) . 'css/virgil-pure-admin.css', array(),
-            $this->version.time(), 'all');
+            $this->version, 'all');
     }
 
     /**
