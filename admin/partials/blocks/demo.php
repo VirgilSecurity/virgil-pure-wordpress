@@ -14,12 +14,15 @@ use VirgilSecurityPure\Config\Config;
         <p class="virgil-phe-demo-desc">
             In demo mode, no data in your database will be altered. To demonstrate how Virgil Pure works, a new
             column will be created to hold the newly protected password data. When you're ready to go live, your
-            password hashes will be translated into cryptographically protected data.<br>
+            password hashes will be translated into cryptographically protected data.
             <?php if(!StatusHelper::isAllUsersMigrated()) { ?>
-                To switch demo mod off migrate all users first.
+            <br>To switch demo mod off migrate all users first.</p>
             <?php } else { ?>
-                <a class="virgil-phe-demo-desc" href="<?= admin_url("/admin.php?page=" . Config::DEMO_MODE_OFF_PAGE) ?>">Change Mode</a>
+                </p>
+                <div>
+                <a class="virgil-phe-global-button virgil-phe-demo-button" href="<?= admin_url("/admin.php?page=" . 
+                    Config::CHANGE_MODE) ?>">Change Mode</a></div>
             <?php } ?>
-        </p>
+
     </div>
 </div>

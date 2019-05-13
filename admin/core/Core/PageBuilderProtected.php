@@ -68,7 +68,7 @@ class PageBuilderProtected
      */
     protected function isChangeModePage(): bool
     {
-        return Config::DEMO_MODE_OFF_PAGE==$_GET['page'];
+        return Config::CHANGE_MODE==$_GET['page'];
     }
 
     /**

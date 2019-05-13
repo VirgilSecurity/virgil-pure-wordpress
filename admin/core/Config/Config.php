@@ -60,7 +60,7 @@ class Config
     const FAQ_PAGE = self::MAIN_PAGE.'_FAQ';
     const RECOVERY_PAGE = self::MAIN_PAGE.'_Recovery';
     const DEV_PAGE = self::MAIN_PAGE.'_Dev';
-    const DEMO_MODE_OFF_PAGE = self::MAIN_PAGE.'_Demo_Mode_Off';
+    const CHANGE_MODE = self::MAIN_PAGE.'_Change_Mode';
 
     const CAPABILITY = 'administrator';
 

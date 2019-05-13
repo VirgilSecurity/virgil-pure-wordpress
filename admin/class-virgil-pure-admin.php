@@ -74,7 +74,8 @@ class Virgil_Pure_Admin
         add_submenu_page(Config::ACTION_PAGE, $title, $title, Config::CAPABILITY, Config::ACTION_PAGE, array($this, 'virgil_pure_page_builder'));
         if ($extLoaded) {
             if(StatusHelper::isAllUsersMigrated()&&(bool)get_option(Option::DEMO_MODE)) {
-                add_submenu_page(Config::ACTION_PAGE, 'Change Mode', 'Change Mode', Config::CAPABILITY, Config::DEMO_MODE_OFF_PAGE, array($this, 'virgil_pure_page_builder'));
+                add_submenu_page(Config::ACTION_PAGE, 'Change Mode', 'Change Mode', Config::CAPABILITY,
+                    Config::CHANGE_MODE, array($this, 'virgil_pure_page_builder'));
             }
             add_submenu_page(Config::ACTION_PAGE, 'Log', 'Log', Config::CAPABILITY, Config::LOG_PAGE, array($this, 'virgil_pure_page_builder'));
             add_submenu_page(Config::ACTION_PAGE, 'FAQ', 'FAQ', Config::CAPABILITY, Config::FAQ_PAGE, array($this, 'virgil_pure_page_builder'));
