@@ -2,10 +2,10 @@
 use VirgilSecurityPure\Config\Config;
 ?>
 
-<div class="virgil-phe-failed-container">
-    <div class="virgil-phe-failed-content">
-        <h2 class="virgil-phe-failed-title">EXTENSIONS MISSING</h2>
-        <p class="virgil-phe-failed-desc">
+<div class="virgil-pure-failed-container">
+    <div class="virgil-pure-failed-content">
+        <h2 class="virgil-pure-failed-title">EXTENSIONS MISSING</h2>
+        <p class="virgil-pure-failed-desc">
             <?php
             foreach (Config::EXTENSIONS as $extension) {
                 echo !extension_loaded($extension) ? "<b>$extension</b> can't be found.<br>" : null;

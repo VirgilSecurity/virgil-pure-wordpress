@@ -2,7 +2,7 @@
 use VirgilSecurityPure\Core\PageBuilderPublic;
 ?>
 
-<div class="virgil-phe-global-container">
+<div class="virgil-pure-global-container">
     <?php
     require_once 'blocks/_header.php';
 

@@ -24,14 +24,14 @@ $infoArr = !extension_loaded(Config::EXTENSION_VIRGIL_CRYPTO_PHP) || !extension_
 
 ?>
 
-<div class="virgil-phe-global-section">
-    <h3 class="virgil-phe-global-section-title">Info</h3>
-    <hr class="virgil-phe-global-line"/>
-    <table class="virgil-phe-info-table">
+<div class="virgil-pure-global-section">
+    <h3 class="virgil-pure-global-section-title">Info</h3>
+    <hr class="virgil-pure-global-line"/>
+    <table class="virgil-pure-info-table">
         <?php foreach ($infoArr as $key => $value) { ?>
             <tr>
-                <td class="virgil-phe-info-table-key"><?= $key ?></td>
-                <td class="virgil-phe-info-table-value"><?= $value ?></td>
+                <td class="virgil-pure-info-table-key"><?= $key ?></td>
+                <td class="virgil-pure-info-table-value"><?= $value ?></td>
             </tr>
         <?php } ?>
     </table>
