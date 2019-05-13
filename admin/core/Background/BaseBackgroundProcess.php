@@ -37,8 +37,6 @@
 
 namespace VirgilSecurityPure\Background;
 
-use VirgilSecurityPure\Core\Core;
-
 /**
  * Class BaseBackgroundProcess
  * @package VirgilSecurityPure\Background

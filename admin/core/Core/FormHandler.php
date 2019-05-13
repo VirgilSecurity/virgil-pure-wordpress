@@ -91,6 +91,12 @@ class FormHandler implements Core
         $this->wpdb = $wpdb;
     }
 
+    /**
+     * @param CoreProtocol $coreProtocol
+     * @param VirgilCryptoWrapper $virgilCryptoWrapper
+     * @param CredentialsManager $credentialsManager
+     * @param DBQueryHelper $DBQueryHelper
+     */
     public function setDep(CoreProtocol $coreProtocol, VirgilCryptoWrapper $virgilCryptoWrapper, CredentialsManager
     $credentialsManager, DBQueryHelper $DBQueryHelper) {
         $this->coreProtocol = $coreProtocol;
@@ -238,7 +244,7 @@ class FormHandler implements Core
             }
             catch (\Exception $e) {
                 if($e instanceof VirgilCryptoException) {
-                    Logger::log("Invalid Recovery Private Key", 0);
+                    Logger::log("Invalid ".Crypto::RECOVERY_PRIVATE_KEY, 0);
                 } else {
                     Logger::log($e->getMessage(), 0);
                 }

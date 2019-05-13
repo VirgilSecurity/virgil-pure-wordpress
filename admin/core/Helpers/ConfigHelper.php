@@ -37,7 +37,6 @@
 
 namespace VirgilSecurityPure\Helpers;
 
-use VirgilSecurityPure\Config\Config;
 use VirgilSecurityPure\Config\Option;
 
 /**
@@ -54,6 +53,9 @@ class ConfigHelper
         return (bool) get_option(Option::DEV_MODE);
     }
 
+    /**
+     * @return bool
+     */
     public static function isRecoveryKeyExists(): bool
     {
         return get_option(Option::RECOVERY_PUBLIC_KEY);

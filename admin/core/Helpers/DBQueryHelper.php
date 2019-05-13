@@ -142,6 +142,9 @@ class DBQueryHelper implements Core
         $this->wpdb->query("UPDATE {$this->tableUsers} SET user_pass='' WHERE ID=$id");
     }
 
+    /**
+     *
+     */
     public function clearPureParams()
     {
         $encrypted = Option::ENCRYPTED;

@@ -45,19 +45,38 @@ use VirgilSecurityPure\Config\Config;
 use VirgilSecurityPure\Core\VirgilCryptoWrapper;
 use VirgilSecurityPure\Helpers\DBQueryHelper;
 
+/**
+ * Class EncryptBackgroundProcess
+ * @package VirgilSecurityPure\Background
+ */
 class EncryptBackgroundProcess extends BaseBackgroundProcess
 {
+    /**
+     * @var string 
+     */
     protected $action = Config::BACKGROUND_ACTION_ENCRYPT;
-
+    /**
+     * @var 
+     */
     private $dbqh;
-
+    /**
+     * @var 
+     */
     private $vcw;
 
+    /**
+     * @param DBQueryHelper $dbqh
+     * @param VirgilCryptoWrapper $vcw
+     */
     public function setDep(DBQueryHelper $dbqh, VirgilCryptoWrapper $vcw) {
         $this->dbqh = $dbqh;
         $this->vcw = $vcw;
     }
 
+    /**
+     * @param mixed $user
+     * @return bool|mixed
+     */
     protected function task($user) {
         $pk = get_option(Option::RECOVERY_PUBLIC_KEY);
         if($pk) {
@@ -71,6 +90,9 @@ class EncryptBackgroundProcess extends BaseBackgroundProcess
         }
     }
 
+    /**
+     * 
+     */
     protected function complete() {
 
         if($this->is_queue_empty())

@@ -1,6 +1,4 @@
 <?php
-
-use VirgilSecurityPure\Helpers\ConfigHelper;
 use VirgilSecurityPure\Helpers\InfoHelper;
 use VirgilSecurityPure\Config\Config;
 

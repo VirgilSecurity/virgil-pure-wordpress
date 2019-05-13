@@ -49,6 +49,9 @@ use VirgilSecurityPure\Helpers\Redirector;
  */
 class CredentialsManager implements Core
 {
+    /**
+     * @var 
+     */
     private $updateToken;
 
     /**

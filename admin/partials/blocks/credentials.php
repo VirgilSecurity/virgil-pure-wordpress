@@ -1,8 +1,6 @@
 <?php
-
 use VirgilSecurityPure\Config\Form;
 use VirgilSecurityPure\Config\Credential;
-
 ?>
 
 <div class="virgil-pure-global-section">

@@ -66,6 +66,7 @@ class PluginValidator implements Core
 
     /**
      * @return bool
+     * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public function checkService(): bool
     {
@@ -75,6 +76,7 @@ class PluginValidator implements Core
 
     /**
      * @return bool
+     * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public function check(): bool
     {

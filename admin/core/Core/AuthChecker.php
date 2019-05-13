@@ -45,6 +45,10 @@ use VirgilSecurityPure\Config\Config;
  */
 class AuthChecker
 {
+    /**
+     * @return bool
+     * @throws \GuzzleHttp\Exception\GuzzleException
+     */
     public function check(): bool {
         try {
             $protocol = new CoreProtocol();
