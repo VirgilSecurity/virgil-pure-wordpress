@@ -18,10 +18,10 @@ Learn more about the Pure technology [here](https://virgilsecurity.com/announcin
 - Zero knowledge of users' passwords
 - Passwords protection from online and offline attacks
 - Instant invalidation of stolen database
+- Plugin deactivation and restoration of the previous authorization system
 
 #### Coming soon
 - User data encryption with a personal key
-- Plugin deactivation and restoration of the previous authorization system
 
 ## Installation
 
