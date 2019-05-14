@@ -39,22 +39,20 @@ In order to install the Pure Plugin you need to go through the following steps:
 - [Download](https://github.com/VirgilSecurity/virgil-pure-wordpress/releases) and unzip *%YOUR_OS%_extensions.zip* 
 archive according to your server operating system and PHP version.
 
-- Make sure you have access to edit the php.ini file (for example, use *root* for the Linux/Darwin).
-    ```
-    $ sudo su
-    ```
-- Copy extensions file to the extensions directory.
+- Make sure you have access to edit the php.ini file (for example, use *root* for the Linux/Darwin or run *cmd* under 
+administrator for the Windows).
+- Copy extensions files to the extensions directory.
     - For the Linux/Darwin:
     ```
-     $ path="(PATH_TO_EXTENSIONS_DIR)" && cp vsce_phe_php.so $path && cp virgil_crypto_php.so $path
+     $ path="%PATH_TO_EXTENSIONS_DIR%" && cp vsce_phe_php.so $path && cp virgil_crypto_php.so $path
     ```
     - Or for the Windows:
     ```
-     $ set path=(PATH_TO_EXTENSIONS_DIR) && copy vsce_phe_php.dll %path% && copy virgil_crypto_php.dll %path%
+     $ set path=%PATH_TO_EXTENSIONS_DIR% && copy vsce_phe_php.dll %path% && copy virgil_crypto_php.dll %path%
     ```
 - Add the extensions in to the php.ini file 
     ```
-    $ echo -e "extension=vsce_phe_php\nextension=virgil_crypto_php” >> (PATH_TO_PHP.INI)
+    $ echo -e "extension=vsce_phe_php\nextension=virgil_crypto_php” >> %PATH_TO_PHP.INI%
     ```
     
 - Then, restart your server or php-fpm service!
