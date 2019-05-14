@@ -55,7 +55,7 @@ class Virgil_Pure_Admin
     public function enqueue_styles()
     {
         wp_enqueue_style($this->Virgil_Pure, plugin_dir_url(__FILE__) . 'css/virgil-pure-admin.css', array(),
-            $this->version.time(), 'all');
+            $this->version, 'all');
     }
 
     /**
