@@ -55,7 +55,7 @@ class Virgil_Pure_Admin
     public function enqueue_styles()
     {
         wp_enqueue_style($this->Virgil_Pure, plugin_dir_url(__FILE__) . 'css/virgil-pure-admin.css', array(),
-            $this->version, 'all');
+            $this->version.time(), 'all');
     }
 
     /**
@@ -186,8 +186,8 @@ class Virgil_Pure_Admin
         }
     }
 
-    /*7г
-     *
+    /**
+     * 
      */
     public function virgil_pure_page_builder()
     {
@@ -226,9 +226,7 @@ class Virgil_Pure_Admin
 
     /**
      * @param int $user_id
-     * @throws \GuzzleHttp\Exception\GuzzleException
      * @throws \Virgil\CryptoImpl\VirgilCryptoException
-     * @throws \Virgil\PureKit\Exceptions\ProtocolException
      */
     public function virgil_pure_profile_update(int $user_id)
     {
@@ -240,9 +238,7 @@ class Virgil_Pure_Admin
 
     /**
      * @param WP_User $user
-     * @throws \GuzzleHttp\Exception\GuzzleException
      * @throws \Virgil\CryptoImpl\VirgilCryptoException
-     * @throws \Virgil\PureKit\Exceptions\ProtocolException
      */
     public function virgil_pure_password_reset(WP_User $user)
     {
