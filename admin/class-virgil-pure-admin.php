@@ -81,7 +81,7 @@ class Virgil_Pure_Admin
                 add_submenu_page(Config::ACTION_PAGE, 'Recovery', 'Recovery', Config::CAPABILITY, Config::RECOVERY_PAGE,
                     array($this, 'virgil_pure_page_builder'));
             if($devMode)
-                add_submenu_page(Config::ACTION_PAGE, 'Dev', '* Dev', Config::CAPABILITY, Config::DEV_PAGE, array($this, 'virgil_pure_page_dev'));
+                add_submenu_page(Config::ACTION_PAGE, 'Dev', 'Dev', Config::CAPABILITY, Config::DEV_PAGE, array($this, 'virgil_pure_page_dev'));
 
         }
     }
@@ -186,7 +186,7 @@ class Virgil_Pure_Admin
         }
     }
 
-    /**
+    /*7г
      *
      */
     public function virgil_pure_page_builder()

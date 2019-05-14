@@ -24,9 +24,7 @@ use VirgilSecurityPure\Config\Config;
                  ("/admin.php?page=" . Config::FAQ_PAGE) ?>">Please read our FAQ section</a> for best practices and more
                  information.
              <br><br>
-             When you need to deactivate the Pure plugin, you can go through the Recovery process via the Wordpress
-             dashboard or CLI and use the recovery key to restore the original password hashes.
-
+             When you need to deactivate the Pure plugin, you can go through the Recovery process via the Wordpress dashboard and use the recovery key to restore the original password hashes.
          </p>
                 <form action="<?php echo esc_url(admin_url('admin-post.php')); ?>" method="post">
                     <input type="hidden" name="action" value="<?= Form::ACTION ?>">
