@@ -122,4 +122,11 @@ SQL;
     public static function getEnvFilePath(): string {
         return WP_PLUGIN_DIR.DIRECTORY_SEPARATOR.Config::PLUGIN_NAME.DIRECTORY_SEPARATOR.'.env';
     }
+
+    /**
+     * @return bool
+     */
+    public static function isRecoveryPrivateKeyExists(): bool {
+        return (bool) get_option(Option::RECOVERY_PUBLIC_KEY);
+    }
 }

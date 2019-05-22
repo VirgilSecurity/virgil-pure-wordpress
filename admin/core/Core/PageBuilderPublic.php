@@ -57,20 +57,9 @@ class PageBuilderPublic extends PageBuilderProtected
     /**
      * @return bool
      */
-    public function demo(): bool
-    {
-        if($this->disabled())
-            return false;
-
-        return (bool)get_option(Option::DEMO_MODE)&&!$this->isChangeModePage();
-    }
-
-    /**
-     * @return bool
-     */
     public function credentials(): bool
     {
-        if($this->disabled())
+        if($this->disabled()||!$this->isRecoveryPublicKeyExists())
             return false;
 
         return (!$this->isCredentialsSet()&&$this->isMainPage());
@@ -81,7 +70,7 @@ class PageBuilderPublic extends PageBuilderProtected
      */
     public function migrate(): bool
     {
-        if($this->disabled())
+        if($this->disabled()||!$this->isRecoveryPublicKeyExists())
             return false;
 
         return ($this->isCredentialsSet()&&$this->isMainPage()&&!$this->isAllUsersMigrated());
@@ -92,7 +81,7 @@ class PageBuilderPublic extends PageBuilderProtected
      */
     public function update(): bool
     {
-        if($this->disabled())
+        if($this->disabled()||!$this->isRecoveryPublicKeyExists())
             return false;
 
         return ($this->isCredentialsSet()&&$this->isMainPage()&&$this->isAllUsersMigrated());
@@ -128,9 +117,9 @@ class PageBuilderPublic extends PageBuilderProtected
     /**
      * @return bool
      */
-    public function change_mode(): bool
+    public function generate_recovery_keys(): bool
     {
-        return $this->isChangeModePage()&&(bool)get_option(Option::DEMO_MODE);
+        return !$this->isRecoveryPublicKeyExists()&&(!$this->isFAQPage()&&!$this->isLogPage());
     }
 
     /**
@@ -138,6 +127,6 @@ class PageBuilderPublic extends PageBuilderProtected
      */
     public function info(): bool
     {
-        return $this->isMainPage()||$this->disabled();
+        return ($this->isMainPage()||$this->disabled())&&!$this->generate_recovery_keys();
     }
 }

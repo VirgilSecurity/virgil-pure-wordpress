@@ -71,13 +71,13 @@ class Virgil_Pure_Admin
         add_menu_page(Config::MAIN_PAGE_TITLE, Config::MAIN_PAGE_TITLE, Config::CAPABILITY, Config::ACTION_PAGE);
         add_submenu_page(Config::ACTION_PAGE, $title, $title, Config::CAPABILITY, Config::ACTION_PAGE, array($this, 'virgil_pure_page_builder'));
         if ($extLoaded) {
-            if(StatusHelper::isAllUsersMigrated()&&(bool)get_option(Option::DEMO_MODE)) {
+            if(StatusHelper::isAllUsersMigrated()) {
                 add_submenu_page(Config::ACTION_PAGE, 'Change Mode', 'Change Mode', Config::CAPABILITY,
                     Config::CHANGE_MODE, array($this, 'virgil_pure_page_builder'));
             }
             add_submenu_page(Config::ACTION_PAGE, 'Log', 'Log', Config::CAPABILITY, Config::LOG_PAGE, array($this, 'virgil_pure_page_builder'));
             add_submenu_page(Config::ACTION_PAGE, 'FAQ', 'FAQ', Config::CAPABILITY, Config::FAQ_PAGE, array($this, 'virgil_pure_page_builder'));
-            if(ConfigHelper::isRecoveryKeyExists() && false==(bool)get_option(Option::DEMO_MODE))
+            if(ConfigHelper::isRecoveryKeyExists())
                 add_submenu_page(Config::ACTION_PAGE, 'Recovery', 'Recovery', Config::CAPABILITY, Config::RECOVERY_PAGE,
                     array($this, 'virgil_pure_page_builder'));
             if($devMode)
@@ -261,8 +261,7 @@ class Virgil_Pure_Admin
 
         $wppe->enroll($user);
 
-        if(0==(int)get_option(Option::DEMO_MODE))
-            $this->dbqh->clearUserPass($user->ID);
+        $this->dbqh->clearUserPass($user->ID);
     }
 
     /**

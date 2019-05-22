@@ -44,7 +44,6 @@ namespace VirgilSecurityPure\Config;
 class Log
 {
     const PLUGIN_ACTIVATION = "Plugin activation";
-    const DEMO_MODE_OFF = "Switch demo mode off";
     const INIT_CREDENTIALS = "Init credentials";
     const START_MIGRATION = "Start of the migration process";
     const FINISH_MIGRATION = "The end of the migration process";
@@ -62,5 +61,5 @@ class Log
     const INVALID_PROOF = "Invalid ".Credential::SERVICE_PUBLIC_KEY." or ".
     Credential::APP_SECRET_KEY;
 
-    const DEMO_MODE_NO_RECOVERY_KEYS = "Download Recovery Private Key";
+    const GENERATE_RECOVERY_KEYS = "Generate Recovery Key";
 }

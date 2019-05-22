@@ -17,9 +17,6 @@ class Virgil_Pure_Activator {
         $dbQuery = new DBQueryHelper();
         $dbQuery->createTableLog();
 
-        if(!get_option(Option::DEMO_MODE))
-            update_option(Option::DEMO_MODE, 1);
-
         if(!get_option(Option::DEV_MODE))
             update_option(Option::DEV_MODE, 0);
 

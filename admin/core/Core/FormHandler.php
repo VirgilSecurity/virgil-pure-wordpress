@@ -108,16 +108,15 @@ class FormHandler implements Core
     /**
      *
      */
-    public function demo()
+    public function demo_temp()
     {
         if(!get_option(Option::RECOVERY_PUBLIC_KEY)) {
-            Logger::log(Log::DEMO_MODE_NO_RECOVERY_KEYS, 0);
+            Logger::log(Log::GENERATE_RECOVERY_KEYS, 0);
         } else {
-
             $users = get_users(array('fields' => array('ID', 'user_pass')));
             $encryptBackgroundProcess = new EncryptBackgroundProcess();
             $encryptBackgroundProcess->setDep($this->dbq, $this->virgilCryptoWrapper);
-            
+
             update_option(Option::ENCRYPT_START, microtime(true));
             Logger::log(Log::START_ENCRYPT);
 
@@ -131,6 +130,15 @@ class FormHandler implements Core
 
             $encryptBackgroundProcess->save()->dispatch();
         }
+    }
+
+    /**
+     *
+     */
+    public function demo()
+    {
+        if(!get_option(Option::RECOVERY_PUBLIC_KEY))
+            Logger::log(Log::GENERATE_RECOVERY_KEYS, 0);
     }
 
     public function downloadRecoveryPrivateKey()
@@ -318,8 +326,6 @@ class FormHandler implements Core
             delete_user_meta($user->ID, Option::PARAMS);
             delete_user_meta($user->ID, Option::ENCRYPTED);
         }
-
-        update_option(Option::DEMO_MODE, 1);
 
         delete_option(Option::MIGRATE_START);
         delete_option(Option::MIGRATE_FINISH);

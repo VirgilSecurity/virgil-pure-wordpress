@@ -4,11 +4,7 @@ use VirgilSecurityPure\Config\Config;
 ?>
 
 <div class="virgil-pure-global-section">
-    <h3 class="virgil-pure-global-page-title">Change Mode</h3>
-
-    <p class="virgil-pure-rotate-desc">
-        If you’ve made it to this page, that means you’re almost ready to go live with the Pure plugin in your database.
-    </p>
+    <h3 class="virgil-pure-global-page-title">Generate Recovery Keys</h3>
      <div class="virgil-pure-demo-container">
 
          <div class="virgil-pure-demo-content">
@@ -16,7 +12,8 @@ use VirgilSecurityPure\Config\Config;
              <h2 class="virgil-pure-demo-title">Recovery Private Key</h2>
 
              <p class="virgil-pure-demo-desc">
-             Before you switch off Demo Mode, you’ll need to generate a recovery key so that the password hashes that are currently in your database can be recovered if you ever need to deactivate the Pure plugin. Your recovery key will encrypt the password hashes, and will store the encrypted values in a new table in your database.
+             You’ll need to generate a recovery key so that the password hashes that are currently in your database
+                 can be recovered if you ever need to deactivate the Pure plugin. Your recovery key will encrypt the password hashes, and will store the encrypted values in a new table in your database.
              <br><br>
 
              The recovery key utilizes a public and private key pair. The public key will be stored in your database
@@ -36,15 +33,20 @@ use VirgilSecurityPure\Config\Config;
             </div>
         </div>
 
-    <p class="virgil-pure-rotate-desc">
-        As soon as you press the “Switch Off Demo Mode” button, the hashes of your user passwords will be transformed into cryptographically protected data, and no one will be able to breach your database’s user passwords.
-    </p>
-
         <form class="virgil-pure-credentials-form" action="<?php echo esc_url(admin_url('admin-post.php')); ?>" method="post">
+
+            <label for="phe-agree-checkbox">
+                <input id="phe-agree-checkbox" type="checkbox" onchange="document
+                .getElementById('submitNextStep').disabled = !this.checked;">
+                <span>I'm aware that if I lose the Recovery Private Key, I will not  be able to recover encrypted
+                    records</span>
+            </label>
+
             <input type="hidden" name="action" value="<?= Form::ACTION ?>">
             <input type="hidden" name="form_type" value="<?= Form::DEMO ?>">
             <?php wp_nonce_field('nonce', Form::NONCE) ?>
-            <input type="submit" name="submit" id="submit" class="virgil-pure-global-button virgil-pure-global-submit"
-                   value="Switch Off Demo Mode">
+            <br><br>
+            <input type="submit" name="submit" id="submitNextStep" class="virgil-pure-global-button
+            virgil-pure-global-submit" disabled value="Next Step">
         </form>
 </div>

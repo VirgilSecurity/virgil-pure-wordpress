@@ -106,9 +106,8 @@ class EncryptBackgroundProcess extends BaseBackgroundProcess
             delete_option(Option::ENCRYPT_START);
             delete_option(Option::ENCRYPT_FINISH);
 
-            update_option(Option::DEMO_MODE, 0);
             $this->dbqh->clearAllUsersPass();
-            Logger::log(Log::DEMO_MODE_OFF);
+            Logger::log(Log::GENERATE_RECOVERY_KEYS);
         }
 
         parent::complete();

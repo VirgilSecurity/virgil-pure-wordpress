@@ -100,7 +100,7 @@ class VirgilCryptoWrapper implements Core
      */
     public function downloadPrivateKey() {
         $prefix = get_bloginfo('name');
-        $file = $prefix.'_recovery_private_key.txt';
+        $file = $prefix.'_recovery_private_key.bin';
         $pk = $this->getKey(Crypto::PUBLIC_KEY);
         $prk = $this->getKey(Crypto::PRIVATE_KEY);
 

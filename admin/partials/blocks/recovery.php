@@ -23,6 +23,7 @@ use VirgilSecurityPure\Config\Crypto;
                    name="<?= Crypto::RECOVERY_PRIVATE_KEY ?>" required>
         </div>
 
+        <input type="file" name="myFile">
         <input type="hidden" name="action" value="<?= Form::ACTION ?>">
         <input type="hidden" name="form_type" value="<?= Form::RECOVERY ?>">
         <?php wp_nonce_field('nonce', Form::NONCE) ?>

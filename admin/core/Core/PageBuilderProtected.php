@@ -66,14 +66,6 @@ class PageBuilderProtected
     /**
      * @return bool
      */
-    protected function isChangeModePage(): bool
-    {
-        return Config::CHANGE_MODE==$_GET['page'];
-    }
-
-    /**
-     * @return bool
-     */
     protected function isLogPage(): bool
     {
         return Config::LOG_PAGE==$_GET['page'];
@@ -102,5 +94,13 @@ class PageBuilderProtected
     {
         return(!empty($_ENV[Credential::APP_TOKEN])&&!empty($_ENV[Credential::APP_SECRET_KEY])&&!empty
             ($_ENV[Credential::SERVICE_PUBLIC_KEY]));
+    }
+
+    /**
+     * @return bool
+     */
+    protected function isRecoveryPublicKeyExists(): bool
+    {
+        return InfoHelper::isRecoveryPrivateKeyExists();
     }
 }

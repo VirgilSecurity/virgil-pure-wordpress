@@ -44,7 +44,6 @@ namespace VirgilSecurityPure\Config;
 class Option
 {
     const DEV_MODE = Config::PLUGIN_NAME.'_dev_mode';
-    const DEMO_MODE = Config::PLUGIN_NAME.'_demo_mode';
     const ACTIVATION_DATE = Config::PLUGIN_NAME.'_activation_date';
     const MIGRATE_START = Config::PLUGIN_NAME.'_migrate_start';
     const MIGRATE_FINISH = Config::PLUGIN_NAME.'_migrate_finish';
