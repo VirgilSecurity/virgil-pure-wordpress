@@ -206,15 +206,12 @@ class Virgil_Pure_Admin
     public function virgil_pure_init_background_processes()
     {
         if ($this->protocol) {
-            $migrateBP = $this->coreFactory->buildBackgroundProcess('Migrate');
-            $migrateBP->setDep($this->protocol);
+            $migrateBP = $this->coreFactory->buildBackgroundProcess('EncryptAndMigrate');
+            $migrateBP->setDep($this->protocol, $this->dbqh, $this->virgilCryptoWrapper);
 
             $updateBP = $this->coreFactory->buildBackgroundProcess('Update');
             $updateBP->setDep($this->protocol, $this->cm);
         }
-        
-        $encryptBP = $this->coreFactory->buildBackgroundProcess('Encrypt');
-        $encryptBP->setDep($this->dbqh, $this->virgilCryptoWrapper);
 
         $recoveryBP = $this->coreFactory->buildBackgroundProcess('Recovery');
         $recoveryBP->setDep($this->dbqh, $this->virgilCryptoWrapper, $this->cm);

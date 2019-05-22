@@ -39,7 +39,7 @@ namespace VirgilSecurityPure\Core;
 
 use GuzzleHttp\Exception\ClientException;
 use Virgil\CryptoImpl\VirgilCryptoException;
-use VirgilSecurityPure\Background\MigrateBackgroundProcess;
+use VirgilSecurityPure\Background\EncryptAndMigrateBackgroundProcess;
 use VirgilSecurityPure\Background\EncryptBackgroundProcess;
 use VirgilSecurityPure\Background\RecoveryBackgroundProcess;
 use VirgilSecurityPure\Background\UpdateBackgroundProcess;
@@ -47,7 +47,6 @@ use VirgilSecurityPure\Config\Config;
 use VirgilSecurityPure\Config\Option;
 use VirgilSecurityPure\Config\Credential;
 use VirgilSecurityPure\Config\Log;
-use VirgilSecurityPure\Exceptions\PluginPureException;
 use VirgilSecurityPure\Helpers\DBQueryHelper;
 use VirgilSecurityPure\Helpers\Redirector;
 use VirgilSecurityPure\Config\Crypto;
@@ -187,7 +186,7 @@ class FormHandler implements Core
     {
         $users = get_users(array('fields' => array('ID', 'user_pass')));
 
-        $migrateBackgroundProcess = new MigrateBackgroundProcess();
+        $migrateBackgroundProcess = new EncryptAndMigrateBackgroundProcess();
         $migrateBackgroundProcess->setDep($this->coreProtocol->init());
 
         update_option(Option::MIGRATE_START, microtime(true));
@@ -291,9 +290,6 @@ class FormHandler implements Core
             } catch (\Exception $e) {
                 if($e instanceof VirgilCryptoException) {
                     Logger::log("Invalid Encrypted Data or Recovery Private Key", 0);
-                }
-                elseif($e instanceof PluginPureException) {
-                    Logger::log("User (id={$e->getMessage()}) without encrypted record", 0);
                 }
                 else {
                     Logger::log($e->getMessage(), 0);

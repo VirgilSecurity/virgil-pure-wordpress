@@ -2,13 +2,13 @@
 
 use VirgilSecurityPure\Helpers\InfoHelper;
 use VirgilSecurityPure\Config\Form;
-use VirgilSecurityPure\Background\MigrateBackgroundProcess;
+use VirgilSecurityPure\Background\EncryptAndMigrateBackgroundProcess;
 
 $total = InfoHelper::getTotalUsers();
 $migrated = InfoHelper::getMigrated();
 $migratedPercents = InfoHelper::getMigratedPercents();
 
-$mbp = new MigrateBackgroundProcess();
+$mbp = new EncryptAndMigrateBackgroundProcess();
 
 $value = $mbp->is_process_running() ? "Migration In Progress" : "Start Migration";
 $disabled = $mbp->is_process_running() ? "disabled" : null;

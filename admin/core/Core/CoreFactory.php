@@ -39,7 +39,7 @@ namespace VirgilSecurityPure\Core;
 
 use VirgilSecurityPure\Background\BaseBackgroundProcess;
 use VirgilSecurityPure\Background\EncryptBackgroundProcess;
-use VirgilSecurityPure\Background\MigrateBackgroundProcess;
+use VirgilSecurityPure\Background\EncryptAndMigrateBackgroundProcess;
 use VirgilSecurityPure\Background\RecoveryBackgroundProcess;
 use VirgilSecurityPure\Background\UpdateBackgroundProcess;
 use VirgilSecurityPure\Helpers\DBQueryHelper;
@@ -94,8 +94,8 @@ class CoreFactory
     public function buildBackgroundProcess(string $class): BaseBackgroundProcess
     {
         switch ($class) {
-            case 'Migrate':
-                return new MigrateBackgroundProcess();
+            case 'EncryptAndMigrate':
+                return new EncryptAndMigrateBackgroundProcess();
                 break;
             case 'Update':
                 return new UpdateBackgroundProcess();

@@ -43,12 +43,14 @@ use VirgilSecurityPure\Config\Log;
 use VirgilSecurityPure\Config\Option;
 use VirgilSecurityPure\Core\Logger;
 use VirgilSecurityPure\Core\passw0rdHash;
+use VirgilSecurityPure\Core\VirgilCryptoWrapper;
+use VirgilSecurityPure\Helpers\DBQueryHelper;
 
 /**
- * Class MigrateBackgroundProcess
+ * Class EncryptAndsMigrateBackgroundProcess
  * @package VirgilSecurityPure\Background
  */
-class MigrateBackgroundProcess extends BaseBackgroundProcess
+class EncryptAndMigrateBackgroundProcess extends BaseBackgroundProcess
 {
     /**
      * @var
@@ -61,13 +63,24 @@ class MigrateBackgroundProcess extends BaseBackgroundProcess
     private $protocol;
 
     /**
+     * @var
+     */
+    private $dbqh;
+
+    /**
+     * @var
+     */
+    private $vcv;
+
+    /**
      * @var string
      */
     protected $action = Config::BACKGROUND_ACTION_MIGRATE;
 
-    public function setDep(Protocol $protocol)
-    {
+    public function setDep(Protocol $protocol, DBQueryHelper $dbqh, VirgilCryptoWrapper $vcw) {
         $this->protocol = $protocol;
+        $this->dbqh = $dbqh;
+        $this->vcw = $vcw;
     }
 
     /**
