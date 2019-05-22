@@ -119,7 +119,6 @@ class RecoveryBackgroundProcess extends BaseBackgroundProcess
             $this->getFinalLog();
             $this->dbqh->clearPureParams();
             delete_option(Option::RECOVERY_PUBLIC_KEY);
-            update_option(Option::DEMO_MODE, 1);
             $this->credentialsManager->addEmptyCredentials();
         }
 

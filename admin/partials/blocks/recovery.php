@@ -14,12 +14,12 @@ use VirgilSecurityPure\Config\Crypto;
     </p>
 
     <form class="virgil-pure-credentials-form" action="<?php echo esc_url(admin_url('admin-post.php')); ?>"
-          method="post">
+          method="post" enctype="multipart/form-data">
         <div class="virgil-pure-global-field">
             <label class="virgil-pure-global-field-label" for="virgil-recovery-private-key">
                 <?= Crypto::RECOVERY_PRIVATE_KEY ?>
             </label>
-            <input type="file" name="recovery_private_key" required>
+            <input type="file" name="<?= Crypto::RECOVERY_PRIVATE_KEY ?>" required>
         </div>
 
         <input type="hidden" name="action" value="<?= Form::ACTION ?>">

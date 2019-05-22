@@ -62,4 +62,5 @@ class Log
     Credential::APP_SECRET_KEY;
 
     const GENERATE_RECOVERY_KEYS = "Generate Recovery Key";
+    const RECOVERY_ERROR = "Invalid ".Crypto::RECOVERY_PRIVATE_KEY;
 }

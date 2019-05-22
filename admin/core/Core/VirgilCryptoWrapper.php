@@ -80,17 +80,17 @@ class VirgilCryptoWrapper implements Core
             case Crypto::PUBLIC_KEY:
                 $keyObject = $this->keyPair->getPublicKey();
                 $keyData = $this->vc->exportPublicKey($keyObject);
+                $res = base64_encode($keyData);
                 break;
             case Crypto::PRIVATE_KEY:
                 $keyObject = $this->keyPair->getPrivateKey();
-                $keyData = $this->vc->exportPrivateKey($keyObject, Crypto::PRIVATE_KEY_PASSWORD);
+                $res = $this->vc->exportPrivateKey($keyObject, Crypto::PRIVATE_KEY_PASSWORD);
                 break;
             default:
                 throw new PluginPureException('Invalid key type (Get key)');
                 break;
         }
         
-        $res = base64_encode($keyData);
         return $res;
     }
 
@@ -100,7 +100,7 @@ class VirgilCryptoWrapper implements Core
      */
     public function downloadPrivateKey() {
         $prefix = get_bloginfo('name');
-        $file = $prefix.'_recovery_private_key.bin';
+        $file = $prefix.Crypto::RECOVERY_PRIVATE_KEY_FILE;
         $pk = $this->getKey(Crypto::PUBLIC_KEY);
         $prk = $this->getKey(Crypto::PRIVATE_KEY);
 
@@ -129,8 +129,7 @@ class VirgilCryptoWrapper implements Core
                 $keyObject = $this->vc->importPublicKey($keyData);
                 break;
             case Crypto::PRIVATE_KEY:
-                $keyData = base64_decode($key);
-                $keyObject = $this->vc->importPrivateKey($keyData, Crypto::PRIVATE_KEY_PASSWORD);
+                $keyObject = $this->vc->importPrivateKey($key, Crypto::PRIVATE_KEY_PASSWORD);
                 break;
             default:
                 throw new PluginPureException('Invalid key type (Import Key)');

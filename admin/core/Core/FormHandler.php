@@ -47,6 +47,7 @@ use VirgilSecurityPure\Config\Config;
 use VirgilSecurityPure\Config\Option;
 use VirgilSecurityPure\Config\Credential;
 use VirgilSecurityPure\Config\Log;
+use VirgilSecurityPure\Exceptions\PluginPureException;
 use VirgilSecurityPure\Helpers\DBQueryHelper;
 use VirgilSecurityPure\Helpers\Redirector;
 use VirgilSecurityPure\Config\Crypto;
@@ -244,11 +245,18 @@ class FormHandler implements Core
      */
     public function recovery()
     {
-        if(!empty($_POST[Crypto::RECOVERY_PRIVATE_KEY])) {
-            $privateKeyIn = $_POST[Crypto::RECOVERY_PRIVATE_KEY];
+        if(!empty($file = $_FILES[Crypto::RECOVERY_PRIVATE_KEY])) {
+
+            if(1000<$file['size']) {
+                Logger::log(Log::RECOVERY_ERROR, 0);
+                Redirector::toPageLog();
+                exit();
+            }
+
+            $privateKeyIn = file_get_contents($file['tmp_name']);
 
             try{
-                $privateKey = $this->virgilCryptoWrapper->importKey(Crypto::PRIVATE_KEY, $privateKeyIn);
+                $this->virgilCryptoWrapper->importKey(Crypto::PRIVATE_KEY, $privateKeyIn);
             }
             catch (\Exception $e) {
                 if($e instanceof VirgilCryptoException) {
@@ -283,7 +291,11 @@ class FormHandler implements Core
             } catch (\Exception $e) {
                 if($e instanceof VirgilCryptoException) {
                     Logger::log("Invalid Encrypted Data or Recovery Private Key", 0);
-                } else {
+                }
+                elseif($e instanceof PluginPureException) {
+                    Logger::log("User (id={$e->getMessage()}) without encrypted record", 0);
+                }
+                else {
                     Logger::log($e->getMessage(), 0);
                 }
                 Redirector::toPageLog();
