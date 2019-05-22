@@ -19,11 +19,9 @@ use VirgilSecurityPure\Config\Crypto;
             <label class="virgil-pure-global-field-label" for="virgil-recovery-private-key">
                 <?= Crypto::RECOVERY_PRIVATE_KEY ?>
             </label>
-            <input id="virgil-recovery-private-key" class="virgil-pure-global-field-input"
-                   name="<?= Crypto::RECOVERY_PRIVATE_KEY ?>" required>
+            <input type="file" name="recovery_private_key" required>
         </div>
 
-        <input type="file" name="myFile">
         <input type="hidden" name="action" value="<?= Form::ACTION ?>">
         <input type="hidden" name="form_type" value="<?= Form::RECOVERY ?>">
         <?php wp_nonce_field('nonce', Form::NONCE) ?>
