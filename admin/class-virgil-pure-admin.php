@@ -7,7 +7,7 @@ use VirgilSecurityPure\Config\Option;
 use VirgilSecurityPure\Core\CoreFactory;
 use VirgilSecurityPure\Helpers\ConfigHelper;
 use VirgilSecurityPure\Helpers\Redirector;
-use VirgilSecurityPure\Helpers\StatusHelper;
+use VirgilSecurityPure\Helpers\InfoHelper;
 
 /**
  * Class Virgil_Pure_Admin
@@ -73,7 +73,7 @@ class Virgil_Pure_Admin
         if ($extLoaded) {
             add_submenu_page(Config::ACTION_PAGE, 'Log', 'Log', Config::CAPABILITY, Config::LOG_PAGE, array($this, 'virgil_pure_page_builder'));
             add_submenu_page(Config::ACTION_PAGE, 'FAQ', 'FAQ', Config::CAPABILITY, Config::FAQ_PAGE, array($this, 'virgil_pure_page_builder'));
-            if(StatusHelper::isAllUsersMigrated()&&ConfigHelper::isRecoveryKeyExists())
+            if(InfoHelper::isAllUsersMigrated()&&ConfigHelper::isRecoveryKeyExists())
                 add_submenu_page(Config::ACTION_PAGE, 'Recovery', 'Recovery', Config::CAPABILITY, Config::RECOVERY_PAGE,
                     array($this, 'virgil_pure_page_builder'));
             if($devMode)
@@ -146,7 +146,7 @@ class Virgil_Pure_Admin
     public function virgil_pure_check_password($check, $password, $hash, $user_id): bool
     {
         if ($this->coreFactory->buildCore('PluginValidator')->check() && $user_id) {
-            if (StatusHelper::isAllUsersMigrated()) {
+            if (InfoHelper::isAllUsersMigrated()) {
                 $passw0rdHash = $this->coreFactory->buildCore('passw0rdHash');
 
                 $salt = get_user_meta($user_id, Option::PARAMS)[0];

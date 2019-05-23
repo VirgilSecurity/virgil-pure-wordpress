@@ -45,7 +45,7 @@ use Virgil\PureKit\Exceptions\InputCredentialsCheckerException;
  * Class CredentialsChecker
  * @package VirgilSecurityPure\Helpers
  */
-class CredentialsChecker
+class CredentialsChecker implements Helper
 {
     /**
      * @var 

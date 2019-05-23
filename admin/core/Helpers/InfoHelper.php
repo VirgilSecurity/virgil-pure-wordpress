@@ -91,8 +91,8 @@ class InfoHelper
 
         $sql = <<<SQL
             SELECT count(u.id) as c
-            FROM wp_users u 
-            LEFT JOIN wp_usermeta um 
+            FROM "$wpdb->users" u 
+            LEFT JOIN "$wpdb->usermeta" um 
             ON u.id=um.user_id 
             WHERE um.meta_key = "$record"
 SQL;
@@ -107,6 +107,13 @@ SQL;
      */
     public static function getMigratedPercents(): float {
         return (float) (round(self::getMigrated()/self::getTotalUsers(), 2))*100;
+    }
+
+    /**
+     * @return bool
+     */
+    public static function isAllUsersMigrated() {
+        return self::getTotalUsers()==self::getMigrated();
     }
 
     /**
