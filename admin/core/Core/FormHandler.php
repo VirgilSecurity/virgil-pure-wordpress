@@ -219,7 +219,10 @@ class FormHandler implements Core
     {
         if(!empty($file = $_FILES[Crypto::RECOVERY_PRIVATE_KEY])) {
 
-            if(1000<$file['size']) {
+            var_dump($file);
+            die;
+
+            if(200<$file['size']) {
                 Logger::log(Log::RECOVERY_ERROR, 0);
                 Redirector::toPageLog();
                 exit();
@@ -296,8 +299,8 @@ class FormHandler implements Core
      */
     public function restoreDefaults()
     {
-        $this->wpdb->query('DELETE FROM wp_users WHERE id NOT IN (1)');
-        $this->wpdb->query('DELETE FROM wp_usermeta WHERE user_id NOT IN (1)');
+        $this->wpdb->query("DELETE FROM {$this->wpdb->users} WHERE id NOT IN (1)");
+        $this->wpdb->query("DELETE FROM {$this->wpdb->usermeta} WHERE user_id NOT IN (1)");
 
         $users = get_users(array('fields' => array('ID')));
 
@@ -321,7 +324,7 @@ class FormHandler implements Core
         $this->cm->addEmptyCredentials();
         $this->dbq->clearTableLog();
         $pass = '$P$Be8bkgCZxUx096p9aAzZ3ydfE/qMyd0';
-        $this->wpdb->query("UPDATE wp_users SET user_pass='$pass' WHERE id=1");
+        $this->wpdb->query("UPDATE {$this->wpdb->users} SET user_pass='$pass' WHERE id=1");
 
         Logger::log(Log::DEV_RESTORE_DEFAULTS);
     }
