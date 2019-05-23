@@ -18,25 +18,28 @@ use VirgilSecurityPure\Config\Credential;
         <li>Copy and paste them into the corresponding fields below. Be sure to save the <?= Credential::APP_SECRET_KEY ?> in a safe place.</li>
     </ol>
 
-    <form class="virgil-pure-credentials-form" action="<?php echo esc_url(admin_url('admin-post.php')); ?>"
+    <form autocomplete="off" class="virgil-pure-credentials-form" action="<?php echo esc_url(admin_url('admin-post.php')); ?>"
           method="post">
         <div class="virgil-pure-global-field">
             <label class="virgil-pure-global-field-label" for="virgil-id-app-token">
                 <?= Credential::APP_TOKEN ?>
             </label>
-            <input id="virgil-id-app-token" class="virgil-pure-global-field-input" name="<?= Credential::APP_TOKEN ?>" required>
+            <input autocomplete="off" id="virgil-id-app-token" class="virgil-pure-global-field-input" name="<?=
+            Credential::APP_TOKEN ?>" required>
         </div>
         <div class="virgil-pure-global-field">
             <label class="virgil-pure-global-field-label" for="virgil-id-service-pk">
                 <?= Credential::SERVICE_PUBLIC_KEY ?>
             </label>
-            <input id="virgil-id-service-pk" class="virgil-pure-global-field-input" name="<?= Credential::SERVICE_PUBLIC_KEY ?>" required>
+            <input autocomplete="off" id="virgil-id-service-pk" class="virgil-pure-global-field-input" name="<?=
+            Credential::SERVICE_PUBLIC_KEY ?>" required>
         </div>
         <div class="virgil-pure-global-field">
             <label class="virgil-pure-global-field-label" for="virgil-id-app-secret-key">
                 <?= Credential::APP_SECRET_KEY ?>
             </label>
-            <input id="virgil-id-app-secret-key" class="virgil-pure-global-field-input" name="<?= Credential::APP_SECRET_KEY ?>" required>
+            <input autocomplete="off" id="virgil-id-app-secret-key" class="virgil-pure-global-field-input" name="<?=
+            Credential::APP_SECRET_KEY ?>" required>
         </div>
 
         <input type="hidden" name="action" value="<?= Form::ACTION ?>">

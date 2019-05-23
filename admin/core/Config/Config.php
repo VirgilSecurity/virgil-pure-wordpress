@@ -68,7 +68,7 @@ class Config
 
     const PLUGIN_DB_LOG_TABLE = self::PLUGIN_NAME_UNDERSCORE.'_log';
 
-    const BACKGROUND_ACTION_MIGRATE = self::PLUGIN_NAME."_action_migrate";
+    const BACKGROUND_ACTION_MIGRATE = self::PLUGIN_NAME."_action_encrypt_and_migrate";
     const BACKGROUND_ACTION_UPDATE = self::PLUGIN_NAME."_action_update";
     const BACKGROUND_ACTION_ENCRYPT = self::PLUGIN_NAME."_action_encrypt";
     const BACKGROUND_ACTION_RECOVERY = self::PLUGIN_NAME."_action_recovery";

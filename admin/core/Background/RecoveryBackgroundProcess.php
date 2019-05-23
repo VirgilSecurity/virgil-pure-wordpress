@@ -87,7 +87,6 @@ class RecoveryBackgroundProcess extends BaseBackgroundProcess
      * @return bool|mixed
      */
     protected function task($data) {
-
         if($data) {
             $user = $data['user'];
             $id = $user->ID;

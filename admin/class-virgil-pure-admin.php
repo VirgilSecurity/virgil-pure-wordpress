@@ -211,10 +211,10 @@ class Virgil_Pure_Admin
 
             $updateBP = $this->coreFactory->buildBackgroundProcess('Update');
             $updateBP->setDep($this->protocol, $this->cm);
-        }
 
-        $recoveryBP = $this->coreFactory->buildBackgroundProcess('Recovery');
-        $recoveryBP->setDep($this->dbqh, $this->virgilCryptoWrapper, $this->cm);
+            $recoveryBP = $this->coreFactory->buildBackgroundProcess('Recovery');
+            $recoveryBP->setDep($this->dbqh, $this->virgilCryptoWrapper, $this->cm);
+        }
     }
 
     /**

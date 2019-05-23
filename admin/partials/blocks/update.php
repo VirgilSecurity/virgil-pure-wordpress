@@ -14,12 +14,13 @@ use VirgilSecurityPure\Config\Credential;
         update token and insert it into the field below. <a href="https://developer.virgilsecurity.com/docs/use-cases/v1/passwords-and-data-protection#update-user-record" target="_blank">Learn more about records
             rotation here</a></p>
 
-    <form class="virgil-pure-credentials-form" action="<?php echo esc_url(admin_url('admin-post.php')); ?>" method="post">
+    <form autocomplete="off" class="virgil-pure-credentials-form" action="<?php echo esc_url(admin_url('admin-post.php')); ?>" method="post">
         <div class="virgil-pure-global-field">
             <label class="virgil-pure-global-field-label" for="virgil-update-token">
                 <?= Credential::UPDATE_TOKEN ?>
             </label>
-            <input id="virgil-update-token" class="virgil-pure-global-field-input" name="<?= Credential::UPDATE_TOKEN ?>" required>
+            <input autocomplete="off" id="virgil-update-token" class="virgil-pure-global-field-input" name="<?=
+            Credential::UPDATE_TOKEN ?>" required>
         </div>
 
         <input type="hidden" name="action" value="<?= Form::ACTION ?>">

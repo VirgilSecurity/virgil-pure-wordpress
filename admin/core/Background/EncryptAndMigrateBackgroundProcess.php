@@ -39,6 +39,7 @@ namespace VirgilSecurityPure\Background;
 
 use Virgil\PureKit\Protocol\Protocol;
 use VirgilSecurityPure\Config\Config;
+use VirgilSecurityPure\Config\Crypto;
 use VirgilSecurityPure\Config\Log;
 use VirgilSecurityPure\Config\Option;
 use VirgilSecurityPure\Core\Logger;
@@ -70,14 +71,15 @@ class EncryptAndMigrateBackgroundProcess extends BaseBackgroundProcess
     /**
      * @var
      */
-    private $vcv;
+    private $vcw;
 
     /**
      * @var string
      */
     protected $action = Config::BACKGROUND_ACTION_MIGRATE;
 
-    public function setDep(Protocol $protocol, DBQueryHelper $dbqh, VirgilCryptoWrapper $vcw) {
+    public function setDep(Protocol $protocol, DBQueryHelper $dbqh, VirgilCryptoWrapper $vcw)
+    {
         $this->protocol = $protocol;
         $this->dbqh = $dbqh;
         $this->vcw = $vcw;
@@ -89,9 +91,16 @@ class EncryptAndMigrateBackgroundProcess extends BaseBackgroundProcess
      * @throws \GuzzleHttp\Exception\GuzzleException
      * @throws \Virgil\PureKit\Exceptions\ProtocolException
      */
-    protected function task( $user ) {
-        if(is_null($this->passw0rdHash))
+    protected function task($user)
+    {
+        if (is_null($this->passw0rdHash))
             $this->passw0rdHash = new passw0rdHash();
+
+        $pk = get_option(Option::RECOVERY_PUBLIC_KEY);
+
+        $virgilPublicKey = $this->vcw->importKey(Crypto::PUBLIC_KEY, $pk);
+
+        $encrypted = $this->vcw->encrypt($user->user_pass, $virgilPublicKey);
 
         $hash = $this->passw0rdHash->get($user->user_pass, 'hash');
         $params = $this->passw0rdHash->get($user->user_pass, 'params');
@@ -101,6 +110,7 @@ class EncryptAndMigrateBackgroundProcess extends BaseBackgroundProcess
 
         update_user_meta($user->ID, Option::RECORD, $record);
         update_user_meta($user->ID, Option::PARAMS, $params);
+        update_user_meta($user->ID, Option::ENCRYPTED, $encrypted);
 
         return false;
     }
@@ -108,18 +118,19 @@ class EncryptAndMigrateBackgroundProcess extends BaseBackgroundProcess
     /**
      *
      */
-    protected function complete() {
+    protected function complete()
+    {
 
-        if($this->is_queue_empty())
-        {
+        if ($this->is_queue_empty()) {
             update_option(Option::MIGRATE_FINISH, microtime(true));
 
-            $duration = round(get_option(Option::MIGRATE_FINISH)-get_option
+            $duration = round(get_option(Option::MIGRATE_FINISH) - get_option
                 (Option::MIGRATE_START), 2);
-            Logger::log( Log::FINISH_MIGRATION." (duration: $duration sec.)");
+            Logger::log(Log::FINISH_MIGRATION . " (duration: $duration sec.)");
 
             delete_option(Option::MIGRATE_START);
             delete_option(Option::MIGRATE_FINISH);
+            $this->dbqh->clearAllUsersPass();
         }
 
         parent::complete();
