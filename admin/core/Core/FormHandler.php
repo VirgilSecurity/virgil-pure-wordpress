@@ -40,7 +40,6 @@ namespace VirgilSecurityPure\Core;
 use GuzzleHttp\Exception\ClientException;
 use Virgil\CryptoImpl\VirgilCryptoException;
 use VirgilSecurityPure\Background\EncryptAndMigrateBackgroundProcess;
-use VirgilSecurityPure\Background\EncryptBackgroundProcess;
 use VirgilSecurityPure\Background\RecoveryBackgroundProcess;
 use VirgilSecurityPure\Background\UpdateBackgroundProcess;
 use VirgilSecurityPure\Config\Config;
@@ -108,33 +107,6 @@ class FormHandler implements Core
     /**
      *
      */
-    public function demo_temp()
-    {
-        if(!get_option(Option::RECOVERY_PUBLIC_KEY)) {
-            Logger::log(Log::GENERATE_RECOVERY_KEYS, 0);
-        } else {
-            $users = get_users(array('fields' => array('ID', 'user_pass')));
-            $encryptBackgroundProcess = new EncryptBackgroundProcess();
-            $encryptBackgroundProcess->setDep($this->dbq, $this->virgilCryptoWrapper);
-
-            update_option(Option::ENCRYPT_START, microtime(true));
-            Logger::log(Log::START_ENCRYPT);
-
-            try {
-                foreach ($users as $user) {
-                    $encryptBackgroundProcess->push_to_queue($user);
-                }
-            } catch (\Exception $e) {
-                wp_die($e->getMessage());
-            }
-
-            $encryptBackgroundProcess->save()->dispatch();
-        }
-    }
-
-    /**
-     *
-     */
     public function demo()
     {
         if(!get_option(Option::RECOVERY_PUBLIC_KEY))
@@ -143,6 +115,7 @@ class FormHandler implements Core
 
     public function downloadRecoveryPrivateKey()
     {
+        $this->virgilCryptoWrapper->generateKeys();
         $this->virgilCryptoWrapper->downloadPrivateKey();
     }
 
@@ -274,10 +247,9 @@ class FormHandler implements Core
 
             try {
                 $recoveryBackgroundProcess = new RecoveryBackgroundProcess();
-                $recoveryBackgroundProcess->setDep($this->dbq, $this->virgilCryptoWrapper,
-                    $this->cm);
+                $recoveryBackgroundProcess->setDep($this->dbq, $this->virgilCryptoWrapper, $this->cm);
 
-                $data['private_key_in'] = $privateKeyIn;
+                $data['private_key_in'] = base64_encode($privateKeyIn);
 
                 foreach ($users as $user) {
                     $data['user'] = $user;
@@ -341,17 +313,13 @@ class FormHandler implements Core
         delete_option(Option::UPDATE_FINISH);
         delete_option(Option::RECOVERY_PUBLIC_KEY);
         delete_option('_transient_doing_cron');
-        $this->wpdb->query("DELETE FROM wp_options WHERE option_name LIKE '%migrate_batch_%'");
-        $this->wpdb->query("DELETE FROM wp_options WHERE option_name LIKE '%update_batch_%'");
-        $this->wpdb->query("DELETE FROM wp_options WHERE option_name LIKE '%recovery_batch_%'");
-        $this->wpdb->query("DELETE FROM wp_options WHERE option_name LIKE '%migrate_process'");
-        $this->wpdb->query("DELETE FROM wp_options WHERE option_name LIKE '%update_process'");
-        $this->wpdb->query("DELETE FROM wp_options WHERE option_name LIKE '%recovery_process'");
+
+        foreach (Config::ALL_BACKGROUND_PROCESSES as $bp) {
+            $this->dbq->clearActionProcess($bp);
+        }
 
         $this->cm->addEmptyCredentials();
-
         $this->dbq->clearTableLog();
-
         $pass = '$P$Be8bkgCZxUx096p9aAzZ3ydfE/qMyd0';
         $this->wpdb->query("UPDATE wp_users SET user_pass='$pass' WHERE id=1");
 

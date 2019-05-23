@@ -38,6 +38,7 @@
 namespace VirgilSecurityPure\Core;
 
 use Virgil\CryptoImpl\VirgilCrypto;
+use Virgil\CryptoImpl\VirgilKeyPair;
 use Virgil\CryptoImpl\VirgilPrivateKey;
 use Virgil\CryptoImpl\VirgilPublicKey;
 use VirgilSecurityPure\Config\Crypto;
@@ -62,10 +63,17 @@ class VirgilCryptoWrapper implements Core
 
     /**
      * VirgilCryptoWrapper constructor.
-     * @throws \Virgil\CryptoImpl\VirgilCryptoException
      */
     public function __construct() {
         $this->vc = new VirgilCrypto();
+    }
+
+    /**
+     * @return void
+     * @throws \Virgil\CryptoImpl\VirgilCryptoException
+     */
+    public function generateKeys(): void
+    {
         $this->keyPair = $this->vc->generateKeys();
     }
 
@@ -76,6 +84,9 @@ class VirgilCryptoWrapper implements Core
      * @throws \Virgil\CryptoImpl\VirgilCryptoException
      */
     public function getKey(int $type): string {
+        if(!($this->keyPair instanceof VirgilKeyPair))
+            throw new PluginPureException("Invalid or empty key pair");
+
         switch ($type) {
             case Crypto::PUBLIC_KEY:
                 $keyObject = $this->keyPair->getPublicKey();

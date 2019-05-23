@@ -61,6 +61,6 @@ class Log
     const INVALID_PROOF = "Invalid ".Credential::SERVICE_PUBLIC_KEY." or ".
     Credential::APP_SECRET_KEY;
 
-    const GENERATE_RECOVERY_KEYS = "Generate Recovery Key";
+    const GENERATE_RECOVERY_KEYS = "Generate Recovery Keys";
     const RECOVERY_ERROR = "Invalid ".Crypto::RECOVERY_PRIVATE_KEY;
 }

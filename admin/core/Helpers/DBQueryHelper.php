@@ -143,6 +143,16 @@ class DBQueryHelper implements Core
     }
 
     /**
+     * @param string $name
+     */
+    public function clearActionProcess(string $name)
+    {
+        $process = '%'.Config::PLUGIN_NAME.'_action_'.$name.'_process%';
+        $batch = '%'.Config::PLUGIN_NAME.'_action_'.$name.'_batch%';
+        $this->wpdb->query("DELETE FROM {$this->wpdb->options} WHERE option_name LIKE \"$process\" AND option_name LIKE \"$batch\"");
+    }
+
+    /**
      *
      */
     public function clearPureParams()
