@@ -13,15 +13,14 @@ use VirgilSecurityPure\Config\Config;
 
              <p class="virgil-pure-demo-desc">
              You’ll need to generate a recovery key so that the password hashes that are currently in your database
-                 can be recovered if you ever need to deactivate the Pure plugin. Your recovery key will encrypt the password hashes, and will store the encrypted values in a new table in your database.
+                 can be recovered if you ever need to deactivate the Pure plugin. Your recovery key will encrypt the
+                 password hashes, and will store the encrypted values in a (wp_usermeta) table in your database.
              <br><br>
 
              The recovery key utilizes a public and private key pair. The public key will be stored in your database
                  and the private key must be stored by you securely on another external device. <a class="virgil-pure-demo-desc" href="<?= admin_url
                  ("/admin.php?page=" . Config::FAQ_PAGE) ?>">Please read our FAQ section</a> for best practices and more
                  information.
-             <br><br>
-             When you need to deactivate the Pure plugin, you can go through the Recovery process via the Wordpress dashboard and use the recovery key to restore the original password hashes.
          </p>
                 <form action="<?php echo esc_url(admin_url('admin-post.php')); ?>" method="post">
                     <input type="hidden" name="action" value="<?= Form::ACTION ?>">
