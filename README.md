@@ -106,13 +106,19 @@ To start working with the plugin, at the plugin tab at your WordPress dashboard 
 - copy your Pure application's credentials such as: `APP_TOKEN`, `APP_SECRET_KEY`, `SERVICE_PUBLIC_KEY`
 - paste them into the corresponding fields
 
+### Generate Recovery Keys
+
+You’ll need to generate a recovery key so that the password hashes that are currently in your database can be 
+recovered if you ever need to deactivate the Pure plugin. Your recovery key will encrypt the password hashes, and 
+will store the encrypted values in a (wp_usermeta) table in your database. 
+
+The recovery key utilizes a public and private key pair. The public key will be stored in your database and the private key must be stored by you securely on another external device. Please read our FAQ section for best practices and more information. 
+
 ### Migration
 
 Migration is a phase during which the plugin requests cryptographic data from Virgil server to associate users' 
 passwords (user_pass) with cryptographic enrollments provided by the server. Then enrollment records are created and 
 stored in your database (wp_usermeta) instead of users' passwords.
-
-> Note! The plugin removes the default passwords hashes ONLY when you turn off DEMO mode.
 
 Simply click the "Start migration" button to start migration.
 
@@ -125,19 +131,10 @@ ROTATION PROCESS", then “SHOW UPDATE TOKEN” button to get the `UPDATE_TOKEN`
 
 ### Recovery (optional)
 
-Before you switch off Demo Mode, you’ll need to generate a recovery key so that the password hashes that are currently in your database can be recovered if you ever need to deactivate the Pure plugin. Your recovery key will encrypt the password hashes, and will store the encrypted values in a new table in your database. 
-
-The recovery key utilizes a public and private key pair. The public key will be stored in your database and the private key must be stored by you securely on another external device. [Please read our FAQ section](#faq) for best practices and more information. 
-
-When you need to deactivate the Pure plugin, you can go through the Recovery process via the Wordpress dashboard and use the recovery key to restore the original password hashes.
+When you need to deactivate the Pure plugin, you can go through the Recovery process via the Wordpress dashboard and 
+use the recovery key to restore the original password hashes.
 
 ## F.A.Q.
-
-#### - What is Demo mode?
-
-Demo mode is a mode in which no data in your database will be altered. To demonstrate how Virgil Pure works, a new column will be created to hold the newly protected password data. When you're ready to go live, your password hashes will be translated into cryptographically protected data.
-
-It is required to migrate all users before switching demo mod off.
 
 #### - Do users have to change their passwords if the database has been compromised? 
 If a database has been stolen, users do not need to change their original passwords. However, you need to rotate all user records in your database. This will use cryptography to disconnect the compromised Pure records from the original passwords, leaving any unauthorized party empty handed.

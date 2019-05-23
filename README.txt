@@ -49,12 +49,6 @@ Or from the official GitHub repository:
 
 == Frequently Asked Questions ==
 
-= What is Demo mode? =
-
-Demo mode is a mode in which no data in your database will be altered. To demonstrate how Virgil Pure works, a new column will be created to hold the newly protected password data. When you're ready to go live, your password hashes will be translated into cryptographically protected data.
-
-It is required to migrate all users before switching demo mod off.
-
 = Do users have to change their passwords if the database has been compromised? =
 
 If a database has been stolen, users do not need to change their original passwords. However, you need to rotate all user records in your database. This will use cryptography to disconnect the compromised Pure records from the original passwords, leaving any unauthorized party empty handed.
@@ -74,8 +68,10 @@ There is no way to restore the APP_SECRET_KEY. The database becomes inaccessible
 == Changelog ==
 
 = 0.2.0 =
-* Add recovery feature
-* Minor fixes
+* Add recovery feature (Warning! If you disabled the demo mode in earlier releases, the recovery feature will be
+unavailable)
+* Remove demo-mode
+* Minor fixes and optimization
 
 = 0.1.2 =
 * Fix activation error
