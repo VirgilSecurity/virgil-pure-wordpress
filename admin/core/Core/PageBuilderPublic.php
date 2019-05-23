@@ -111,6 +111,9 @@ class PageBuilderPublic extends PageBuilderProtected
      */
     public function recovery(): bool
     {
+        if($this->disabled())
+            return false;
+
         return $this->isRecoveryPage();
     }
 

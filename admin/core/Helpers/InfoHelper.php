@@ -91,8 +91,8 @@ class InfoHelper
 
         $sql = <<<SQL
             SELECT count(u.id) as c
-            FROM "$wpdb->users" u 
-            LEFT JOIN "$wpdb->usermeta" um 
+            FROM $wpdb->users u 
+            LEFT JOIN $wpdb->usermeta um 
             ON u.id=um.user_id 
             WHERE um.meta_key = "$record"
 SQL;
