@@ -90,7 +90,7 @@ class RecoveryBackgroundProcess extends BaseBackgroundProcess
         if($data) {
             $user = $data['user'];
             $id = $user->ID;
-            $privateKeyIn = base64_decode($data['private_key_in']);
+            $privateKeyIn = $data['private_key_in'];
             $encryptedIn = get_user_meta($id, Option::ENCRYPTED)[0];
             $privateKey = $this->vcw->importKey(Crypto::PRIVATE_KEY, $privateKeyIn);
             try {

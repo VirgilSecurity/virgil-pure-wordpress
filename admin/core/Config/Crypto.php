@@ -47,5 +47,5 @@ class Crypto
     const PRIVATE_KEY_PASSWORD = "wordpress_plugin";
 
     const RECOVERY_PRIVATE_KEY = 'Recovery_Private_Key';
-    const RECOVERY_PRIVATE_KEY_FILE = '_recovery_private_key.bin';
+    const RECOVERY_PRIVATE_KEY_FILE = '_recovery_private_key.txt';
 }

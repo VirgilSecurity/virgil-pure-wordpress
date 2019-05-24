@@ -6,6 +6,15 @@
         passwords. However, you need to
         rotate all user records in your database. This will use cryptography to disconnect the compromised Pure records from the original passwords, leaving any unauthorized party empty handed.</p>
     <hr>
+    <p class="virgil-pure-global-faq-question">How does the Recovery Key work?</p>
+    <p class="virgil-pure-global-faq-answer">Recovery Key is a key pair that allows you to recover users password
+        hashes if you ever need to deactivate the Pure plugin. The Recovery Key encrypts the password hashes, and
+        stores the encrypted values into the wp_usermeta table in your database.
+        <br>
+        The Recovery Key utilizes a public and private key pair. The public key is stored in the wp_option table and
+        the Private Key must be stored by you securely on an external device.
+    </p>
+    <hr>
     <p class="virgil-pure-global-faq-question">How much does it cost?</p>
     <p class="virgil-pure-global-faq-answer">Pure is a FREE toolkit. All libraries are open source and can be found on GitHub, where they are available for free to any user.</p>
     <hr>

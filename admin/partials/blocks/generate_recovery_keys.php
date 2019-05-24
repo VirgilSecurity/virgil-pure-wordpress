@@ -13,14 +13,10 @@ use VirgilSecurityPure\Config\Config;
 
              <p class="virgil-pure-demo-desc">
              You’ll need to generate a recovery key so that the password hashes that are currently in your database
-                 can be recovered if you ever need to deactivate the Pure plugin. Your recovery key will encrypt the
-                 password hashes, and will store the encrypted values in a (wp_usermeta) table in your database.
-             <br><br>
-
-             The recovery key utilizes a public and private key pair. The public key will be stored in your database
-                 and the private key must be stored by you securely on another external device. <a class="virgil-pure-demo-desc" href="<?= admin_url
-                 ("/admin.php?page=" . Config::FAQ_PAGE) ?>">Please read our FAQ section</a> for best practices and more
-                 information.
+                 can be recovered if you ever need to deactivate the Pure plugin. Please read more in the <a
+                         class="virgil-pure-demo-desc" href="<?= admin_url ("/admin.php?page=" . Config::FAQ_PAGE) ?>">FAQ section</a>.
+                 <br><br>
+                 Please securely store your Recovery Key on an external device.
          </p>
                 <form action="<?php echo esc_url(admin_url('admin-post.php')); ?>" method="post">
                     <input type="hidden" name="action" value="<?= Form::ACTION ?>">
@@ -37,7 +33,7 @@ use VirgilSecurityPure\Config\Config;
             <label for="phe-agree-checkbox">
                 <input id="phe-agree-checkbox" type="checkbox" onchange="document
                 .getElementById('submitNextStep').disabled = !this.checked;">
-                <span>I'm aware that if I lose the Recovery Private Key, I will not  be able to recover encrypted
+                <span>I'm aware that if I lose the Recovery Key, I will not  be able to recover encrypted
                     records</span>
             </label>
 

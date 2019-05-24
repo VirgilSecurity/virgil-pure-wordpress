@@ -53,6 +53,14 @@ Or from the official GitHub repository:
 
 If a database has been stolen, users do not need to change their original passwords. However, you need to rotate all user records in your database. This will use cryptography to disconnect the compromised Pure records from the original passwords, leaving any unauthorized party empty handed.
 
+= How does the Recovery Key work? =
+
+Recovery Key is a key pair that allows you to recover users password hashes if you ever need to deactivate the Pure
+plugin. The Recovery Key encrypts the password hashes, and stores the encrypted values into the wp_usermeta table in your database.
+
+The Recovery Key utilizes a public and private key pair. The public key is stored in the wp_option table and
+the Private Key must be stored by you securely on an external device.
+
 = How much does it cost? =
 
 Pure is a FREE toolkit. All libraries are open source and can be found on GitHub, where they are available for free to any user.
@@ -68,9 +76,9 @@ There is no way to restore the APP_SECRET_KEY. The database becomes inaccessible
 == Changelog ==
 
 = 0.2.0 =
-* Add recovery feature (Warning! If you disabled the demo mode in earlier releases, the recovery feature will be
-unavailable)
-* Remove demo-mode
+* Add recovery feature (Warning! If you switch off Demo Mode in the 0.1.x releases, the recovery feature will not be
+available for you)
+* Remove Demo Mode
 * Minor fixes and optimization
 
 = 0.1.2 =

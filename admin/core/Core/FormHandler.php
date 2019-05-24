@@ -219,10 +219,7 @@ class FormHandler implements Core
     {
         if(!empty($file = $_FILES[Crypto::RECOVERY_PRIVATE_KEY])) {
 
-            var_dump($file);
-            die;
-
-            if(200<$file['size']) {
+            if(250<$file['size']) {
                 Logger::log(Log::RECOVERY_ERROR, 0);
                 Redirector::toPageLog();
                 exit();
@@ -252,7 +249,7 @@ class FormHandler implements Core
                 $recoveryBackgroundProcess = new RecoveryBackgroundProcess();
                 $recoveryBackgroundProcess->setDep($this->dbq, $this->virgilCryptoWrapper, $this->cm);
 
-                $data['private_key_in'] = base64_encode($privateKeyIn);
+                $data['private_key_in'] = $privateKeyIn;
 
                 foreach ($users as $user) {
                     $data['user'] = $user;

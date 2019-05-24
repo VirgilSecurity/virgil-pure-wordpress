@@ -8,9 +8,8 @@ use VirgilSecurityPure\Config\Crypto;
     <hr class="virgil-pure-global-line"/>
     <p class="virgil-pure-rotate-desc">
         If you need to deactivate the Pure plugin, you can go through this Recovery process using your previously
-        generated recovery key to restore the original password hashes. This will decrypt the password hashes, replace
-        the Pure data with the decrypted will decrypt the password hashes, them back in your password database and
-        remove the PHE data.
+        generated recovery key to restore the original password hashes. This will decrypt the encrypted password
+        hashes, delete the Pure records and back original password hashes in your wp_users table.
     </p>
 
     <form class="virgil-pure-credentials-form" action="<?php echo esc_url(admin_url('admin-post.php')); ?>"
