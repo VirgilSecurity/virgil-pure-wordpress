@@ -219,7 +219,7 @@ class FormHandler implements Core
     {
         if(!empty($file = $_FILES[Crypto::RECOVERY_PRIVATE_KEY])) {
 
-            if(250<$file['size']) {
+            if(350<$file['size']) {
                 Logger::log(Log::RECOVERY_ERROR, 0);
                 Redirector::toPageLog();
                 exit();

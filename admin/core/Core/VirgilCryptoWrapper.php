@@ -90,18 +90,17 @@ class VirgilCryptoWrapper implements Core
         switch ($type) {
             case Crypto::PUBLIC_KEY:
                 $keyObject = $this->keyPair->getPublicKey();
-                $keyData = $this->vc->exportPublicKey($keyObject);
+                $res = $this->vc->exportPublicKey($keyObject);
                 break;
             case Crypto::PRIVATE_KEY:
                 $keyObject = $this->keyPair->getPrivateKey();
-                $keyData = $this->vc->exportPrivateKey($keyObject, Crypto::PRIVATE_KEY_PASSWORD);
+                $res = $this->vc->exportPrivateKey($keyObject, Crypto::PRIVATE_KEY_PASSWORD);
                 break;
             default:
                 throw new PluginPureException('Invalid key type (Get key)');
                 break;
         }
 
-        $res = base64_encode($keyData);
         return $res;
     }
 
@@ -115,12 +114,15 @@ class VirgilCryptoWrapper implements Core
         $pk = $this->getKey(Crypto::PUBLIC_KEY);
         $prk = $this->getKey(Crypto::PRIVATE_KEY);
 
+        $pemPrK = \VirgilKeyPair::privateKeyToPEM($prk, Crypto::PRIVATE_KEY_PASSWORD);
+        $pemPK = \VirgilKeyPair::publicKeyToPEM($pk);
+
         header('Content-Type: application/octet-stream');
         header("Content-Transfer-Encoding: Binary");
         header('Content-type: text/plain');
         header("Content-disposition: attachment; filename=$file");
-        echo $prk;
-        update_option(Option::RECOVERY_PUBLIC_KEY, $pk);
+        echo $pemPrK;
+        update_option(Option::RECOVERY_PUBLIC_KEY, $pemPK);
         Logger::log($file." downloaded");
         exit;
     }
@@ -136,11 +138,11 @@ class VirgilCryptoWrapper implements Core
     {
         switch ($type) {
             case Crypto::PUBLIC_KEY:
-                $keyData = base64_decode($key);
+                $keyData = \VirgilKeyPair::publicKeyToDER($key);
                 $keyObject = $this->vc->importPublicKey($keyData);
                 break;
             case Crypto::PRIVATE_KEY:
-                $keyData = base64_decode($key);
+                $keyData = \VirgilKeyPair::privateKeyToDER($key, Crypto::PRIVATE_KEY_PASSWORD);
                 $keyObject = $this->vc->importPrivateKey($keyData, Crypto::PRIVATE_KEY_PASSWORD);
                 break;
             default:
