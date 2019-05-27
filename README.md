@@ -129,6 +129,8 @@ This function allows you to use a special `UPDATE_TOKEN` to update all of the en
 Navigate to your Pure application panel at [Virgil Dashboard](https://dashboard.virgilsecurity.com/), press "BEGIN 
 ROTATION PROCESS", then “SHOW UPDATE TOKEN” button to get the `UPDATE_TOKEN`. Insert the `UPDATE_TOKEN` into the field at the Virgil Pure plugin tab.
 
+This can be used when a database is known to be breached. For security reasons, we recommend proactively updating records every one week.
+
 ### Recovery (optional)
 
 When you need to deactivate the Pure plugin, you can go through the Recovery process via the Wordpress dashboard and 
