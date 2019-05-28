@@ -35,56 +35,17 @@
  * Lead Maintainer: Virgil Security Inc. <support@virgilsecurity.com>
  */
 
-namespace VirgilSecurityPure\Core;
+namespace VirgilSecurityPure\Config;
 
-use Virgil\PureKit\Protocol\Protocol;
-use VirgilSecurityPure\Config\Option;
-use WP_User;
-
-/**
- * Class WPPasswordEnroller
- * @package VirgilSecurityPure\Core
- */
-class WPPasswordEnroller implements Core
+class Crypto
 {
-    /**
-     * @var Protocol
-     */
-    private $protocol;
+    const ALL = [self::PUBLIC_KEY, self::PRIVATE_KEY];
 
-    /**
-     * @var passw0rdHash
-     */
-    private $passw0rdHash;
+    const PUBLIC_KEY = 1;
+    const PRIVATE_KEY = 2;
 
+    const PRIVATE_KEY_PASSWORD = "wordpress_plugin";
 
-    /**
-     * @param Protocol $protocol
-     * @param passw0rdHash $passw0rdHash
-     */
-    public function setDep(Protocol $protocol, passw0rdHash $passw0rdHash) {
-        $this->protocol = $protocol;
-        $this->passw0rdHash = $passw0rdHash;
-    }
-
-    /**
-     * @param WP_User $user
-     * @param bool $clearUserPass
-     * @return bool
-     * @throws \GuzzleHttp\Exception\GuzzleException
-     * @throws \Virgil\PureKit\Exceptions\ProtocolException
-     */
-    public function enroll(WP_User $user, bool $clearUserPass = false): bool
-    {
-        $hash = $this->passw0rdHash->get($user->user_pass, 'hash');
-        $params = $this->passw0rdHash->get($user->user_pass, 'params');
-
-        $enrollment = $this->protocol->enrollAccount($hash);
-        $record = base64_encode($enrollment[0]);
-
-        update_user_meta($user->ID, Option::RECORD, $record);
-        update_user_meta($user->ID, Option::PARAMS, $params);
-
-        return true;
-    }
+    const RECOVERY_PRIVATE_KEY = 'Recovery_Private_Key';
+    const RECOVERY_PRIVATE_KEY_FILE = '_recovery_private_key.pem';
 }

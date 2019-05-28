@@ -37,54 +37,99 @@
 
 namespace VirgilSecurityPure\Core;
 
-use Virgil\PureKit\Protocol\Protocol;
+use VirgilSecurityPure\Config\Config;
 use VirgilSecurityPure\Config\Option;
-use WP_User;
 
 /**
- * Class WPPasswordEnroller
+ * Class PageBuilder
  * @package VirgilSecurityPure\Core
  */
-class WPPasswordEnroller implements Core
+class PageBuilderPublic extends PageBuilderProtected
 {
     /**
-     * @var Protocol
+     * @return bool
      */
-    private $protocol;
-
-    /**
-     * @var passw0rdHash
-     */
-    private $passw0rdHash;
-
-
-    /**
-     * @param Protocol $protocol
-     * @param passw0rdHash $passw0rdHash
-     */
-    public function setDep(Protocol $protocol, passw0rdHash $passw0rdHash) {
-        $this->protocol = $protocol;
-        $this->passw0rdHash = $passw0rdHash;
+    public function disabled(): bool
+    {
+        return !extension_loaded(Config::EXTENSION_VSCE_PHE_PHP)||!extension_loaded(Config::EXTENSION_VIRGIL_CRYPTO_PHP);
     }
 
     /**
-     * @param WP_User $user
-     * @param bool $clearUserPass
      * @return bool
-     * @throws \GuzzleHttp\Exception\GuzzleException
-     * @throws \Virgil\PureKit\Exceptions\ProtocolException
      */
-    public function enroll(WP_User $user, bool $clearUserPass = false): bool
+    public function credentials(): bool
     {
-        $hash = $this->passw0rdHash->get($user->user_pass, 'hash');
-        $params = $this->passw0rdHash->get($user->user_pass, 'params');
+        if($this->disabled()||!$this->isRecoveryPublicKeyExists())
+            return false;
 
-        $enrollment = $this->protocol->enrollAccount($hash);
-        $record = base64_encode($enrollment[0]);
+        return (!$this->isCredentialsSet()&&$this->isMainPage());
+    }
 
-        update_user_meta($user->ID, Option::RECORD, $record);
-        update_user_meta($user->ID, Option::PARAMS, $params);
+    /**
+     * @return bool
+     */
+    public function migrate(): bool
+    {
+        if($this->disabled()||!$this->isRecoveryPublicKeyExists())
+            return false;
 
-        return true;
+        return ($this->isCredentialsSet()&&$this->isMainPage()&&!$this->isAllUsersMigrated());
+    }
+
+    /**
+     * @return bool
+     */
+    public function update(): bool
+    {
+        if($this->disabled()||!$this->isRecoveryPublicKeyExists())
+            return false;
+
+        return ($this->isCredentialsSet()&&$this->isMainPage()&&$this->isAllUsersMigrated());
+    }
+
+    /**
+     * @return bool
+     */
+    public function log(): bool
+    {
+        if($this->disabled())
+            return false;
+
+        return $this->isLogPage();
+    }
+
+    /**
+     * @return bool
+     */
+    public function faq(): bool
+    {
+        return $this->isFAQPage();
+    }
+
+    /**
+     * @return bool
+     */
+    public function recovery(): bool
+    {
+        if($this->disabled())
+            return false;
+
+        return $this->isRecoveryPage();
+    }
+
+    /**
+     * @return bool
+     */
+    public function generate_recovery_keys(): bool
+    {
+        return !$this->isRecoveryPublicKeyExists()&&(!$this->isFAQPage()&&!$this->isLogPage());
+    }
+
+    /**
+     * @return bool
+     */
+    public function info(): bool
+    {
+        return ($this->isMainPage()||$this->disabled())&&!$this->generate_recovery_keys();
     }
 }

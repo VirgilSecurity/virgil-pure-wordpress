@@ -35,56 +35,10 @@
  * Lead Maintainer: Virgil Security Inc. <support@virgilsecurity.com>
  */
 
-namespace VirgilSecurityPure\Core;
+namespace VirgilSecurityPure\Helpers;
 
-use Virgil\PureKit\Protocol\Protocol;
-use VirgilSecurityPure\Config\Option;
-use WP_User;
 
-/**
- * Class WPPasswordEnroller
- * @package VirgilSecurityPure\Core
- */
-class WPPasswordEnroller implements Core
+interface Helper
 {
-    /**
-     * @var Protocol
-     */
-    private $protocol;
 
-    /**
-     * @var passw0rdHash
-     */
-    private $passw0rdHash;
-
-
-    /**
-     * @param Protocol $protocol
-     * @param passw0rdHash $passw0rdHash
-     */
-    public function setDep(Protocol $protocol, passw0rdHash $passw0rdHash) {
-        $this->protocol = $protocol;
-        $this->passw0rdHash = $passw0rdHash;
-    }
-
-    /**
-     * @param WP_User $user
-     * @param bool $clearUserPass
-     * @return bool
-     * @throws \GuzzleHttp\Exception\GuzzleException
-     * @throws \Virgil\PureKit\Exceptions\ProtocolException
-     */
-    public function enroll(WP_User $user, bool $clearUserPass = false): bool
-    {
-        $hash = $this->passw0rdHash->get($user->user_pass, 'hash');
-        $params = $this->passw0rdHash->get($user->user_pass, 'params');
-
-        $enrollment = $this->protocol->enrollAccount($hash);
-        $record = base64_encode($enrollment[0]);
-
-        update_user_meta($user->ID, Option::RECORD, $record);
-        update_user_meta($user->ID, Option::PARAMS, $params);
-
-        return true;
-    }
 }

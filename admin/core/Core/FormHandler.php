@@ -38,7 +38,9 @@
 namespace VirgilSecurityPure\Core;
 
 use GuzzleHttp\Exception\ClientException;
-use VirgilSecurityPure\Background\MigrateBackgroundProcess;
+use Virgil\CryptoImpl\VirgilCryptoException;
+use VirgilSecurityPure\Background\EncryptAndMigrateBackgroundProcess;
+use VirgilSecurityPure\Background\RecoveryBackgroundProcess;
 use VirgilSecurityPure\Background\UpdateBackgroundProcess;
 use VirgilSecurityPure\Config\Config;
 use VirgilSecurityPure\Config\Option;
@@ -46,12 +48,13 @@ use VirgilSecurityPure\Config\Credential;
 use VirgilSecurityPure\Config\Log;
 use VirgilSecurityPure\Helpers\DBQueryHelper;
 use VirgilSecurityPure\Helpers\Redirector;
+use VirgilSecurityPure\Config\Crypto;
 
 /**
  * Class FormHandler
  * @package VirgilSecurityPure\Core
  */
-class FormHandler
+class FormHandler implements Core
 {
     /**
      * @var CredentialsManager
@@ -74,18 +77,31 @@ class FormHandler
     private $coreProtocol;
 
     /**
-     * FormHandler constructor.
-     * @param CoreProtocol $coreProtocol
+     * @var VirgilCryptoWrapper
      */
-    public function __construct(CoreProtocol $coreProtocol)
+    private $virgilCryptoWrapper;
+
+    /**
+     * FormHandler constructor.
+     */
+    public function __construct()
     {
         global $wpdb;
         $this->wpdb = $wpdb;
+    }
 
-        $this->cm = new CredentialsManager();
-        $this->dbq = new DBQueryHelper();
-
+    /**
+     * @param CoreProtocol $coreProtocol
+     * @param VirgilCryptoWrapper $virgilCryptoWrapper
+     * @param CredentialsManager $credentialsManager
+     * @param DBQueryHelper $DBQueryHelper
+     */
+    public function setDep(CoreProtocol $coreProtocol, VirgilCryptoWrapper $virgilCryptoWrapper, CredentialsManager
+    $credentialsManager, DBQueryHelper $DBQueryHelper) {
         $this->coreProtocol = $coreProtocol;
+        $this->virgilCryptoWrapper = $virgilCryptoWrapper;
+        $this->cm = $credentialsManager;
+        $this->dbq = $DBQueryHelper;
     }
 
     /**
@@ -93,9 +109,14 @@ class FormHandler
      */
     public function demo()
     {
-        update_option(Option::DEMO_MODE, 0);
-        $this->dbq->clearAllUsersPass();
-        Logger::log(Log::DEMO_MODE_OFF);
+        if(!get_option(Option::RECOVERY_PUBLIC_KEY))
+            Logger::log(Log::GENERATE_RECOVERY_KEYS, 0);
+    }
+
+    public function downloadRecoveryPrivateKey()
+    {
+        $this->virgilCryptoWrapper->generateKeys();
+        $this->virgilCryptoWrapper->downloadPrivateKey();
     }
 
     /**
@@ -138,7 +159,8 @@ class FormHandler
     {
         $users = get_users(array('fields' => array('ID', 'user_pass')));
 
-        $migrateBackgroundProcess = new MigrateBackgroundProcess($this->coreProtocol->init());
+        $migrateBackgroundProcess = new EncryptAndMigrateBackgroundProcess();
+        $migrateBackgroundProcess->setDep($this->coreProtocol->init(), $this->dbq, $this->virgilCryptoWrapper);
 
         update_option(Option::MIGRATE_START, microtime(true));
 
@@ -172,7 +194,8 @@ class FormHandler
             Logger::log(Log::START_UPDATE);
 
             try {
-                $updateBackgroundProcess = new UpdateBackgroundProcess($this->coreProtocol->init());
+                $updateBackgroundProcess = new UpdateBackgroundProcess();
+                $updateBackgroundProcess->setDep($this->coreProtocol->init(), $this->cm);
 
                 foreach ($users as $user) {
                     $updateBackgroundProcess->push_to_queue( $user );
@@ -186,6 +209,69 @@ class FormHandler
         }
         else {
             wp_die("Empty ".Credential::UPDATE_TOKEN);
+        }
+    }
+
+    /**
+     * 
+     */
+    public function recovery()
+    {
+        if(!empty($file = $_FILES[Crypto::RECOVERY_PRIVATE_KEY])) {
+
+            if(350<$file['size']) {
+                Logger::log(Log::RECOVERY_ERROR, 0);
+                Redirector::toPageLog();
+                exit();
+            }
+
+            $privateKeyIn = file_get_contents($file['tmp_name']);
+
+            try{
+                $this->virgilCryptoWrapper->importKey(Crypto::PRIVATE_KEY, $privateKeyIn);
+            }
+            catch (\Exception $e) {
+                if($e instanceof VirgilCryptoException) {
+                    Logger::log("Invalid ".Crypto::RECOVERY_PRIVATE_KEY, 0);
+                } else {
+                    Logger::log($e->getMessage(), 0);
+                }
+
+                Redirector::toPageLog();
+                exit();
+            }
+
+            update_option(Option::RECOVERY_START, microtime(true));
+            Logger::log(Log::START_RECOVERY);
+            $users = get_users(array('fields' => array('ID')));
+
+            try {
+                $recoveryBackgroundProcess = new RecoveryBackgroundProcess();
+                $recoveryBackgroundProcess->setDep($this->dbq, $this->virgilCryptoWrapper, $this->cm);
+
+                $data['private_key_in'] = $privateKeyIn;
+
+                foreach ($users as $user) {
+                    $data['user'] = $user;
+
+                    $recoveryBackgroundProcess->push_to_queue($data);
+                }
+
+                $recoveryBackgroundProcess->save()->dispatch();
+
+            } catch (\Exception $e) {
+                if($e instanceof VirgilCryptoException) {
+                    Logger::log("Invalid Encrypted Data or Recovery Private Key", 0);
+                }
+                else {
+                    Logger::log($e->getMessage(), 0);
+                }
+                Redirector::toPageLog();
+                exit();
+            }
+        }
+        else {
+            wp_die("Empty ".Crypto::RECOVERY_PRIVATE_KEY);
         }
     }
 
@@ -210,33 +296,32 @@ class FormHandler
      */
     public function restoreDefaults()
     {
-        $this->wpdb->query('DELETE FROM wp_users WHERE id NOT IN (1)');
-        $this->wpdb->query('DELETE FROM wp_usermeta WHERE user_id NOT IN (1)');
+        $this->wpdb->query("DELETE FROM {$this->wpdb->users} WHERE id NOT IN (1)");
+        $this->wpdb->query("DELETE FROM {$this->wpdb->usermeta} WHERE user_id NOT IN (1)");
 
         $users = get_users(array('fields' => array('ID')));
 
         foreach ($users as $user) {
             delete_user_meta($user->ID, Option::RECORD);
             delete_user_meta($user->ID, Option::PARAMS);
+            delete_user_meta($user->ID, Option::ENCRYPTED);
         }
-
-        update_option(Option::DEMO_MODE, 1);
 
         delete_option(Option::MIGRATE_START);
         delete_option(Option::MIGRATE_FINISH);
         delete_option(Option::UPDATE_START);
         delete_option(Option::UPDATE_FINISH);
+        delete_option(Option::RECOVERY_PUBLIC_KEY);
         delete_option('_transient_doing_cron');
-        $this->wpdb->query("DELETE FROM wp_options WHERE option_name LIKE '%migrate_batch_%'");
-        $this->wpdb->query("DELETE FROM wp_options WHERE option_name LIKE '%migrate_process'");
-        $this->wpdb->query("DELETE FROM wp_options WHERE option_name LIKE '%update_process'");
+
+        foreach (Config::ALL_BACKGROUND_PROCESSES as $bp) {
+            $this->dbq->clearActionProcess($bp);
+        }
 
         $this->cm->addEmptyCredentials();
-
         $this->dbq->clearTableLog();
-
         $pass = '$P$Be8bkgCZxUx096p9aAzZ3ydfE/qMyd0';
-        $this->wpdb->query("UPDATE wp_users SET user_pass='$pass' WHERE id=1");
+        $this->wpdb->query("UPDATE {$this->wpdb->users} SET user_pass='$pass' WHERE id=1");
 
         Logger::log(Log::DEV_RESTORE_DEFAULTS);
     }

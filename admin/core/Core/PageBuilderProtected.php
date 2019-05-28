@@ -39,99 +39,18 @@ namespace VirgilSecurityPure\Core;
 
 use VirgilSecurityPure\Config\Config;
 use VirgilSecurityPure\Config\Credential;
-use VirgilSecurityPure\Config\Option;
 use VirgilSecurityPure\Helpers\InfoHelper;
 
 /**
- * Class PageBuilder
+ * Class PageBuilderProtected
  * @package VirgilSecurityPure\Core
  */
-class PageBuilder
+class PageBuilderProtected
 {
     /**
      * @return bool
      */
-    public function disabledBlock(): bool
-    {
-
-        return !extension_loaded(Config::EXTENSION_NAME);
-    }
-
-    /**
-     * @return bool
-     */
-    public function demoModeBlock(): bool
-    {
-        if($this->disabledBlock())
-            return false;
-
-        return (bool)get_option(Option::DEMO_MODE);
-    }
-
-    /**
-     * @return bool
-     */
-    public function credentialsBlock(): bool
-    {
-        if($this->disabledBlock())
-            return false;
-
-        return (!$this->isCredentialsSet()&&$this->isMainPage());
-    }
-
-    /**
-     * @return bool
-     */
-    public function migrateBlock(): bool
-    {
-        if($this->disabledBlock())
-            return false;
-
-        return ($this->isCredentialsSet()&&$this->isMainPage()&&!$this->isAllUsersMigrated());
-    }
-
-    /**
-     * @return bool
-     */
-    public function updateBlock(): bool
-    {
-        if($this->disabledBlock())
-            return false;
-
-        return ($this->isCredentialsSet()&&$this->isMainPage()&&$this->isAllUsersMigrated());
-    }
-
-    /**
-     * @return bool
-     */
-    public function logBlock(): bool
-    {
-        if($this->disabledBlock())
-            return false;
-
-        return $this->isLogPage();
-    }
-
-    /**
-     * @return bool
-     */
-    public function faqBlock(): bool
-    {
-        return $this->isFAQPage();
-    }
-
-    /**
-     * @return bool
-     */
-    public function infoBlock(): bool
-    {
-        return $this->isMainPage()||$this->disabledBlock();
-    }
-
-    /**
-     * @return bool
-     */
-    private function isAllUsersMigrated(): bool
+    protected function isAllUsersMigrated(): bool
     {
         return 100==(int)InfoHelper::getMigratedPercents();
     }
@@ -139,7 +58,7 @@ class PageBuilder
     /**
      * @return bool
      */
-    private function isMainPage(): bool
+    protected function isMainPage(): bool
     {
         return Config::ACTION_PAGE==$_GET['page'];
     }
@@ -147,7 +66,7 @@ class PageBuilder
     /**
      * @return bool
      */
-    private function isLogPage(): bool
+    protected function isLogPage(): bool
     {
         return Config::LOG_PAGE==$_GET['page'];
     }
@@ -155,7 +74,7 @@ class PageBuilder
     /**
      * @return bool
      */
-    private function isFAQPage(): bool
+    protected function isFAQPage(): bool
     {
         return Config::FAQ_PAGE==$_GET['page'];
     }
@@ -163,9 +82,25 @@ class PageBuilder
     /**
      * @return bool
      */
-    private function isCredentialsSet(): bool
+    protected function isRecoveryPage(): bool
+    {
+        return Config::RECOVERY_PAGE==$_GET['page'];
+    }
+
+    /**
+     * @return bool
+     */
+    protected function isCredentialsSet(): bool
     {
         return(!empty($_ENV[Credential::APP_TOKEN])&&!empty($_ENV[Credential::APP_SECRET_KEY])&&!empty
             ($_ENV[Credential::SERVICE_PUBLIC_KEY]));
+    }
+
+    /**
+     * @return bool
+     */
+    protected function isRecoveryPublicKeyExists(): bool
+    {
+        return InfoHelper::isRecoveryPrivateKeyExists();
     }
 }

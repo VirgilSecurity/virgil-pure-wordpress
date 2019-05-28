@@ -41,13 +41,31 @@ use VirgilSecurityPure\Config\Credential;
 use VirgilSecurityPure\Exceptions\PluginPureException;
 use Virgil\PureKit\Exceptions\InputCredentialsCheckerException;
 
-class CredentialsChecker
+/**
+ * Class CredentialsChecker
+ * @package VirgilSecurityPure\Helpers
+ */
+class CredentialsChecker implements Helper
 {
+    /**
+     * @var 
+     */
     private $credentials;
-
+    /**
+     * @var 
+     */
     private $appToken;
+    /**
+     * @var 
+     */
     private $servicePublicKey;
+    /**
+     * @var 
+     */
     private $appSecretKey;
+    /**
+     * @var 
+     */
     private $updateToken;
 
     /**

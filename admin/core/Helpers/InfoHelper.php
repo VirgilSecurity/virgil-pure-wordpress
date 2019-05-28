@@ -77,23 +77,9 @@ class InfoHelper
     /**
      * @return string
      */
-    public static function getExtensionExtension(): string {
+    public static function getExtensionType(): string {
         $ee = 'Windows'==self::getOSVersion() ? 'dll' : 'so';
         return ".".$ee;
-    }
-
-    /**
-     * @return string
-     */
-    public static function getExtensionName(): string {
-        return Config::EXTENSION_NAME;
-    }
-
-    /**
-     * @return bool
-     */
-    public static function isExtensionLoaded(): bool {
-        return extension_loaded(Config::EXTENSION_NAME);
     }
 
     /**
@@ -105,8 +91,8 @@ class InfoHelper
 
         $sql = <<<SQL
             SELECT count(u.id) as c
-            FROM wp_users u 
-            LEFT JOIN wp_usermeta um 
+            FROM $wpdb->users u 
+            LEFT JOIN $wpdb->usermeta um 
             ON u.id=um.user_id 
             WHERE um.meta_key = "$record"
 SQL;
@@ -124,6 +110,13 @@ SQL;
     }
 
     /**
+     * @return bool
+     */
+    public static function isAllUsersMigrated() {
+        return self::getTotalUsers()==self::getMigrated();
+    }
+
+    /**
      * @return string
      */
     public static function getTotalUsers(): string {
@@ -135,5 +128,12 @@ SQL;
      */
     public static function getEnvFilePath(): string {
         return WP_PLUGIN_DIR.DIRECTORY_SEPARATOR.Config::PLUGIN_NAME.DIRECTORY_SEPARATOR.'.env';
+    }
+
+    /**
+     * @return bool
+     */
+    public static function isRecoveryPrivateKeyExists(): bool {
+        return (bool) get_option(Option::RECOVERY_PUBLIC_KEY);
     }
 }

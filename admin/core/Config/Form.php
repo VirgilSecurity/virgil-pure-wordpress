@@ -45,17 +45,19 @@ class Form
 {
     const PREFIX = Config::PLUGIN_NAME."_form_";
 
-    const ALL = [self::DEMO, self::CREDENTIALS, self::MIGRATE, self::UPDATE,
-        self::DEV_ADD_USERS, self::DEV_RESTORE_DEFAULTS];
+    const ALL = [self::DEMO, self::DOWNLOAD_RECOVERY_PRIVATE_KEY, self::CREDENTIALS, self::MIGRATE, self::UPDATE,
+        self::DEV_ADD_USERS, self::DEV_RESTORE_DEFAULTS, self::RECOVERY];
 
     const NONCE = self::PREFIX.'nonce';
     const ACTION = 'virgil_pure';
     const TYPE = 'form_type';
 
     const DEMO = self::PREFIX.'demo';
+    const DOWNLOAD_RECOVERY_PRIVATE_KEY = self::PREFIX.'downloadRecoveryPrivateKey';
     const CREDENTIALS = self::PREFIX.'credentials';
     const MIGRATE = self::PREFIX.'migrate';
     const UPDATE = self::PREFIX.'update';
-    const DEV_ADD_USERS = self::PREFIX.'dev_add_users';
-    const DEV_RESTORE_DEFAULTS = self::PREFIX.'dev_restore_defaults';
+    const RECOVERY = self::PREFIX.'recovery';
+    const DEV_ADD_USERS = self::PREFIX.'addUsers';
+    const DEV_RESTORE_DEFAULTS = self::PREFIX.'restoreDefaults';
 }

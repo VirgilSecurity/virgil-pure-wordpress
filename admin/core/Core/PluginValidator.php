@@ -44,7 +44,7 @@ use VirgilSecurityPure\Config\Credential;
  * Class PluginValidator
  * @package VirgilSecurityPure\Core
  */
-class PluginValidator
+class PluginValidator implements Core
 {
     /**
      * @return bool
@@ -66,6 +66,7 @@ class PluginValidator
 
     /**
      * @return bool
+     * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public function checkService(): bool
     {
@@ -75,6 +76,7 @@ class PluginValidator
 
     /**
      * @return bool
+     * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public function check(): bool
     {

@@ -38,7 +38,6 @@
 namespace VirgilSecurityPure\Helpers;
 
 use VirgilSecurityPure\Config\Credential;
-use VirgilSecurityPure\Config\Option;
 
 /**
  * Class ENVFormatter
@@ -60,12 +59,7 @@ class ENVFormatter
         $titleSK = Credential::APP_SECRET_KEY;
         $titleUT = Credential::UPDATE_TOKEN;
 
-        $env = null;
-
-        if(get_option(Option::DEV_MODE))
-            $env = "\nVIRGIL_ENV=\"api-stg\"";
-
-        $formatData = "$titleAT=\"$appToken\"\n$titlePK=\"$servicePublicKey\"\n$titleSK=\"$appSecretKey\"\n$titleUT=\"$updateToken\"$env";
+        $formatData = "$titleAT=\"$appToken\"\n$titlePK=\"$servicePublicKey\"\n$titleSK=\"$appSecretKey\"\n$titleUT=\"$updateToken\"";
 
         return $formatData;
     }

@@ -23,6 +23,5 @@ class Virgil_Pure_Deactivator {
         }
 
         delete_option(Option::DEV_MODE);
-        delete_option(Option::DEMO_MODE);
 	}
 }

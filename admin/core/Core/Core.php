@@ -35,54 +35,13 @@
  * Lead Maintainer: Virgil Security Inc. <support@virgilsecurity.com>
  */
 
-namespace VirgilSecurityPure\Helpers;
-
-use VirgilSecurityPure\Config\Option;
+namespace VirgilSecurityPure\Core;
 
 /**
- * Class StatusHelper
- * @package VirgilSecurityPure\Helpers
+ * Interface Core
+ * @package VirgilSecurityPure\Core
  */
-class StatusHelper
+interface Core
 {
-    /**
-     * @return bool
-     */
-    public static function isAllUsersMigrated() {
-        return self::getTotalUsers()==self::getMigrated();
-    }
 
-    /**
-     * @return int
-     */
-    public static function getMigrated(): int {
-        global $wpdb;
-        $record = Option::RECORD;
-
-        $sql = <<<SQL
-            SELECT count(u.id) as c
-            FROM wp_users u 
-            LEFT JOIN wp_usermeta um 
-            ON u.id=um.user_id 
-            WHERE um.meta_key = "$record"
-SQL;
-        $count = $wpdb->get_results($sql);
-        $res = null == $count[0]->c ? 0 : $count[0]->c;
-
-        return (int)$res;
-    }
-
-    /**
-     * @return float
-     */
-    public static function getMigratedPercents(): float {
-        return (float) (round(self::getMigrated()/self::getTotalUsers(), 2))*100;
-    }
-
-    /**
-     * @return int
-     */
-    public static function getTotalUsers(): int {
-        return count_users()['total_users'];
-    }
 }

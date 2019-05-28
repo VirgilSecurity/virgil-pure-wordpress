@@ -1,7 +1,9 @@
 {
   "require": {
     "vlucas/phpdotenv": "^2.5",
-    "virgil/purekit": "^2.0"
+    "virgil/purekit": "^2.0",
+    "virgil/sdk": "^5.0",
+    "virgil/crypto": "^5.1"
   },
   "autoload": {
     "psr-4": {

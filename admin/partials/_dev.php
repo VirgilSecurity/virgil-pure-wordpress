@@ -2,12 +2,12 @@
 use VirgilSecurityPure\Config\Form;
 ?>
 
-<div class="virgil-phe-global-container">
+<div class="virgil-pure-global-container">
 
-    <?php require_once 'blocks/header.php'; ?>
+    <?php require_once 'blocks/_header.php'; ?>
 
-    <h3 class="virgil-phe-global-section-title">Dev</h3>
-    <hr class="virgil-phe-global-line"/>
+    <h3 class="virgil-pure-global-section-title">Dev</h3>
+    <hr class="virgil-pure-global-line"/>
 
     <form action="<?php echo esc_url(admin_url('admin-post.php')); ?>" method="post">
 

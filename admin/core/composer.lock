@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "e611201a2c5836dfaa9c7f6f6d47c7a4",
+    "content-hash": "2e5b204125afc139d81d61160235f41b",
     "packages": [
         {
             "name": "google/protobuf",
@@ -379,6 +379,117 @@
             "time": "2019-02-06T07:57:58+00:00"
         },
         {
+            "name": "virgil/crypto",
+            "version": "v5.1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/VirgilSecurity/virgil-crypto-php.git",
+                "reference": "438932ffbd4ef2a31ab769b3b8c282464dfb90bf"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/VirgilSecurity/virgil-crypto-php/zipball/438932ffbd4ef2a31ab769b3b8c282464dfb90bf",
+                "reference": "438932ffbd4ef2a31ab769b3b8c282464dfb90bf",
+                "shasum": ""
+            },
+            "require": {
+                "ext-virgil_crypto_php": "*",
+                "php": ">=5.6",
+                "virgil/crypto-api": "^5.0"
+            },
+            "provide": {
+                "virgil/crypto-api-implementation": "v5"
+            },
+            "require-dev": {
+                "phpunit/phpunit": ">=5.6"
+            },
+            "type": "standalone",
+            "autoload": {
+                "files": [
+                    "virgil_crypto_php.php"
+                ],
+                "psr-4": {
+                    "Virgil\\CryptoImpl\\": "Virgil/CryptoImpl/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-3-Clause"
+            ],
+            "authors": [
+                {
+                    "name": "Virgil Security, Inc",
+                    "email": "support@virgilsecurity.com",
+                    "homepage": "https://virgilsecurity.com/"
+                }
+            ],
+            "description": "Virgil is a stack of security libraries (ECIES with Crypto Agility wrapped in Virgil Cryptogram) and all the necessary infrastructure to enable seamless, end-to-end encryption for any application, platform or device. See below for currently available languages and platforms. Get in touch with us to get preview access to our key infrastructure.",
+            "homepage": "http://virgilsecurity.com",
+            "keywords": [
+                "Authentication",
+                "ECIES",
+                "PFS",
+                "Passwordless",
+                "Perfect Forward Secrecy",
+                "Virgil.Keys",
+                "Virgil.Pass",
+                "cross",
+                "cryptography",
+                "decryption",
+                "elliptic",
+                "encryption",
+                "end-to-end",
+                "platform",
+                "security",
+                "verification",
+                "virgil"
+            ],
+            "time": "2018-11-08T10:14:07+00:00"
+        },
+        {
+            "name": "virgil/crypto-api",
+            "version": "5.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/VirgilSecurity/virgil-cryptoapi-php.git",
+                "reference": "797dfa266aec50e1e29b0a2a923124e23a57b0f0"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/VirgilSecurity/virgil-cryptoapi-php/zipball/797dfa266aec50e1e29b0a2a923124e23a57b0f0",
+                "reference": "797dfa266aec50e1e29b0a2a923124e23a57b0f0",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.6"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Virgil\\CryptoApi\\": "Virgil/CryptoApi/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-3-Clause"
+            ],
+            "authors": [
+                {
+                    "name": "Virgil Security, Inc",
+                    "email": "support@virgilsecurity.com",
+                    "homepage": "http://virgilsecurity.com"
+                }
+            ],
+            "description": "Virgil crypto API contains a bunch of common cipher interfaces",
+            "homepage": "http://virgilsecurity.com",
+            "keywords": [
+                "cipher",
+                "crypto api",
+                "virgil crypto"
+            ],
+            "time": "2018-05-14T06:20:45+00:00"
+        },
+        {
             "name": "virgil/purekit",
             "version": "v2.1.1",
             "source": {
@@ -423,6 +534,73 @@
             "description": "Virgil Security introduces an implementation of the Password-Hardened Encryption (PHE) protocol that provides developers with a technology to protect users passwords from offline/online attacks and make stolen passwords useless even if your database has been compromised.",
             "homepage": "https://passw0rd.io/",
             "time": "2019-04-08T16:46:25+00:00"
+        },
+        {
+            "name": "virgil/sdk",
+            "version": "v5.0.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/VirgilSecurity/virgil-sdk-php.git",
+                "reference": "b3dd713f614019da2ee87aa80cebce7011f56f85"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/VirgilSecurity/virgil-sdk-php/zipball/b3dd713f614019da2ee87aa80cebce7011f56f85",
+                "reference": "b3dd713f614019da2ee87aa80cebce7011f56f85",
+                "shasum": ""
+            },
+            "require": {
+                "ext-curl": "*",
+                "php": ">=5.6",
+                "virgil/crypto-api-implementation": "^v5.0",
+                "vlucas/phpdotenv": "^2.5"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "7.5.1",
+                "virgil/crypto": "^5.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Virgil\\": "Virgil/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-3-Clause"
+            ],
+            "authors": [
+                {
+                    "name": "Virgil Security, Inc",
+                    "email": "support@virgilsecurity.com",
+                    "homepage": "http://virgilsecurity.com"
+                }
+            ],
+            "description": "Virgil is a stack of security libraries (ECIES with Crypto Agility wrapped in Virgil Cryptogram) and all the necessary infrastructure to enable seamless, end-to-end encryption for any application, platform or device. See below for currently available languages and platforms. Get in touch with us to get preview access to our key infrastructure.",
+            "homepage": "https://virgilsecurity.com",
+            "keywords": [
+                "Authentication",
+                "ECIES",
+                "Keyring",
+                "PFS",
+                "Passwordless",
+                "Perfect Forward Secrecy",
+                "Virgil.Keys",
+                "Virgil.Pass",
+                "cross",
+                "cryptography",
+                "decryption",
+                "elliptic",
+                "encryption",
+                "end-to-end",
+                "pki",
+                "platform",
+                "sdk",
+                "security",
+                "verification",
+                "virgil"
+            ],
+            "time": "2019-02-06T10:20:14+00:00"
         },
         {
             "name": "vlucas/phpdotenv",

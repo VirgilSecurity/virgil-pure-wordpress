@@ -3,7 +3,7 @@ Contributors: virgilsecuritycom
 Donate link: (none)
 Tags: password-hardened-encryption, aead, pure, cryptography, protect-database
 Requires at least: 5.0
-Tested up to: 5.1
+Tested up to: 5.2
 Stable tag: trunk
 Requires PHP: 7.2
 License: BSD 3-Clause License
@@ -23,15 +23,14 @@ Learn more about the Pure technology [here](https://virgilsecurity.com/announcin
 
 == Installation ==
 
-Currently the plugin is available only for PHP7.2!
+Currently the plugin is available only for PHP7.2 and PHP7.3!
 
 In order to install the Pure Plugin you need to go through the following steps:
-* add the "vsce_phe_php" extension into your server
-* and then install the Plugin from the [WordPress Plugin Directory](https://wordpress.org/plugins/virgil-pure/) or from
-[official GitHub repository](https://github.com/VirgilSecurity/virgil-pure-wordpress)
+* add the crypto extensions into your server
+* and then install the Plugin from the [WordPress Plugin Directory](https://wordpress.org/plugins/virgil-pure/) or from the [official GitHub repository](https://github.com/VirgilSecurity/virgil-pure-wordpress)
 
-= Step #1. Add the "vsce_phe_php" extension into your server before using the Plugin =
-[How to add vsce_phe_php extension](https://github.com/VirgilSecurity/virgil-pure-wordpress#step-1-add-the-vsce_phe_php-extension-into-your-server-before-using-the-plugin)
+= Step #1. Add the crypto extensions into your server before using the Plugin =
+[How to add the crypto extensions](https://github.com/VirgilSecurity/virgil-pure-wordpress#step-1-add-the-crypto-extensions-into-your-server-before-using-the-plugin)
 
 = Step #2. Install Virgil Pure WordPress Plugin =
 
@@ -50,15 +49,15 @@ Or from the official GitHub repository:
 
 == Frequently Asked Questions ==
 
-= What is Demo mode? =
-
-Demo mode is a mode in which no data in your database will be altered. To demonstrate how Virgil Pure works, a new column will be created to hold the newly protected password data. When you're ready to go live, your password hashes will be translated into cryptographically protected data.
-
-It is required to migrate all users before switching demo mod off.
-
 = Do users have to change their passwords if the database has been compromised? =
 
-If a database has been stolen, users do not need to change their original passwords. However, you need to rotate all user records in your database. This will use cryptography to disconnect the compromised Pure records from the original passwords, leaving any unauthorized party empty handed.
+If a database has been stolen, users do not need to change their original passwords. However, you will need to rotate all user records in your database. This will use cryptography to disconnect the compromised Pure records from the original passwords, leaving any unauthorized party empty handed.
+
+= How does the Recovery Key work? =
+
+Recovery Key is a key pair that allows you to recover the original user password hashes if you ever need to deactivate the Pure plugin. The Recovery Key encrypts the password hashes, and stores the encrypted values into the wp_usermeta table in your database.
+
+The Recovery Key utilizes a public and private key pair. The public key is stored in the wp_option table and the Private Key must be stored by you securely on an external device.
 
 = How much does it cost? =
 
@@ -66,13 +65,20 @@ Pure is a FREE toolkit. All libraries are open source and can be found on GitHub
 
 = What if an App Private Key gets lost? =
 
-There is no way to restore the APP_SECRET_KEY. The database becomes inaccessible and therefore useless. So, it makes sense to immediately make a backup of the key in any convenient form.
+There is no way to restore the `APP_SECRET_KEY`. The database records become inaccessible and therefore useless. So, it is highly recommended that you immediately create a backup of the key in a secure location to avoid losing it.
 
 == Screenshots ==
 
 (none)
 
 == Changelog ==
+
+= 0.2.0 =
+* Add recovery feature (Warning! If you switch off Demo Mode in the 0.1.x releases, the recovery feature will not be
+available for you)
+* Remove Demo Mode
+* Minor fixes and optimization
+* Required virgil_crypto_php extension
 
 = 0.1.2 =
 * Fix activation error

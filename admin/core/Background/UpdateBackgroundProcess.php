@@ -72,15 +72,10 @@ class UpdateBackgroundProcess extends BaseBackgroundProcess
      */
     protected $action = Config::BACKGROUND_ACTION_UPDATE;
 
-    /**
-     * UpdateBackgroundProcess constructor.
-     * @param Protocol $protocol
-     */
-    public function __construct(Protocol $protocol)
+    public function setDep(Protocol $protocol, CredentialsManager $credentialsManager)
     {
         $this->protocol = $protocol;
-        $this->credentialsManager = new CredentialsManager();
-        parent::__construct();
+        $this->credentialsManager = $credentialsManager;
     }
 
     /**
@@ -105,7 +100,7 @@ class UpdateBackgroundProcess extends BaseBackgroundProcess
             }
 
             $this->cancel_process();
-            Logger::log($msg);
+            Logger::log($msg, 0);
         }
 
 

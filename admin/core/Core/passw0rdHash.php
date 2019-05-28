@@ -43,7 +43,7 @@ require_once(ABSPATH . 'wp-includes/class-phpass.php');
  * Class passw0rdHash
  * @package passw0rd
  */
-class passw0rdHash
+class passw0rdHash implements Core
 {
     /**
      * @var \PasswordHash
