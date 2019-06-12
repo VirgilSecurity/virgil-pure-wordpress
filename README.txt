@@ -74,8 +74,7 @@ There is no way to restore the `APP_SECRET_KEY`. The database records become ina
 == Changelog ==
 
 = 0.2.0 =
-* Add recovery feature (Warning! If you switch off Demo Mode in the 0.1.x releases, the recovery feature will not be
-available for you)
+* Add recovery feature (Warning! If you switch off Demo Mode in the 0.1.x releases, the recovery feature will not be available for you)
 * Remove Demo Mode
 * Minor fixes and optimization
 * Required virgil_crypto_php extension
