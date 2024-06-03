@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright (C) 2015-2019 Virgil Security Inc.
+ * Copyright (C) 2015-2024 Virgil Security Inc.
  *
  * All rights reserved.
  *
@@ -92,8 +92,7 @@ class PageBuilderProtected
      */
     protected function isCredentialsSet(): bool
     {
-        return(!empty($_ENV[Credential::APP_TOKEN])&&!empty($_ENV[Credential::APP_SECRET_KEY])&&!empty
-            ($_ENV[Credential::SERVICE_PUBLIC_KEY]));
+        return(!empty($_ENV[Credential::APP_TOKEN])&&!empty($_ENV[Credential::APP_SECRET_KEY])&&!empty($_ENV[Credential::SERVICE_PUBLIC_KEY]));
     }
 
     /**

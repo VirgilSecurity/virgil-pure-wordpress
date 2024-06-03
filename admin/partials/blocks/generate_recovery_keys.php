@@ -14,7 +14,7 @@ use VirgilSecurityPure\Config\Config;
              <p class="virgil-pure-demo-desc">
              You’ll need to generate a recovery key so that the password hashes that are currently in your database
                  can be recovered if you ever need to deactivate the Pure plugin. Please read more in the <a
-                         class="virgil-pure-demo-desc" href="<?= admin_url ("/admin.php?page=" . Config::FAQ_PAGE) ?>">FAQ section</a>.
+                         class="virgil-pure-demo-desc" href="<?= admin_url("/admin.php?page=" . Config::FAQ_PAGE) ?>">FAQ section</a>.
                  <br><br>
                  Please securely store your Recovery Key on an external device.
          </p>

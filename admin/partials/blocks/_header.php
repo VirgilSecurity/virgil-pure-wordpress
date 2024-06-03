@@ -1,6 +1,6 @@
 <div class="virgil-pure-global-section">
     <div class="virgil-pure-global-logo-container">
-        <img src="<?php echo esc_url( plugins_url( '../../images/virgil-pure-logo.svg', __FILE__ ) ); ?>"
+        <img src="<?php echo esc_url(plugins_url('../../images/virgil-pure-logo.svg', __FILE__)); ?>"
              class="virgil-pure-global-logo" />
         <p class="virgil-pure-global-logo-text">
             Free toolkit that protects user passwords from data breaches and both online and offline attacks, and

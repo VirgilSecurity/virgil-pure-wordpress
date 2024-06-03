@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright (C) 2015-2019 Virgil Security Inc.
+ * Copyright (C) 2015-2024 Virgil Security Inc.
  *
  * All rights reserved.
  *
@@ -38,7 +38,6 @@
 namespace VirgilSecurityPure\Core;
 
 use VirgilSecurityPure\Background\BaseBackgroundProcess;
-use VirgilSecurityPure\Background\EncryptBackgroundProcess;
 use VirgilSecurityPure\Background\EncryptAndMigrateBackgroundProcess;
 use VirgilSecurityPure\Background\RecoveryBackgroundProcess;
 use VirgilSecurityPure\Background\UpdateBackgroundProcess;
@@ -53,7 +52,6 @@ class CoreFactory
     /**
      * @param string $class
      * @return Core
-     * @throws \Virgil\CryptoImpl\VirgilCryptoException
      */
     public function buildCore(string $class): Core
     {
@@ -100,9 +98,6 @@ class CoreFactory
             case 'Update':
                 return new UpdateBackgroundProcess();
                 break;
-            case 'Encrypt':
-                return new EncryptBackgroundProcess();
-                break;
             case 'Recovery':
                 return new RecoveryBackgroundProcess();
                 break;
@@ -114,7 +109,7 @@ class CoreFactory
     /**
      * @param string $class
      */
-    private function throwError(string $class)
+    private function throwError(string $class):void
     {
         var_dump("Invalid class name: $class");
         die;

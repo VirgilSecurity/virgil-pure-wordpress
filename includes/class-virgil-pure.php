@@ -6,19 +6,19 @@
 class Virgil_Pure {
 
     /**
-     * @var
+     * @var Virgil_Pure_Loader
      */
-	protected $loader;
+	protected Virgil_Pure_Loader $loader;
 
     /**
      * @var string
      */
-	protected $Virgil_Pure;
+	protected string $Virgil_Pure;
 
     /**
      * @var string
      */
-	protected $version;
+	protected string $version;
 
     /**
      * Virgil_Pure constructor.
@@ -37,9 +37,10 @@ class Virgil_Pure {
 	}
 
     /**
-     *
+     * @return void
      */
-	private function load_dependencies() {
+	private function load_dependencies(): void
+    {
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-virgil-pure-loader.php';
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-virgil-pure-i18n.php';
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/class-virgil-pure-admin.php';
@@ -48,9 +49,10 @@ class Virgil_Pure {
 	}
 
     /**
-     *
+     * @return void
      */
-	private function set_locale() {
+	private function set_locale(): void
+    {
 
 		$plugin_i18n = new Virgil_Pure_i18n();
 
@@ -59,9 +61,10 @@ class Virgil_Pure {
 	}
 
     /**
-     *
+     * @return void
      */
-	private function define_admin_hooks() {
+	private function define_admin_hooks(): void
+    {
 
 		$plugin_admin = new Virgil_Pure_Admin( $this->get_Virgil_Pure(), $this->get_version() );
 
@@ -70,14 +73,15 @@ class Virgil_Pure {
 		$this->loader->add_action('admin_post_virgil_pure', $plugin_admin, 'virgil_pure_form_handler');
 		$this->loader->add_action('plugins_loaded', $plugin_admin, 'virgil_pure_init_background_processes');
 		$this->loader->add_filter('check_password', $plugin_admin, 'virgil_pure_check_password', 1, 4);
-		$this->loader->add_action('after_password_reset', $plugin_admin, 'virgil_pure_password_reset', 1, 1);
-		$this->loader->add_action('profile_update', $plugin_admin, 'virgil_pure_profile_update', 1, 1);
+		$this->loader->add_action('after_password_reset', $plugin_admin, 'virgil_pure_password_reset', 1);
+		$this->loader->add_action('profile_update', $plugin_admin, 'virgil_pure_profile_update', 1);
 	}
 
     /**
-     *
+     * @return void
      */
-	public function run() {
+	public function run(): void
+    {
 		$this->loader->run();
 	}
 
@@ -89,9 +93,10 @@ class Virgil_Pure {
 	}
 
     /**
-     * @return mixed
+     * @return Virgil_Pure_Loader
      */
-	public function get_loader() {
+	public function get_loader(): Virgil_Pure_Loader
+    {
 		return $this->loader;
 	}
 

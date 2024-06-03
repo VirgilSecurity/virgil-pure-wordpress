@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright (C) 2015-2019 Virgil Security Inc.
+ * Copyright (C) 2015-2024 Virgil Security Inc.
  *
  * All rights reserved.
  *
@@ -37,14 +37,14 @@
 
 namespace VirgilSecurityPure\Background;
 
-use Virgil\PureKit\Protocol\Protocol;
+use Exception;
 use VirgilSecurityPure\Config\Credential;
 use VirgilSecurityPure\Config\Log;
 use VirgilSecurityPure\Config\Option;
+use VirgilSecurityPure\Core\CoreProtocol;
 use VirgilSecurityPure\Core\CredentialsManager;
 use VirgilSecurityPure\Core\Logger;
 use VirgilSecurityPure\Config\Config;
-use Virgil\PureKit\Protocol\RecordUpdater;
 
 /**
  * Class UpdateBackgroundProcess
@@ -52,45 +52,44 @@ use Virgil\PureKit\Protocol\RecordUpdater;
  */
 class UpdateBackgroundProcess extends BaseBackgroundProcess
 {
-    /**
-     * @var
-     */
-    private $recordUpdater;
 
     /**
      * @var CredentialsManager
      */
-    private $credentialsManager;
+    private CredentialsManager $credentialsManager;
 
     /**
-     * @var Protocol
+     * @var CoreProtocol
      */
-    private $protocol;
+    private CoreProtocol $protocol;
 
     /**
      * @var string
      */
-    protected $action = Config::BACKGROUND_ACTION_UPDATE;
+    protected string $action = Config::BACKGROUND_ACTION_UPDATE;
 
-    public function setDep(Protocol $protocol, CredentialsManager $credentialsManager)
+    /**
+     * @param CoreProtocol $protocol
+     * @param CredentialsManager $credentialsManager
+     * @return void
+     */
+    public function setDep(CoreProtocol $protocol, CredentialsManager $credentialsManager): void
     {
         $this->protocol = $protocol;
         $this->credentialsManager = $credentialsManager;
     }
 
     /**
-     * @param mixed $user
-     * @return bool|mixed
+     * @param mixed $item
+     * @return bool
      */
-    protected function task($user)
+    protected function task($item): bool
     {
-        $record = get_user_meta($user->ID, Option::RECORD);
+        $record = get_user_meta($item->ID, Option::RECORD);
 
         try {
-            if (is_null($this->recordUpdater))
-                $this->recordUpdater = new RecordUpdater($_ENV[Credential::UPDATE_TOKEN]);
-                $newRecordRaw = $this->recordUpdater->update(base64_decode($record[0]));
-        } catch (\Exception $e) {
+            $newRecordRaw = $this->protocol->performRotation(base64_decode($record[0]));
+        } catch (Exception $e) {
             if("PHE Client error"==$e->getMessage())
             {
                 $msg = "Invalid ".Credential::UPDATE_TOKEN;
@@ -104,18 +103,19 @@ class UpdateBackgroundProcess extends BaseBackgroundProcess
         }
 
 
-        if (!is_null($newRecordRaw)) {
+        if (isset($newRecordRaw)) {
             $newRecord = base64_encode($newRecordRaw);
-            update_user_meta($user->ID, Option::RECORD, $newRecord);
+            update_user_meta($item->ID, Option::RECORD, $newRecord);
         }
 
         return false;
     }
 
     /**
-     *
+     * @return void
+     * @throws Exception
      */
-    protected function complete()
+    protected function complete(): void
     {
 
         if ($this->is_queue_empty()) {
@@ -123,12 +123,11 @@ class UpdateBackgroundProcess extends BaseBackgroundProcess
 
             $v = $this->credentialsManager->getVersion($_ENV[Credential::UPDATE_TOKEN]);
 
-            $duration = round(get_option(Option::UPDATE_FINISH) - get_option
-                (Option::UPDATE_START), 2);
+            $duration = round(get_option(Option::UPDATE_FINISH) - get_option(Option::UPDATE_START), 2);
             Logger::log(Log::FINISH_UPDATE . " (records ver.: $v, duration: $duration sec.)");
 
 
-            $nk = $this->protocol->getNewRawKeys();
+            $nk = $this->protocol->getNewRawKeys(); // [new_client_private_key, new_server_public_key]
 
             $newAppSecretKey = Credential::APP_SECRET_KEY_PREFIX."." . $v . "." . base64_encode($nk[0]);
             $newServicePublicKey = Credential::SERVICE_PUBLIC_KEY_PREFIX."." . $v . "." . base64_encode($nk[1]);

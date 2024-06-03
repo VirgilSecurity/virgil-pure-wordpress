@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright (C) 2015-2019 Virgil Security Inc.
+ * Copyright (C) 2015-2024 Virgil Security Inc.
  *
  * All rights reserved.
  *
@@ -44,12 +44,12 @@ namespace VirgilSecurityPure\Core;
 interface Pagination
 {
     /**
-     * @return mixed
+     * @return object|array|null
      */
-    public function getData();
+    public function getData(): object|array|null;
 
     /**
-     * @return mixed
+     * @return string|array
      */
-    public function getPag();
+    public function getPag(): array|string;
 }

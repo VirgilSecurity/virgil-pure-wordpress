@@ -1,13 +1,15 @@
 {
   "require": {
-    "vlucas/phpdotenv": "^2.5",
-    "virgil/purekit": "^2.0",
-    "virgil/sdk": "^5.0",
-    "virgil/crypto": "^5.1"
+    "vlucas/phpdotenv": "^5.6",
+    "virgil/purekit": "^3.2",
+    "virgil/sdk": "^6.4"
   },
   "autoload": {
     "psr-4": {
       "VirgilSecurityPure\\": ""
     }
+  },
+  "require-dev": {
+    "squizlabs/php_codesniffer": "^3.10"
   }
 }

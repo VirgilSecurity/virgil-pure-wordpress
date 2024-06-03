@@ -26,7 +26,7 @@ abstract class WP_Background_Process extends WP_Async_Request
      * @var string
      * @access protected
      */
-    protected $action = 'background_process';
+    protected string $action = 'background_process';
 
     /**
      * Start time of current process.
@@ -36,23 +36,23 @@ abstract class WP_Background_Process extends WP_Async_Request
      * @var int
      * @access protected
      */
-    protected $start_time = 0;
+    protected int $start_time = 0;
 
     /**
      * Cron_hook_identifier
      *
-     * @var mixed
+     * @var string
      * @access protected
      */
-    protected $cron_hook_identifier;
+    protected string $cron_hook_identifier;
 
     /**
      * Cron_interval_identifier
      *
-     * @var mixed
+     * @var string
      * @access protected
      */
-    protected $cron_interval_identifier;
+    protected string $cron_interval_identifier;
 
     /**
      * Initiate new background process
@@ -64,17 +64,17 @@ abstract class WP_Background_Process extends WP_Async_Request
         $this->cron_hook_identifier = $this->identifier . '_cron';
         $this->cron_interval_identifier = $this->identifier . '_cron_interval';
 
-        add_action($this->cron_hook_identifier, array($this, 'handle_cron_healthcheck'));
-        add_filter('cron_schedules', array($this, 'schedule_cron_healthcheck'));
+        add_action($this->cron_hook_identifier, [$this, 'handle_cron_healthcheck']);
+        add_filter('cron_schedules', [$this, 'schedule_cron_healthcheck']);
     }
 
     /**
      * Dispatch
      *
      * @access public
-     * @return void
+     * @return array
      */
-    public function dispatch()
+    public function dispatch(): array
     {
         // Schedule the cron healthcheck.
         $this->schedule_event();
@@ -90,7 +90,7 @@ abstract class WP_Background_Process extends WP_Async_Request
      *
      * @return $this
      */
-    public function push_to_queue($data)
+    public function push_to_queue(mixed $data): static
     {
         $this->data[] = $data;
 
@@ -102,7 +102,7 @@ abstract class WP_Background_Process extends WP_Async_Request
      *
      * @return $this
      */
-    public function save()
+    public function save(): static
     {
         $key = $this->generate_key();
 
@@ -121,7 +121,7 @@ abstract class WP_Background_Process extends WP_Async_Request
      *
      * @return $this
      */
-    public function update($key, $data)
+    public function update(string $key, array $data): static
     {
         if (!empty($data)) {
             update_site_option($key, $data);
@@ -137,7 +137,7 @@ abstract class WP_Background_Process extends WP_Async_Request
      *
      * @return $this
      */
-    public function delete($key)
+    public function delete(string $key): static
     {
         delete_site_option($key);
 
@@ -154,7 +154,7 @@ abstract class WP_Background_Process extends WP_Async_Request
      *
      * @return string
      */
-    protected function generate_key($length = 64)
+    protected function generate_key(int $length = 64): string
     {
         $unique = md5(microtime() . rand());
         $prepend = $this->identifier . '_batch_';
@@ -168,7 +168,7 @@ abstract class WP_Background_Process extends WP_Async_Request
      * Checks whether data exists within the queue and that
      * the process is not already running.
      */
-    public function maybe_handle()
+    public function maybe_handle(): void
     {
         // Don't lock up other requests while processing
         session_write_close();
@@ -195,7 +195,7 @@ abstract class WP_Background_Process extends WP_Async_Request
      *
      * @return bool
      */
-    protected function is_queue_empty()
+    protected function is_queue_empty(): bool
     {
         global $wpdb;
 
@@ -215,7 +215,7 @@ abstract class WP_Background_Process extends WP_Async_Request
 			WHERE {$column} LIKE %s
 		", $key));
 
-        return ($count > 0) ? false : true;
+        return !(($count > 0));
     }
 
     /**
@@ -224,7 +224,7 @@ abstract class WP_Background_Process extends WP_Async_Request
      * Check whether the current process is already running
      * in a background process.
      */
-    public function is_process_running()
+    public function is_process_running(): bool
     {
         if (get_site_transient($this->identifier . '_process_lock')) {
             // Process already running.
@@ -241,7 +241,7 @@ abstract class WP_Background_Process extends WP_Async_Request
      * Override if applicable, but the duration should be greater than that
      * defined in the time_exceeded() method.
      */
-    protected function lock_process()
+    protected function lock_process(): void
     {
         $this->start_time = time(); // Set start time of current process.
 
@@ -258,7 +258,7 @@ abstract class WP_Background_Process extends WP_Async_Request
      *
      * @return $this
      */
-    protected function unlock_process()
+    protected function unlock_process(): static
     {
         delete_site_transient($this->identifier . '_process_lock');
 
@@ -270,7 +270,7 @@ abstract class WP_Background_Process extends WP_Async_Request
      *
      * @return stdClass Return the first batch from the queue
      */
-    protected function get_batch()
+    protected function get_batch(): stdClass
     {
         global $wpdb;
 
@@ -309,7 +309,7 @@ abstract class WP_Background_Process extends WP_Async_Request
      * Pass each queue item to the task handler, while remaining
      * within server memory and time limit constraints.
      */
-    protected function handle()
+    protected function handle(): void
     {
         $this->lock_process();
 
@@ -320,7 +320,7 @@ abstract class WP_Background_Process extends WP_Async_Request
                 $task = $this->task($value);
 
                 if (false !== $task) {
-                    $batch->data[$key] = $task;
+                    $batch->data[$key] = true;
                 } else {
                     unset($batch->data[$key]);
                 }
@@ -359,7 +359,7 @@ abstract class WP_Background_Process extends WP_Async_Request
      *
      * @return bool
      */
-    protected function memory_exceeded()
+    protected function memory_exceeded(): bool
     {
         $memory_limit = $this->get_memory_limit() * 0.9; // 90% of max memory
         $current_memory = memory_get_usage(true);
@@ -377,7 +377,7 @@ abstract class WP_Background_Process extends WP_Async_Request
      *
      * @return int
      */
-    protected function get_memory_limit()
+    protected function get_memory_limit(): int
     {
         if (function_exists('ini_get')) {
             $memory_limit = ini_get('memory_limit');
@@ -402,7 +402,7 @@ abstract class WP_Background_Process extends WP_Async_Request
      *
      * @return bool
      */
-    protected function time_exceeded()
+    protected function time_exceeded(): bool
     {
         $finish = $this->start_time + apply_filters($this->identifier . '_default_time_limit', 20); // 20 seconds
         $return = false;
@@ -420,7 +420,7 @@ abstract class WP_Background_Process extends WP_Async_Request
      * Override if applicable, but ensure that the below actions are
      * performed, or, call parent::complete().
      */
-    protected function complete()
+    protected function complete(): void
     {
         // Unschedule the cron healthcheck.
         $this->clear_scheduled_event();
@@ -433,7 +433,7 @@ abstract class WP_Background_Process extends WP_Async_Request
      * @param mixed $schedules Schedules.
      * @return mixed
      */
-    public function schedule_cron_healthcheck($schedules)
+    public function schedule_cron_healthcheck(mixed $schedules): mixed
     {
         $interval = apply_filters($this->identifier . '_cron_interval', 5);
 
@@ -442,10 +442,10 @@ abstract class WP_Background_Process extends WP_Async_Request
         }
 
         // Adds every 5 minutes to the existing schedules.
-        $schedules[$this->identifier . '_cron_interval'] = array(
+        $schedules[$this->identifier . '_cron_interval'] = [
             'interval' => MINUTE_IN_SECONDS * $interval,
             'display' => sprintf(__('Every %d Minutes'), $interval),
-        );
+        ];
 
         return $schedules;
     }
@@ -456,7 +456,7 @@ abstract class WP_Background_Process extends WP_Async_Request
      * Restart the background process if not already running
      * and data exists in the queue.
      */
-    public function handle_cron_healthcheck()
+    public function handle_cron_healthcheck(): void
     {
         if ($this->is_process_running()) {
             // Background process already running.
@@ -477,7 +477,7 @@ abstract class WP_Background_Process extends WP_Async_Request
     /**
      * Schedule event
      */
-    protected function schedule_event()
+    protected function schedule_event(): void
     {
         if (!wp_next_scheduled($this->cron_hook_identifier)) {
             wp_schedule_event(time(), $this->cron_interval_identifier, $this->cron_hook_identifier);
@@ -487,7 +487,7 @@ abstract class WP_Background_Process extends WP_Async_Request
     /**
      * Clear scheduled event
      */
-    protected function clear_scheduled_event()
+    protected function clear_scheduled_event(): void
     {
         $timestamp = wp_next_scheduled($this->cron_hook_identifier);
 
@@ -502,7 +502,7 @@ abstract class WP_Background_Process extends WP_Async_Request
      * Stop processing queue items, clear cronjob and delete batch.
      *
      */
-    public function cancel_process()
+    public function cancel_process(): void
     {
         if (!$this->is_queue_empty()) {
             $batch = $this->get_batch();
@@ -511,7 +511,6 @@ abstract class WP_Background_Process extends WP_Async_Request
 
             wp_clear_scheduled_hook($this->cron_hook_identifier);
         }
-
     }
 
     /**
@@ -524,8 +523,7 @@ abstract class WP_Background_Process extends WP_Async_Request
      *
      * @param mixed $item Queue item to iterate over.
      *
-     * @return mixed
+     * @return bool
      */
-    abstract protected function task($item);
-
+    abstract protected function task(mixed $item): bool;
 }

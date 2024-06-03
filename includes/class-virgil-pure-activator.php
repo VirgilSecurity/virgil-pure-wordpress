@@ -11,9 +11,10 @@ use VirgilSecurityPure\Helpers\DBQueryHelper;
 class Virgil_Pure_Activator {
 
     /**
-     *
+     * @return void
      */
-	public static function activate() {
+	public static function activate(): void
+    {
         $dbQuery = new DBQueryHelper();
         $dbQuery->createTableLog();
 

@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright (C) 2015-2019 Virgil Security Inc.
+ * Copyright (C) 2015-2024 Virgil Security Inc.
  *
  * All rights reserved.
  *
@@ -37,10 +37,22 @@
 
 namespace VirgilSecurityPure\Core;
 
+use Exception;
+use Virgil\Crypto\Exceptions\VirgilCryptoException;
+use Virgil\CryptoWrapper\Phe\PheClient;
+use Virgil\CryptoWrapper\Phe\PheServer;
+use Virgil\PureKit\Pure\Exception\EmptyArgumentException;
+use Virgil\PureKit\Pure\Exception\IllegalStateException;
+use Virgil\PureKit\Pure\Exception\NullArgumentException;
+use Virgil\PureKit\Pure\Exception\PheClientException;
+use Virgil\PureKit\Pure\Exception\PureCryptoException;
+use Virgil\PureKit\Pure\Exception\PureLogicException;
+use Virgil\PureKit\Pure\PheManager;
+use Virgil\PureKit\Pure\Pure;
+use Virgil\PureKit\Pure\PureContext;
+use Virgil\PureKit\Pure\PureCrypto;
 use VirgilSecurityPure\Config\Credential;
 use VirgilSecurityPure\Helpers\Redirector;
-use Virgil\PureKit\Protocol\Protocol;
-use Virgil\PureKit\Protocol\ProtocolContext;
 
 /**
  * Class CoreProtocol
@@ -48,47 +60,109 @@ use Virgil\PureKit\Protocol\ProtocolContext;
  */
 class CoreProtocol implements Core
 {
+    private PureCrypto $pureCrypto;
+    private PheManager $pheManager;
+    private Pure $protocol;
+    private PheClient $pheClient;
+    private PheServer $pheServer;
+
     /**
-     * @return null|Protocol
+     * @return null|static
      */
-    public function init()
+    public function init(): ?static
     {
-        $protocol = null;
-
         try {
-            if(!empty($_ENV[Credential::APP_TOKEN]) && !empty($_ENV[Credential::APP_SECRET_KEY]) && !empty
-                ($_ENV[Credential::SERVICE_PUBLIC_KEY]))
-
-                $protocol = $this->createProtocol();
-
-        } catch (\Exception $e) {
-            if(0==$e->getCode()) {
-                Logger::log("Invalid credentials", 0);
+            if (!empty($_ENV[Credential::APP_TOKEN]) && !empty($_ENV[Credential::APP_SECRET_KEY]) && !empty(
+                $_ENV[Credential::SERVICE_PUBLIC_KEY]
+            )) {
+                $this->protocol = $this->createProtocol();
+                $this->pheServer = new PheServer();
+            }
+        } catch (Exception $e) {
+            if (0 == $e->getCode()) {
+                Logger::log("Invalid credentials: " . $e->getMessage(), 0);
                 $credentialsManager = new CredentialsManager();
                 $credentialsManager->addUpdateTokenToOldCredentials("");
-            }
-            else {
-                Logger::log($e->getMessage(),0);
+            } else {
+                Logger::log($e->getMessage(), 0);
             }
             Redirector::toPageLog();
         }
 
-        return $protocol;
+        return $this;
     }
 
     /**
-     * @return Protocol
-     * @throws \Exception
+     * @return Pure
+     * @throws VirgilCryptoException
+     * @throws EmptyArgumentException
+     * @throws IllegalStateException
+     * @throws NullArgumentException
+     * @throws PureCryptoException
+     * @throws PureLogicException
      */
-    private function createProtocol(): Protocol
+    private function createProtocol(): Pure
     {
-        $context = (new ProtocolContext)->create([
-            'appToken' => $_ENV[Credential::APP_TOKEN],
-            'appSecretKey' => $_ENV[Credential::APP_SECRET_KEY],
-            'servicePublicKey' => $_ENV[Credential::SERVICE_PUBLIC_KEY],
-            'updateToken' => $_ENV[Credential::UPDATE_TOKEN],
-        ]);
 
-        return new Protocol($context);
+        $context = PureContext::createVirgilContext(
+            $_ENV[Credential::APP_TOKEN],
+            $_ENV[Credential::NONROTATABLE_MASTER_SECRET],
+            $_ENV[Credential::BACKUP_PUBLIC_KEY],
+            $_ENV[Credential::APP_SECRET_KEY],
+            $_ENV[Credential::SERVICE_PUBLIC_KEY]
+        );
+
+        if (!empty($_ENV[Credential::UPDATE_TOKEN])) {
+            $context->setUpdateToken($_ENV[Credential::UPDATE_TOKEN]);
+        }
+
+        $this->pureCrypto = new PureCrypto($context->getCrypto());
+        $this->pheManager = new PheManager($context);
+        $this->pheClient = new PheClient();
+        return new Pure($context);
+    }
+
+    /**
+     * @param string $passwordHash
+     * @return array
+     * @throws PureCryptoException
+     * @throws PheClientException
+     */
+    public function enrollAccount(string $passwordHash): array
+    {
+        $this->pureCrypto->computePasswordHash($passwordHash);
+        return $this->pheManager->getEnrollment($passwordHash);
+    }
+
+    /**
+     * @return array
+     * @throws Exception
+     */
+    public function getNewRawKeys(): array // [new_client_private_key, new_server_public_key]
+    {
+        return $this->pheClient->rotateKeys($_ENV[Credential::UPDATE_TOKEN]);
+    }
+
+    /**
+     * @param $value
+     * @return string
+     * @throws IllegalStateException
+     * @throws NullArgumentException
+     * @throws PureCryptoException
+     */
+    public function performRotation($value): string
+    {
+        return $this->pheManager->performRotation($value);
+    }
+
+    /**
+     * @param $inputHash
+     * @param $userPass
+     * @return bool
+     * @throws Exception
+     */
+    public function verifyPassword($inputHash, $userPass): bool
+    {
+        return is_string($this->pheClient->createVerifyPasswordRequest($inputHash, $userPass));
     }
 }

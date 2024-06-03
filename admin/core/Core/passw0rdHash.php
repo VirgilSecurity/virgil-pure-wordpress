@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright (C) 2015-2019 Virgil Security Inc.
+ * Copyright (C) 2015-2024 Virgil Security Inc.
  *
  * All rights reserved.
  *
@@ -37,6 +37,8 @@
 
 namespace VirgilSecurityPure\Core;
 
+use PasswordHash;
+
 require_once(ABSPATH . 'wp-includes/class-phpass.php');
 
 /**
@@ -46,16 +48,16 @@ require_once(ABSPATH . 'wp-includes/class-phpass.php');
 class passw0rdHash implements Core
 {
     /**
-     * @var \PasswordHash
+     * @var PasswordHash
      */
-    private $corePH;
+    private PasswordHash $corePH;
 
     /**
      * passw0rdHash constructor.
      */
     public function __construct()
     {
-        $this->corePH = new \PasswordHash(8, true);
+        $this->corePH = new PasswordHash(8, true);
     }
 
     /**
@@ -63,7 +65,7 @@ class passw0rdHash implements Core
      * @param string $type
      * @return null|string
      */
-    public function get(string $userPass, string $type)
+    public function get(string $userPass, string $type): ?string
     {
         $res = null;
 
@@ -86,39 +88,42 @@ class passw0rdHash implements Core
      */
     public function hashPassword(string $password, string $salt): string
     {
-        if ( strlen( $password ) > 4096 ) {
+        if (strlen($password) > 4096) {
             return '*';
         }
 
         $random = '';
 
         if (CRYPT_BLOWFISH == 1 && !$this->corePH->portable_hashes) {
-            $random = $this->get_random_bytes(16);
+            $random = $this->corePH->get_random_bytes(16);
             $hash = crypt($password, $this->corePH->gensalt_blowfish($random));
-            if (strlen($hash) == 60)
-
-                var_dump('Hash password: CRYPT_BLOWFISH');
-                die;
+            if (strlen($hash) == 60) {
+                /*var_dump('Hash password: CRYPT_BLOWFISH');
+                die;*/
 
                 return $hash;
+            }
         }
 
         if (CRYPT_EXT_DES == 1 && !$this->corePH->portable_hashes) {
-            if (strlen($random) < 3)
+            if (strlen($random) < 3) {
                 $random = $this->corePH->get_random_bytes(3);
-            $hash =  crypt($password, $this->corePH->gensalt_extended($random));
-            if (strlen($hash) == 20)
-
-                var_dump('Hash password: CRYPT_EXT_DES');
-                die;
+            }
+            $hash =  crypt($password, $this->gensalt_extended($random));
+            if (strlen($hash) == 20) {
+                /*var_dump('Hash password: CRYPT_EXT_DES');
+                die;*/
 
                 return $hash;
+            }
         }
 
-        if (strlen($random) < 6)
+        if (strlen($random) < 6) {
             $hash = $this->corePH->crypt_private($password, $salt);
-            if (strlen($hash) == 34)
+            if (strlen($hash) == 34) {
                 return $hash;
+            }
+        }
 
         # Returning '*' on error is safe here, but would _not_ be safe
         # in a crypt(3)-like function used _both_ for generating new
@@ -131,8 +136,30 @@ class passw0rdHash implements Core
      * @param string $stored_hash
      * @return bool
      */
-    public function checkPassword(string $password, string $stored_hash)
+    public function checkPassword(string $password, string $stored_hash): bool
     {
         return $this->corePH->CheckPassword($password, $stored_hash);
+    }
+
+    /**
+     * @param $input
+     * @return string
+     */
+    private function gensalt_extended($input): string
+    {
+        $count_log2 = min($this->corePH->iteration_count_log2 + 8, 24);
+        # This should be odd to not reveal weak DES keys, and the
+        # maximum valid value is (2**24 - 1) which is odd anyway.
+        $count = ( 1 << $count_log2 ) - 1;
+
+        $output = '_';
+        $output .= $this->corePH->itoa64[ $count & 0x3f ];
+        $output .= $this->corePH->itoa64[ ( $count >> 6 ) & 0x3f ];
+        $output .= $this->corePH->itoa64[ ( $count >> 12 ) & 0x3f ];
+        $output .= $this->corePH->itoa64[ ( $count >> 18 ) & 0x3f ];
+
+        $output .= $this->corePH->encode64($input, 3);
+
+        return $output;
     }
 }

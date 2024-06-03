@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright (C) 2015-2019 Virgil Security Inc.
+ * Copyright (C) 2015-2024 Virgil Security Inc.
  *
  * All rights reserved.
  *
@@ -52,7 +52,7 @@ class PluginValidator implements Core
     public function isPluginActive(): bool
     {
         require_once ABSPATH . 'wp-admin/includes/plugin.php';
-        return (bool)is_plugin_active(Config::PLUGIN_FULL_NAME);
+        return is_plugin_active(Config::PLUGIN_FULL_NAME);
     }
 
     /**
@@ -60,13 +60,11 @@ class PluginValidator implements Core
      */
     public function checkEnvCredentials(): bool
     {
-        return (!empty($_ENV[Credential::APP_TOKEN]) && !empty($_ENV[Credential::APP_SECRET_KEY]) && !empty
-            ($_ENV[Credential::SERVICE_PUBLIC_KEY]));
+        return (!empty($_ENV[Credential::APP_TOKEN]) && !empty($_ENV[Credential::APP_SECRET_KEY]) && !empty($_ENV[Credential::SERVICE_PUBLIC_KEY]));
     }
 
     /**
      * @return bool
-     * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public function checkService(): bool
     {
@@ -76,7 +74,6 @@ class PluginValidator implements Core
 
     /**
      * @return bool
-     * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public function check(): bool
     {

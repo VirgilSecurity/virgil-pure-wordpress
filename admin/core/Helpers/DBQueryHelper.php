@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright (C) 2015-2019 Virgil Security Inc.
+ * Copyright (C) 2015-2024 Virgil Security Inc.
  *
  * All rights reserved.
  *
@@ -40,6 +40,7 @@ namespace VirgilSecurityPure\Helpers;
 use VirgilSecurityPure\Config\Config;
 use VirgilSecurityPure\Config\Option;
 use VirgilSecurityPure\Core\Core;
+use wpdb;
 
 /**
  * Class DBQueryHelper
@@ -48,21 +49,24 @@ use VirgilSecurityPure\Core\Core;
 class DBQueryHelper implements Core
 {
     /**
-     * @var \wpdb
+     * @var wpdb
      */
-    private $wpdb;
+    private wpdb $wpdb;
 
     /**
      * @var string
      */
-    private $tableLog;
+    private string $tableLog;
 
     /**
      * @var string
      */
-    private $charsetCollate;
+    private string $charsetCollate;
 
-    private $tableUsers;
+    /**
+     * @var string
+     */
+    private string $tableUsers;
 
     /**
      * DBQueryHelper constructor.
@@ -82,15 +86,15 @@ class DBQueryHelper implements Core
      * @param int $limit
      * @return array|null|object
      */
-    public function getAllLogs(int $offset = 0, int $limit = 0)
+    public function getAllLogs(int $offset = 0, int $limit = 0): object|array|null
     {
         return $this->wpdb->get_results("SELECT * FROM {$this->tableLog} ORDER BY id DESC LIMIT {$limit} OFFSET {$offset}");
     }
 
     /**
-     *
+     * @return void
      */
-    public function createTableLog()
+    public function createTableLog(): void
     {
         $sql = "CREATE TABLE {$this->tableLog} (
 		id mediumint(9) NOT NULL AUTO_INCREMENT,
@@ -105,31 +109,36 @@ class DBQueryHelper implements Core
     }
 
     /**
-     *
+     * @return void
      */
-    public function dropTableLog()
+    public function dropTableLog(): void
     {
         $sql = "DROP TABLE IF EXISTS {$this->tableLog}";
         $this->wpdb->query($sql);
     }
 
     /**
-     *
+     * @return void
      */
-    public function clearTableLog()
+    public function clearTableLog(): void
     {
         $this->wpdb->query("DELETE FROM {$this->tableLog} WHERE id NOT IN (1)");
     }
 
     /**
-     *
+     * @return void
      */
-    public function clearAllUsersPass()
+    public function clearAllUsersPass(): void
     {
         $this->wpdb->query("UPDATE {$this->tableUsers} SET user_pass=''");
     }
 
-    public function passRecovery(int $id, string $password)
+    /**
+     * @param int $id
+     * @param string $password
+     * @return void
+     */
+    public function passRecovery(int $id, string $password): void
     {
         $this->wpdb->query("UPDATE {$this->tableUsers} SET user_pass='{$password}' WHERE id={$id}");
     }
@@ -137,7 +146,7 @@ class DBQueryHelper implements Core
     /**
      * @param int $id
      */
-    public function clearUserPass(int $id)
+    public function clearUserPass(int $id): void
     {
         $this->wpdb->query("UPDATE {$this->tableUsers} SET user_pass='' WHERE ID=$id");
     }
@@ -145,7 +154,7 @@ class DBQueryHelper implements Core
     /**
      * @param string $name
      */
-    public function clearActionProcess(string $name)
+    public function clearActionProcess(string $name): void
     {
         $process = '%'.Config::PLUGIN_NAME.'_action_'.$name.'_process%';
         $batch = '%'.Config::PLUGIN_NAME.'_action_'.$name.'_batch%';
@@ -153,9 +162,9 @@ class DBQueryHelper implements Core
     }
 
     /**
-     *
+     * @return void
      */
-    public function clearPureParams()
+    public function clearPureParams(): void
     {
         $encrypted = Option::ENCRYPTED;
         $params = Option::PARAMS;
@@ -163,6 +172,4 @@ class DBQueryHelper implements Core
 
         $this->wpdb->query("DELETE FROM {$this->wpdb->usermeta} WHERE meta_key IN ('$encrypted', '$params', '$record')");
     }
-
-
 }

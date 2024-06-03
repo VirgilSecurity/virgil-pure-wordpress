@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright (C) 2015-2019 Virgil Security Inc.
+ * Copyright (C) 2015-2024 Virgil Security Inc.
  *
  * All rights reserved.
  *
@@ -49,35 +49,40 @@ class InfoHelper
     /**
      * @return string
      */
-    public static function getPHPVersion(): string {
+    public static function getPHPVersion(): string
+    {
         return PHP_MAJOR_VERSION . '.' . PHP_MINOR_VERSION;
     }
 
     /**
      * @return string
      */
-    public static function getExtensionDir(): string {
+    public static function getExtensionDir(): string
+    {
         return PHP_EXTENSION_DIR;
     }
 
     /**
      * @return string
      */
-    public static function getExtensionIniFile(): string {
+    public static function getExtensionIniFile(): string
+    {
         return php_ini_scanned_files();
     }
 
     /**
      * @return string
      */
-    public static function getOSVersion(): string {
+    public static function getOSVersion(): string
+    {
         return PHP_OS;
     }
 
     /**
      * @return string
      */
-    public static function getExtensionType(): string {
+    public static function getExtensionType(): string
+    {
         $ee = 'Windows'==self::getOSVersion() ? 'dll' : 'so';
         return ".".$ee;
     }
@@ -85,7 +90,8 @@ class InfoHelper
     /**
      * @return string
      */
-    public static function getMigrated(): string {
+    public static function getMigrated(): string
+    {
         global $wpdb;
         $record = Option::RECORD;
 
@@ -97,43 +103,46 @@ class InfoHelper
             WHERE um.meta_key = "$record"
 SQL;
         $count = $wpdb->get_results($sql);
-        $res = null == $count[0]->c ? 0 : $count[0]->c;
-
-        return $res;
+        return null == $count[0]->c ? 0 : $count[0]->c;
     }
 
     /**
      * @return float
      */
-    public static function getMigratedPercents(): float {
-        return (float) (round(self::getMigrated()/self::getTotalUsers(), 2))*100;
+    public static function getMigratedPercents(): float
+    {
+        return round(self::getMigrated()/self::getTotalUsers(), 2) *100;
     }
 
     /**
      * @return bool
      */
-    public static function isAllUsersMigrated() {
+    public static function isAllUsersMigrated(): bool
+    {
         return self::getTotalUsers()==self::getMigrated();
     }
 
     /**
      * @return string
      */
-    public static function getTotalUsers(): string {
+    public static function getTotalUsers(): string
+    {
         return count_users()['total_users'];
     }
 
     /**
      * @return string
      */
-    public static function getEnvFilePath(): string {
+    public static function getEnvFilePath(): string
+    {
         return WP_PLUGIN_DIR.DIRECTORY_SEPARATOR.Config::PLUGIN_NAME.DIRECTORY_SEPARATOR.'.env';
     }
 
     /**
      * @return bool
      */
-    public static function isRecoveryPrivateKeyExists(): bool {
+    public static function isRecoveryPrivateKeyExists(): bool
+    {
         return (bool) get_option(Option::RECOVERY_PUBLIC_KEY);
     }
 }

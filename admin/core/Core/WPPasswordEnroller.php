@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright (C) 2015-2019 Virgil Security Inc.
+ * Copyright (C) 2015-2024 Virgil Security Inc.
  *
  * All rights reserved.
  *
@@ -37,7 +37,8 @@
 
 namespace VirgilSecurityPure\Core;
 
-use Virgil\PureKit\Protocol\Protocol;
+use Virgil\PureKit\Pure\Exception\PheClientException;
+use Virgil\PureKit\Pure\Exception\PureCryptoException;
 use VirgilSecurityPure\Config\Option;
 use WP_User;
 
@@ -48,33 +49,33 @@ use WP_User;
 class WPPasswordEnroller implements Core
 {
     /**
-     * @var Protocol
+     * @var CoreProtocol|null
      */
-    private $protocol;
+    private ?CoreProtocol $protocol;
 
     /**
-     * @var passw0rdHash
+     * @var passw0rdHash|null
      */
-    private $passw0rdHash;
+    private ?passw0rdHash $passw0rdHash;
 
 
     /**
-     * @param Protocol $protocol
+     * @param CoreProtocol $protocol
      * @param passw0rdHash $passw0rdHash
      */
-    public function setDep(Protocol $protocol, passw0rdHash $passw0rdHash) {
+    public function setDep(CoreProtocol $protocol, passw0rdHash $passw0rdHash): void
+    {
         $this->protocol = $protocol;
         $this->passw0rdHash = $passw0rdHash;
     }
 
     /**
      * @param WP_User $user
-     * @param bool $clearUserPass
      * @return bool
-     * @throws \GuzzleHttp\Exception\GuzzleException
-     * @throws \Virgil\PureKit\Exceptions\ProtocolException
+     * @throws PheClientException
+     * @throws PureCryptoException
      */
-    public function enroll(WP_User $user, bool $clearUserPass = false): bool
+    public function enroll(WP_User $user): bool
     {
         $hash = $this->passw0rdHash->get($user->user_pass, 'hash');
         $params = $this->passw0rdHash->get($user->user_pass, 'params');

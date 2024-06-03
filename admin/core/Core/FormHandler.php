@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright (C) 2015-2019 Virgil Security Inc.
+ * Copyright (C) 2015-2024 Virgil Security Inc.
  *
  * All rights reserved.
  *
@@ -37,8 +37,10 @@
 
 namespace VirgilSecurityPure\Core;
 
+use Exception;
 use GuzzleHttp\Exception\ClientException;
-use Virgil\CryptoImpl\VirgilCryptoException;
+use Virgil\Crypto\Exceptions\VirgilCryptoException;
+use Virgil\PureKit\Pure\Pure;
 use VirgilSecurityPure\Background\EncryptAndMigrateBackgroundProcess;
 use VirgilSecurityPure\Background\RecoveryBackgroundProcess;
 use VirgilSecurityPure\Background\UpdateBackgroundProcess;
@@ -46,9 +48,11 @@ use VirgilSecurityPure\Config\Config;
 use VirgilSecurityPure\Config\Option;
 use VirgilSecurityPure\Config\Credential;
 use VirgilSecurityPure\Config\Log;
+use VirgilSecurityPure\Exceptions\PluginPureException;
 use VirgilSecurityPure\Helpers\DBQueryHelper;
 use VirgilSecurityPure\Helpers\Redirector;
 use VirgilSecurityPure\Config\Crypto;
+use wpdb;
 
 /**
  * Class FormHandler
@@ -59,27 +63,27 @@ class FormHandler implements Core
     /**
      * @var CredentialsManager
      */
-    protected $cm;
+    protected CredentialsManager $cm;
 
     /**
      * @var DBQueryHelper
      */
-    protected $dbq;
+    protected DBQueryHelper $dbq;
 
     /**
-     * @var \wpdb
+     * @var wpdb
      */
-    protected $wpdb;
+    protected wpdb $wpdb;
 
     /**
      * @var CoreProtocol
      */
-    private $coreProtocol;
+    private CoreProtocol $coreProtocol;
 
     /**
      * @var VirgilCryptoWrapper
      */
-    private $virgilCryptoWrapper;
+    private VirgilCryptoWrapper $virgilCryptoWrapper;
 
     /**
      * FormHandler constructor.
@@ -96,8 +100,12 @@ class FormHandler implements Core
      * @param CredentialsManager $credentialsManager
      * @param DBQueryHelper $DBQueryHelper
      */
-    public function setDep(CoreProtocol $coreProtocol, VirgilCryptoWrapper $virgilCryptoWrapper, CredentialsManager
-    $credentialsManager, DBQueryHelper $DBQueryHelper) {
+    public function setDep(
+        CoreProtocol $coreProtocol,
+        VirgilCryptoWrapper $virgilCryptoWrapper,
+        CredentialsManager $credentialsManager,
+        DBQueryHelper $DBQueryHelper
+    ): void {
         $this->coreProtocol = $coreProtocol;
         $this->virgilCryptoWrapper = $virgilCryptoWrapper;
         $this->cm = $credentialsManager;
@@ -107,44 +115,52 @@ class FormHandler implements Core
     /**
      *
      */
-    public function demo()
+    public function demo(): void
     {
-        if(!get_option(Option::RECOVERY_PUBLIC_KEY))
+        if (!get_option(Option::RECOVERY_PUBLIC_KEY)) {
             Logger::log(Log::GENERATE_RECOVERY_KEYS, 0);
+        }
     }
 
-    public function downloadRecoveryPrivateKey()
+    /**
+     * @return void
+     * @throws PluginPureException
+     * @throws VirgilCryptoException
+     */
+    public function downloadRecoveryPrivateKey(): void
     {
         $this->virgilCryptoWrapper->generateKeys();
         $this->virgilCryptoWrapper->downloadPrivateKey();
     }
 
     /**
-     * @throws \GuzzleHttp\Exception\GuzzleException
+     * @return void
      */
-    public function credentials()
+    public function credentials(): void
     {
-        $this->cm->addInitialCredentials($_POST[Credential::APP_TOKEN], $_POST[Credential::SERVICE_PUBLIC_KEY],
-        $_POST[Credential::APP_SECRET_KEY]);
+        $this->cm->addInitialCredentials(
+            $_POST[Credential::APP_TOKEN],
+            $_POST[Credential::SERVICE_PUBLIC_KEY],
+            $_POST[Credential::APP_SECRET_KEY],
+            $_POST[Credential::NONROTATABLE_MASTER_SECRET],
+            $_POST[Credential::BACKUP_PUBLIC_KEY],
+        );
 
         try {
-            $protocol = $this->coreProtocol->init();
-            $protocol->enrollAccount(Config::TEST_ENROLLMENT);
-        }
-        catch(ClientException $e) {
-            if(401==$e->getCode()) {
-                $this->cm->addEmptyCredentials();
+            /** @var Pure $protocol */
+            $this->coreProtocol->init();
+            $this->coreProtocol->enrollAccount(Config::TEST_ENROLLMENT);
+        } catch (ClientException $e) {
+            $this->cm->addEmptyCredentials();
+            if (401 == $e->getCode()) {
                 Logger::log(Log::INVALID_APP_TOKEN, 0);
             } else {
-                $this->cm->addEmptyCredentials();
                 Logger::log($e->getMessage(), 0);
             }
             Redirector::toPageLog();
-
-        }
-        catch (\Exception $e) {
+        } catch (Exception $e) {
             $this->cm->addEmptyCredentials();
-            Logger::log("Invalid proof"==$e->getMessage() ? Log::INVALID_PROOF : $e->getMessage(), 0);
+            Logger::log("Invalid proof" == $e->getMessage() ? Log::INVALID_PROOF : $e->getMessage(), 0);
 
             Redirector::toPageLog();
         }
@@ -153,11 +169,11 @@ class FormHandler implements Core
     }
 
     /**
-     *
+     * @return void
      */
-    public function migrate()
+    public function migrate(): void
     {
-        $users = get_users(array('fields' => array('ID', 'user_pass')));
+        $users = get_users(['fields' => ['ID', 'user_pass']]);
 
         $migrateBackgroundProcess = new EncryptAndMigrateBackgroundProcess();
         $migrateBackgroundProcess->setDep($this->coreProtocol->init(), $this->dbq, $this->virgilCryptoWrapper);
@@ -168,10 +184,11 @@ class FormHandler implements Core
 
         try {
             foreach ($users as $user) {
-                if(empty(get_user_meta($user->ID, Option::RECORD)) && empty(get_user_meta($user->ID, Option::PARAMS)))
-                    $migrateBackgroundProcess->push_to_queue( $user );
+                if (empty(get_user_meta($user->ID, Option::RECORD)) && empty(get_user_meta($user->ID, Option::PARAMS))) {
+                    $migrateBackgroundProcess->push_to_queue($user);
+                }
             }
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             wp_die($e->getMessage());
         }
 
@@ -179,16 +196,16 @@ class FormHandler implements Core
     }
 
     /**
-     *
+     * @return void
      */
-    public function update()
+    public function update(): void
     {
-        if(!empty($_POST[Credential::UPDATE_TOKEN])) {
+        if (!empty($_POST[Credential::UPDATE_TOKEN])) {
+            $users = get_users(['fields' => ['ID']]);
 
-            $users = get_users(array('fields' => array('ID')));
-
-            if(!$this->cm->addUpdateTokenToOldCredentials($_POST[Credential::UPDATE_TOKEN]))
-                Logger::log("Add .".Credential::UPDATE_TOKEN." to old credentials", 0);
+            if (!$this->cm->addUpdateTokenToOldCredentials($_POST[Credential::UPDATE_TOKEN])) {
+                Logger::log("Add ." . Credential::UPDATE_TOKEN . " to old credentials", 0);
+            }
 
             update_option(Option::UPDATE_START, microtime(true));
             Logger::log(Log::START_UPDATE);
@@ -198,28 +215,25 @@ class FormHandler implements Core
                 $updateBackgroundProcess->setDep($this->coreProtocol->init(), $this->cm);
 
                 foreach ($users as $user) {
-                    $updateBackgroundProcess->push_to_queue( $user );
+                    $updateBackgroundProcess->push_to_queue($user);
                 }
 
                 $updateBackgroundProcess->save()->dispatch();
-
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 wp_die($e->getMessage());
             }
-        }
-        else {
-            wp_die("Empty ".Credential::UPDATE_TOKEN);
+        } else {
+            wp_die("Empty " . Credential::UPDATE_TOKEN);
         }
     }
 
     /**
-     * 
+     * @return void
      */
-    public function recovery()
+    public function recovery(): void
     {
-        if(!empty($file = $_FILES[Crypto::RECOVERY_PRIVATE_KEY])) {
-
-            if(350<$file['size']) {
+        if (!empty($file = $_FILES[Crypto::RECOVERY_PRIVATE_KEY])) {
+            if (350 < $file['size']) {
                 Logger::log(Log::RECOVERY_ERROR, 0);
                 Redirector::toPageLog();
                 exit();
@@ -227,12 +241,11 @@ class FormHandler implements Core
 
             $privateKeyIn = file_get_contents($file['tmp_name']);
 
-            try{
+            try {
                 $this->virgilCryptoWrapper->importKey(Crypto::PRIVATE_KEY, $privateKeyIn);
-            }
-            catch (\Exception $e) {
-                if($e instanceof VirgilCryptoException) {
-                    Logger::log("Invalid ".Crypto::RECOVERY_PRIVATE_KEY, 0);
+            } catch (Exception $e) {
+                if ($e instanceof VirgilCryptoException) {
+                    Logger::log("Invalid " . Crypto::RECOVERY_PRIVATE_KEY, 0);
                 } else {
                     Logger::log($e->getMessage(), 0);
                 }
@@ -243,7 +256,7 @@ class FormHandler implements Core
 
             update_option(Option::RECOVERY_START, microtime(true));
             Logger::log(Log::START_RECOVERY);
-            $users = get_users(array('fields' => array('ID')));
+            $users = get_users(['fields' => ['ID']]);
 
             try {
                 $recoveryBackgroundProcess = new RecoveryBackgroundProcess();
@@ -258,27 +271,24 @@ class FormHandler implements Core
                 }
 
                 $recoveryBackgroundProcess->save()->dispatch();
-
-            } catch (\Exception $e) {
-                if($e instanceof VirgilCryptoException) {
+            } catch (Exception $e) {
+                if ($e instanceof VirgilCryptoException) {
                     Logger::log("Invalid Encrypted Data or Recovery Private Key", 0);
-                }
-                else {
+                } else {
                     Logger::log($e->getMessage(), 0);
                 }
                 Redirector::toPageLog();
                 exit();
             }
-        }
-        else {
-            wp_die("Empty ".Crypto::RECOVERY_PRIVATE_KEY);
+        } else {
+            wp_die("Empty " . Crypto::RECOVERY_PRIVATE_KEY);
         }
     }
 
     /**
-     *
+     * @return void
      */
-    public function addUsers()
+    public function addUsers(): void
     {
         for ($i = 0; $i < (int)$_POST['number_of_users']; $i++) {
 //        $user = wp_generate_password(8, false, false);
@@ -288,18 +298,18 @@ class FormHandler implements Core
         }
 
         $num = (int)$_POST['number_of_users'];
-        Logger::log(Log::DEV_ADD_USERS." (".$num.")");
+        Logger::log(Log::DEV_ADD_USERS . " (" . $num . ")");
     }
 
     /**
-     *
+     * @return void
      */
-    public function restoreDefaults()
+    public function restoreDefaults(): void
     {
         $this->wpdb->query("DELETE FROM {$this->wpdb->users} WHERE id NOT IN (1)");
         $this->wpdb->query("DELETE FROM {$this->wpdb->usermeta} WHERE user_id NOT IN (1)");
 
-        $users = get_users(array('fields' => array('ID')));
+        $users = get_users(['fields' => ['ID']]);
 
         foreach ($users as $user) {
             delete_user_meta($user->ID, Option::RECORD);

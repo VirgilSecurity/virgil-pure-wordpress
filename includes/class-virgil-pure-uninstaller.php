@@ -9,9 +9,10 @@ use VirgilSecurityPure\Helpers\DBQueryHelper;
 class Virgil_Pure_Uninstaller {
 
     /**
-     *
+     * @return void
      */
-	public static function uninstall() {
+	public static function uninstall(): void
+    {
         $dbQuery = new DBQueryHelper();
         $dbQuery->dropTableLog();
 

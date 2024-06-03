@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright (C) 2015-2019 Virgil Security Inc.
+ * Copyright (C) 2015-2024 Virgil Security Inc.
  *
  * All rights reserved.
  *
@@ -49,18 +49,20 @@ class ENVFormatter
      * @param string $appToken
      * @param string $servicePublicKey
      * @param string $appSecretKey
+     * @param string $updateNonrotatableMasterSecret
+     * @param string $backupPublicKey
      * @param string|null $updateToken
      * @return string
      */
-    public static function formatData(string $appToken, string $servicePublicKey, string $appSecretKey, string $updateToken = null): string
+    public static function formatData(string $appToken, string $servicePublicKey, string $appSecretKey, string $updateNonrotatableMasterSecret, string $backupPublicKey, string $updateToken = null): string
     {
         $titleAT = Credential::APP_TOKEN;
         $titlePK = Credential::SERVICE_PUBLIC_KEY;
         $titleSK = Credential::APP_SECRET_KEY;
         $titleUT = Credential::UPDATE_TOKEN;
+        $titleNM = Credential::NONROTATABLE_MASTER_SECRET;
+        $titleBP = Credential::BACKUP_PUBLIC_KEY;
 
-        $formatData = "$titleAT=\"$appToken\"\n$titlePK=\"$servicePublicKey\"\n$titleSK=\"$appSecretKey\"\n$titleUT=\"$updateToken\"";
-
-        return $formatData;
+        return "$titleAT=\"$appToken\"\n$titlePK=\"$servicePublicKey\"\n$titleSK=\"$appSecretKey\"\n$titleNM=\"$updateNonrotatableMasterSecret\"\n$titleBP=\"$backupPublicKey\"\n$titleUT=\"$updateToken\"";
     }
 }

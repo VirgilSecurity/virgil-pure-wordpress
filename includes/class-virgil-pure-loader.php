@@ -8,20 +8,20 @@ class Virgil_Pure_Loader {
     /**
      * @var array
      */
-	protected $actions;
+	protected array $actions;
 
     /**
      * @var array
      */
-	protected $filters;
+	protected array $filters;
 
     /**
      * Virgil_Pure_Loader constructor.
      */
 	public function __construct() {
 
-		$this->actions = array();
-		$this->filters = array();
+		$this->actions = [];
+		$this->filters = [];
 
 	}
 
@@ -32,7 +32,8 @@ class Virgil_Pure_Loader {
      * @param int $priority
      * @param int $accepted_args
      */
-	public function add_action( $hook, $component, $callback, $priority = 10, $accepted_args = 1 ) {
+	public function add_action( $hook, $component, $callback, int $priority = 10, int $accepted_args = 1 ): void
+    {
 		$this->actions = $this->add( $this->actions, $hook, $component, $callback, $priority, $accepted_args );
 	}
 
@@ -43,7 +44,8 @@ class Virgil_Pure_Loader {
      * @param int $priority
      * @param int $accepted_args
      */
-	public function add_filter( $hook, $component, $callback, $priority = 10, $accepted_args = 1 ) {
+	public function add_filter( $hook, $component, $callback, int $priority = 10, int $accepted_args = 1 ): void
+    {
 		$this->filters = $this->add( $this->filters, $hook, $component, $callback, $priority, $accepted_args );
 	}
 
@@ -56,7 +58,8 @@ class Virgil_Pure_Loader {
      * @param $accepted_args
      * @return array
      */
-	private function add( $hooks, $hook, $component, $callback, $priority, $accepted_args ) {
+	private function add( $hooks, $hook, $component, $callback, $priority, $accepted_args ): array
+    {
 
 		$hooks[] = array(
 			'hook'          => $hook,
@@ -71,9 +74,10 @@ class Virgil_Pure_Loader {
 	}
 
     /**
-     *
+     * @return void
      */
-	public function run() {
+	public function run(): void
+    {
 
 		foreach ( $this->filters as $hook ) {
 			add_filter( $hook['hook'], array( $hook['component'], $hook['callback'] ), $hook['priority'], $hook['accepted_args'] );

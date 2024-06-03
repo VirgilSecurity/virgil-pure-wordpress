@@ -9,9 +9,10 @@ use VirgilSecurityPure\Helpers\DBQueryHelper;
 class Virgil_Pure_Deactivator {
 
     /**
-     *
+     * @return void
      */
-	public static function deactivate() {
+	public static function deactivate(): void
+    {
         $dbQuery = new DBQueryHelper();
         $dbQuery->dropTableLog();
 

@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright (C) 2015-2019 Virgil Security Inc.
+ * Copyright (C) 2015-2024 Virgil Security Inc.
  *
  * All rights reserved.
  *
@@ -37,6 +37,7 @@
 
 namespace VirgilSecurityPure\Core;
 
+use Exception;
 use VirgilSecurityPure\Config\Config;
 
 /**
@@ -47,15 +48,14 @@ class AuthChecker
 {
     /**
      * @return bool
-     * @throws \GuzzleHttp\Exception\GuzzleException
      */
-    public function check(): bool {
+    public function check(): bool
+    {
         try {
-            $protocol = new CoreProtocol();
-            $protocol = $protocol->init();
-            $protocol->enrollAccount(Config::TEST_ENROLLMENT);
-        }
-        catch (\Exception $e) {
+            $core = new CoreProtocol();
+            $core->init();
+            $core->enrollAccount(Config::TEST_ENROLLMENT);
+        } catch (Exception) {
             return false;
         }
 

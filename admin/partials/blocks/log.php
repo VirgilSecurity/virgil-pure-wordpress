@@ -15,7 +15,6 @@ $lp = new LogPagination();
         </tr>
 
         <?php foreach ($lp->getData() as $log) { ?>
-
             <?php
             $trClass = 0 == $log->status ? 'virgil-pure-log-table-tr-error' : null;
             ?>
@@ -27,7 +26,7 @@ $lp = new LogPagination();
         <?php } ?>
     </table>
 
-    <?php if($lp->getPag()) {?>
+    <?php if ($lp->getPag()) {?>
         <div class="virgil-pure-log-paginator">
             <div class="virgil-pure-log-paginator-page">page</div>
             <?= $lp->getPag() ?>
