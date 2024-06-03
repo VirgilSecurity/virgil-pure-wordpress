@@ -97,6 +97,7 @@ class RecoveryBackgroundProcess extends BaseBackgroundProcess
             $user = $item['user'];
             $id = $user->ID;
             $privateKeyIn = $item['private_key_in'];
+            // Must check it !!!
             $encryptedIn = get_user_meta($id, Option::ENCRYPTED)[0];
             $privateKey = $this->vcw->importKey(Crypto::PRIVATE_KEY, $privateKeyIn)->getPrivateKey();
             try {

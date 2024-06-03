@@ -97,6 +97,7 @@ class Virgil_Pure {
      */
 	public function get_loader(): Virgil_Pure_Loader
     {
+        // I can't find where we use it
 		return $this->loader;
 	}
 

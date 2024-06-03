@@ -88,20 +88,11 @@ class VirgilCryptoWrapper implements Core
      */
     public function getKey(int $type): string
     {
-        switch ($type) {
-            case Crypto::PUBLIC_KEY:
-                $keyObject = $this->keyPair->getPublicKey();
-                $res = $this->vc->exportPublicKey($keyObject);
-                break;
-            case Crypto::PRIVATE_KEY:
-                $keyObject = $this->keyPair->getPrivateKey();
-                $res = $this->vc->exportPrivateKey($keyObject);
-                break;
-            default:
-                throw new PluginPureException('Invalid key type (Get key)');
-        }
-
-        return $res;
+        return match ($type) {
+            Crypto::PUBLIC_KEY => $this->vc->exportPublicKey($this->keyPair->getPublicKey()),
+            Crypto::PRIVATE_KEY => $this->vc->exportPrivateKey($this->keyPair->getPrivateKey()),
+            default => throw new PluginPureException('Invalid key type (Get key)'),
+        };
     }
 
     /**

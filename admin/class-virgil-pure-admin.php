@@ -185,7 +185,7 @@ class Virgil_Pure_Admin
                 $userPass = get_user_meta($user_id, Option::RECORD)[0];
                 $userPass = base64_decode($userPass);
 
-                return $this->protocol->verifyPassword($inputHash, $userPass); // На данный момент здесь все валится
+                return $this->protocol->verifyPassword($inputHash, $userPass); // at that moment we have an error here
             }
         }
 

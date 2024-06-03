@@ -94,13 +94,10 @@ class CoreFactory
         switch ($class) {
             case 'EncryptAndMigrate':
                 return new EncryptAndMigrateBackgroundProcess();
-                break;
             case 'Update':
                 return new UpdateBackgroundProcess();
-                break;
             case 'Recovery':
                 return new RecoveryBackgroundProcess();
-                break;
             default:
                 $this->throwError($class);
         }

@@ -97,6 +97,7 @@ class passw0rdHash implements Core
         if (CRYPT_BLOWFISH == 1 && !$this->corePH->portable_hashes) {
             $random = $this->corePH->get_random_bytes(16);
             $hash = crypt($password, $this->corePH->gensalt_blowfish($random));
+            // Is it work before for debug ?
             if (strlen($hash) == 60) {
                 /*var_dump('Hash password: CRYPT_BLOWFISH');
                 die;*/

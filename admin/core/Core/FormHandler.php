@@ -147,6 +147,7 @@ class FormHandler implements Core
         );
 
         try {
+            // each time before use Pure we need init it - maybe in future add init function to __construct
             /** @var Pure $protocol */
             $this->coreProtocol->init();
             $this->coreProtocol->enrollAccount(Config::TEST_ENROLLMENT);
@@ -176,6 +177,7 @@ class FormHandler implements Core
         $users = get_users(['fields' => ['ID', 'user_pass']]);
 
         $migrateBackgroundProcess = new EncryptAndMigrateBackgroundProcess();
+        // Make sure that migration without errors on background process too
         $migrateBackgroundProcess->setDep($this->coreProtocol->init(), $this->dbq, $this->virgilCryptoWrapper);
 
         update_option(Option::MIGRATE_START, microtime(true));
@@ -185,6 +187,7 @@ class FormHandler implements Core
         try {
             foreach ($users as $user) {
                 if (empty(get_user_meta($user->ID, Option::RECORD)) && empty(get_user_meta($user->ID, Option::PARAMS))) {
+                    // correct working push but must check process
                     $migrateBackgroundProcess->push_to_queue($user);
                 }
             }

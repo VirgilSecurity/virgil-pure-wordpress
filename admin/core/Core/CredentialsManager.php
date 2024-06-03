@@ -147,6 +147,7 @@ class CredentialsManager implements Core
     private function updateENV(): void
     {
         $dotenv = Dotenv::createImmutable(dirname(VIRGIL_PURE_CORE), basename(VIRGIL_PURE_CORE));
+        // we need make sure we've entered all the data
         $dotenv->load();
     }
 }

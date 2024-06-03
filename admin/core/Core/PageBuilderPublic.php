@@ -97,7 +97,7 @@ class PageBuilderPublic extends PageBuilderProtected
         if ($this->disabled()) {
             return false;
         }
-
+    // can't find where we use it
         return $this->isLogPage();
     }
 
