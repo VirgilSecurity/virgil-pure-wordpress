@@ -165,4 +165,9 @@ class CoreProtocol implements Core
     {
         return is_string($this->pheClient->createVerifyPasswordRequest($inputHash, $userPass));
     }
+
+    public function getPure(): Pure
+    {
+        return $this->protocol;
+    }
 }

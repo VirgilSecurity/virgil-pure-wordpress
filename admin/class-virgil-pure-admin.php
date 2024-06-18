@@ -171,21 +171,14 @@ class Virgil_Pure_Admin
      */
     public function virgil_pure_check_password($check, $password, $hash, $user_id): bool
     {
+
         /** @var PluginValidator $pluginValidator */
         $pluginValidator = $this->coreFactory->buildCore('PluginValidator');
 
         if ($pluginValidator->check() && $user_id) {
             if (InfoHelper::isAllUsersMigrated()) {
-
-                /** @var passw0rdHash $passw0rdHash */
-                $passw0rdHash = $this->coreFactory->buildCore('passw0rdHash');
-                $salt = get_user_meta($user_id, Option::PARAMS)[0];
-
-                $inputHash = base64_decode($passw0rdHash->get($passw0rdHash->hashPassword($password, $salt), 'hash'));
-                $userPass = get_user_meta($user_id, Option::RECORD)[0];
-                $userPass = base64_decode($userPass);
-
-                return $this->protocol->verifyPassword($inputHash, $userPass); // at that moment we have an error here
+                $this->protocol->init();
+                return !empty($this->protocol->getPure()->authenticateUser($user_id, $password)->getGrant()->getSessionId()); // at that moment we have an error here
             }
         }
 

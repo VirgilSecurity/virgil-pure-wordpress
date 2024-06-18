@@ -38,8 +38,13 @@
 namespace VirgilSecurityPure\Background;
 
 use Virgil\Crypto\Exceptions\VirgilCryptoException;
+use Virgil\PureKit\Pure\Exception\EmptyArgumentException;
+use Virgil\PureKit\Pure\Exception\IllegalStateException;
+use Virgil\PureKit\Pure\Exception\NullArgumentException;
+use Virgil\PureKit\Pure\Exception\NullPointerException;
 use Virgil\PureKit\Pure\Exception\PheClientException;
 use Virgil\PureKit\Pure\Exception\PureCryptoException;
+use Virgil\PureKit\Pure\Exception\PureLogicException;
 use VirgilSecurityPure\Config\Config;
 use VirgilSecurityPure\Config\Crypto;
 use VirgilSecurityPure\Config\Log;
@@ -91,60 +96,65 @@ class EncryptAndMigrateBackgroundProcess extends BaseBackgroundProcess
     public function setDep(CoreProtocol $protocol, DBQueryHelper $dbqh, VirgilCryptoWrapper $vcw): void
     {
         $this->protocol = $protocol;
+        $this->protocol->init();
         $this->dbqh = $dbqh;
         $this->vcw = $vcw;
     }
 
     /**
      * @param mixed $item
-     * @return false
+     * @return bool
+     * @throws EmptyArgumentException
+     * @throws IllegalStateException
+     * @throws NullArgumentException
      * @throws PheClientException
      * @throws PureCryptoException
-     * @throws PluginPureException
      * @throws VirgilCryptoException
      */
     protected function task(mixed $item): bool
     {
-        if (is_null($this->passw0rdHash)) {
+        if (is_null($this->passw0rdHash)) { // не нужен
             $this->passw0rdHash = new passw0rdHash();
         }
 
-        $pk = get_option(Option::RECOVERY_PUBLIC_KEY);
-
-        $virgilPublicKey = $this->vcw->importKey(Crypto::PUBLIC_KEY, $pk);
-
-        $encrypted = $this->vcw->encrypt($item->user_pass, $virgilPublicKey);
-
-        $hash = $this->passw0rdHash->get($item->user_pass, 'hash');
-        $params = $this->passw0rdHash->get($item->user_pass, 'params');
-
-        $enrollment = $this->protocol->enrollAccount($hash);
-        $record = base64_encode($enrollment[0]);
-
-        update_user_meta($item->ID, Option::RECORD, $record);
-        update_user_meta($item->ID, Option::PARAMS, $params);
-        update_user_meta($item->ID, Option::ENCRYPTED, $encrypted);
+        //$pk = get_option(Option::RECOVERY_PUBLIC_KEY);
+        Logger::log("[DELETE AFTER TEST] - task for {$item->ID} {$item->user_pass}");
+        $this->protocol->getPure()->registerUser($item->ID, $item->user_pass);
+        Logger::log("[DELETE AFTER TEST] - REGISTER FOR {$item->ID} {$item->user_pass} COMPLETE");
+        update_user_meta($item->ID, Option::MIGRATE_START, true);
 
         return false;
     }
 
     /**
      * @return void
+     * @throws PheClientException
+     * @throws PureCryptoException
+     * @throws VirgilCryptoException
+     * @throws EmptyArgumentException
+     * @throws IllegalStateException
+     * @throws NullArgumentException
+     * @throws NullPointerException
+     * @throws PureLogicException
      */
     protected function complete(): void
     {
-
+        // добавить бэк-процесс по всем юзерам, проверять через pure->authenticateUser() [PureTest - 336 по гранту и проверить сессию у гранта] и меняем мету
+        //
+        Logger::log("[DELETE AFTER TEST] - complete");
         if ($this->is_queue_empty()) {
+            Logger::log("[DELETE AFTER TEST] - complete IS_QUEUE_EMPTY");
+
             update_option(Option::MIGRATE_FINISH, microtime(true));
 
             $duration = round(get_option(Option::MIGRATE_FINISH) - get_option(Option::MIGRATE_START), 2);
             Logger::log(Log::FINISH_MIGRATION . " (duration: $duration sec.)");
 
+            $this->dbqh->clearAllUsersPass($this->protocol->getPure());
+
             delete_option(Option::MIGRATE_START);
             delete_option(Option::MIGRATE_FINISH);
-            $this->dbqh->clearAllUsersPass();
+            parent::complete();
         }
-
-        parent::complete();
     }
 }

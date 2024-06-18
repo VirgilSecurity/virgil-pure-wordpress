@@ -37,6 +37,15 @@
 
 namespace VirgilSecurityPure\Helpers;
 
+use Virgil\Crypto\Exceptions\VirgilCryptoException;
+use Virgil\PureKit\Pure\Exception\EmptyArgumentException;
+use Virgil\PureKit\Pure\Exception\IllegalStateException;
+use Virgil\PureKit\Pure\Exception\NullArgumentException;
+use Virgil\PureKit\Pure\Exception\NullPointerException;
+use Virgil\PureKit\Pure\Exception\PheClientException;
+use Virgil\PureKit\Pure\Exception\PureCryptoException;
+use Virgil\PureKit\Pure\Exception\PureLogicException;
+use Virgil\PureKit\Pure\Pure;
 use VirgilSecurityPure\Config\Config;
 use VirgilSecurityPure\Config\Option;
 use VirgilSecurityPure\Core\Core;
@@ -126,11 +135,29 @@ class DBQueryHelper implements Core
     }
 
     /**
+     * @param Pure $pure
      * @return void
+     * @throws VirgilCryptoException
+     * @throws EmptyArgumentException
+     * @throws IllegalStateException
+     * @throws NullArgumentException
+     * @throws NullPointerException
+     * @throws PheClientException
+     * @throws PureCryptoException
+     * @throws PureLogicException
      */
-    public function clearAllUsersPass(): void
+    public function clearAllUsersPass(Pure $pure): void
     {
-        $this->wpdb->query("UPDATE {$this->tableUsers} SET user_pass=''");
+        $users = $this->wpdb->get_results("SELECT ID, user_pass FROM {$this->tableUsers} WHERE user_pass != ''");
+        foreach ($users as $user) {
+            if (get_user_meta($user->ID, Option::MIGRATE_START, true) === true) {
+                $authResult = $pure->authenticateUser($user->ID, $user->user_pass);
+                if ($authResult->getEncryptedGrant() !== null) {
+                    update_user_meta($user->ID, Option::MIGRATE_FINISH, true);
+                    $this->clearUserPass($user->ID);
+                }
+            }
+        }
     }
 
     /**
