@@ -12,6 +12,7 @@ use VirgilSecurityPure\Core\CoreFactory;
 use VirgilSecurityPure\Core\CoreProtocol;
 use VirgilSecurityPure\Core\CredentialsManager;
 use VirgilSecurityPure\Core\FormHandler;
+use VirgilSecurityPure\Core\Logger;
 use VirgilSecurityPure\Core\passw0rdHash;
 use VirgilSecurityPure\Core\PluginValidator;
 use VirgilSecurityPure\Core\VirgilCryptoWrapper;
@@ -177,8 +178,7 @@ class Virgil_Pure_Admin
 
         if ($pluginValidator->check() && $user_id) {
             if (InfoHelper::isAllUsersMigrated()) {
-                $this->protocol->init();
-                return !empty($this->protocol->getPure()->authenticateUser($user_id, $password)->getGrant()->getSessionId()); // at that moment we have an error here
+                return !empty($this->protocol->getPure()->authenticateUser($user_id, $password)->getGrant()->getSessionId());
             }
         }
 

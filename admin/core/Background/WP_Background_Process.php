@@ -8,6 +8,8 @@
 namespace VirgilSecurityPure\Background;
 
 use stdClass;
+use VirgilSecurityPure\Config\Log;
+use VirgilSecurityPure\Core\Logger;
 
 /**
  * Abstract WP_Background_Process class.
@@ -312,39 +314,46 @@ abstract class WP_Background_Process extends WP_Async_Request
     protected function handle(): void
     {
         $this->lock_process();
-
+        Logger::log("lock_process");
         do {
             $batch = $this->get_batch();
 
             foreach ($batch->data as $key => $value) {
+                Logger::log(get_class($this) . ' : ' . $key);
                 $task = $this->task($value);
-
+                Logger::log(get_class($this) . ' : FINISH');
                 if (false !== $task) {
                     $batch->data[$key] = true;
                 } else {
                     unset($batch->data[$key]);
                 }
-
+                Logger::log("check time_exceeded");
                 if ($this->time_exceeded() || $this->memory_exceeded()) {
                     // Batch limits reached.
+                    Logger::log("time_exceeded or memory_exceeded");
                     break;
                 }
             }
 
             // Update or delete current batch.
+            Logger::log("Update or delete current batch");
             if (!empty($batch->data)) {
                 $this->update($batch->key, $batch->data);
             } else {
                 $this->delete($batch->key);
             }
+            Logger::log("time_exceeded");
         } while (!$this->time_exceeded() && !$this->memory_exceeded() && !$this->is_queue_empty());
 
         $this->unlock_process();
 
         // Start next batch or complete process.
+        Logger::log("Start next batch or complete process.");
         if (!$this->is_queue_empty()) {
+            Logger::log("dispatch");
             $this->dispatch();
         } else {
+            Logger::log("complete");
             $this->complete();
         }
 
@@ -459,6 +468,7 @@ abstract class WP_Background_Process extends WP_Async_Request
     public function handle_cron_healthcheck(): void
     {
         if ($this->is_process_running()) {
+            Logger::log('Background process already running.');
             // Background process already running.
             exit;
         }

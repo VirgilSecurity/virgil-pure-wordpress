@@ -64,7 +64,6 @@ class CoreProtocol implements Core
     private PheManager $pheManager;
     private Pure $protocol;
     private PheClient $pheClient;
-    private PheServer $pheServer;
 
     /**
      * @return null|static
@@ -72,11 +71,11 @@ class CoreProtocol implements Core
     public function init(): ?static
     {
         try {
-            if (!empty($_ENV[Credential::APP_TOKEN]) && !empty($_ENV[Credential::APP_SECRET_KEY]) && !empty(
-                $_ENV[Credential::SERVICE_PUBLIC_KEY]
-            )) {
+            if ($this->checkCredentials()) {
                 $this->protocol = $this->createProtocol();
-                $this->pheServer = new PheServer();
+            } else {
+                Logger::log("Invalid credentials: Fill all Credentials", 0);
+                Redirector::toPageLog();
             }
         } catch (Exception $e) {
             if (0 == $e->getCode()) {
@@ -103,7 +102,6 @@ class CoreProtocol implements Core
      */
     private function createProtocol(): Pure
     {
-
         $context = PureContext::createVirgilContext(
             $_ENV[Credential::APP_TOKEN],
             $_ENV[Credential::NONROTATABLE_MASTER_SECRET],
@@ -169,5 +167,15 @@ class CoreProtocol implements Core
     public function getPure(): Pure
     {
         return $this->protocol;
+    }
+
+    /**
+     * @return bool
+     */
+    public static function checkCredentials(): bool
+    {
+        return (!empty($_ENV[Credential::APP_TOKEN]) && !empty($_ENV[Credential::APP_SECRET_KEY]) && !empty(
+            $_ENV[Credential::SERVICE_PUBLIC_KEY]
+            ) && !empty($_ENV[Credential::NONROTATABLE_MASTER_SECRET]) && !empty($_ENV[Credential::BACKUP_PUBLIC_KEY]));
     }
 }

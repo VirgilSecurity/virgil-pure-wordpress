@@ -60,16 +60,7 @@ class PluginValidator implements Core
      */
     public function checkEnvCredentials(): bool
     {
-        return (!empty($_ENV[Credential::APP_TOKEN]) && !empty($_ENV[Credential::APP_SECRET_KEY]) && !empty($_ENV[Credential::SERVICE_PUBLIC_KEY]));
-    }
-
-    /**
-     * @return bool
-     */
-    public function checkService(): bool
-    {
-        $ac = new AuthChecker();
-        return $ac->check();
+        return CoreProtocol::checkCredentials();
     }
 
     /**
@@ -77,6 +68,6 @@ class PluginValidator implements Core
      */
     public function check(): bool
     {
-        return $this->isPluginActive()&&$this->checkEnvCredentials()&&$this->checkService();
+        return $this->isPluginActive()&&$this->checkEnvCredentials();
     }
 }

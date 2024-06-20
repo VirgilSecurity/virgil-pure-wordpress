@@ -188,11 +188,12 @@ class FormHandler implements Core
             foreach ($users as $user) {
                 if (empty(get_user_meta($user->ID, Option::RECORD)) && empty(get_user_meta($user->ID, Option::PARAMS))) {
                     // correct working push but must check process
-
+                    Logger::log('push to queue ' . $user->ID);
                     $migrateBackgroundProcess->push_to_queue($user);
                 }
             }
         } catch (Exception $e) {
+            Logger::log('Push user to migration return error:  ' . $e->getMessage());
             wp_die($e->getMessage());
         }
 

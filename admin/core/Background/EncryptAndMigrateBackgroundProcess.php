@@ -45,6 +45,7 @@ use Virgil\PureKit\Pure\Exception\NullPointerException;
 use Virgil\PureKit\Pure\Exception\PheClientException;
 use Virgil\PureKit\Pure\Exception\PureCryptoException;
 use Virgil\PureKit\Pure\Exception\PureLogicException;
+use Virgil\PureKit\Pure\Exception\PureStorageUserNotFoundException;
 use VirgilSecurityPure\Config\Config;
 use VirgilSecurityPure\Config\Crypto;
 use VirgilSecurityPure\Config\Log;
@@ -55,6 +56,7 @@ use VirgilSecurityPure\Core\passw0rdHash;
 use VirgilSecurityPure\Core\VirgilCryptoWrapper;
 use VirgilSecurityPure\Exceptions\PluginPureException;
 use VirgilSecurityPure\Helpers\DBQueryHelper;
+use WpOrg\Requests\Exception;
 
 /**
  * Class EncryptAndsMigrateBackgroundProcess
@@ -96,7 +98,6 @@ class EncryptAndMigrateBackgroundProcess extends BaseBackgroundProcess
     public function setDep(CoreProtocol $protocol, DBQueryHelper $dbqh, VirgilCryptoWrapper $vcw): void
     {
         $this->protocol = $protocol;
-        $this->protocol->init();
         $this->dbqh = $dbqh;
         $this->vcw = $vcw;
     }
@@ -113,15 +114,17 @@ class EncryptAndMigrateBackgroundProcess extends BaseBackgroundProcess
      */
     protected function task(mixed $item): bool
     {
-        if (is_null($this->passw0rdHash)) { // не нужен
-            $this->passw0rdHash = new passw0rdHash();
+        try {
+            $this->protocol->getPure()->authenticateUser($item->ID, $item->user_pass);
+        } catch (VirgilCryptoException|PureLogicException|PureCryptoException|PheClientException|NullPointerException|NullArgumentException|IllegalStateException|EmptyArgumentException $e) {
+            Logger::log('Error when auth User ID = ' . $item->ID);
+        } catch (PureStorageUserNotFoundException $e) {
+            $this->protocol->getPure()->registerUser($item->ID, $item->user_pass);
+            update_user_meta($item->ID, Option::MIGRATE_START, true);
+            return false;
         }
-
-        //$pk = get_option(Option::RECOVERY_PUBLIC_KEY);
-        Logger::log("[DELETE AFTER TEST] - task for {$item->ID} {$item->user_pass}");
-        $this->protocol->getPure()->registerUser($item->ID, $item->user_pass);
-        Logger::log("[DELETE AFTER TEST] - REGISTER FOR {$item->ID} {$item->user_pass} COMPLETE");
-        update_user_meta($item->ID, Option::MIGRATE_START, true);
+        Logger::log('MIGRATE FINISH FOR User ID = ' . $item->ID);
+        update_user_meta($item->ID, Option::MIGRATE_FINISH, true);
 
         return false;
     }
@@ -139,11 +142,8 @@ class EncryptAndMigrateBackgroundProcess extends BaseBackgroundProcess
      */
     protected function complete(): void
     {
-        // добавить бэк-процесс по всем юзерам, проверять через pure->authenticateUser() [PureTest - 336 по гранту и проверить сессию у гранта] и меняем мету
-        //
-        Logger::log("[DELETE AFTER TEST] - complete");
+        Logger::log( "WE IN COMPLETE");
         if ($this->is_queue_empty()) {
-            Logger::log("[DELETE AFTER TEST] - complete IS_QUEUE_EMPTY");
 
             update_option(Option::MIGRATE_FINISH, microtime(true));
 

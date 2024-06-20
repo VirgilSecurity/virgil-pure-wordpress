@@ -61,6 +61,14 @@ class Logger
             'date' => current_time('mysql')
         ]);
 
+        if (!empty($wpdb->last_error)) {
+            $wpdb->insert($table_name, [
+                'description' => $wpdb->last_error,
+                'status' => $status,
+                'date' => current_time('mysql')
+            ]);
+        }
+
         return true;
     }
 }
