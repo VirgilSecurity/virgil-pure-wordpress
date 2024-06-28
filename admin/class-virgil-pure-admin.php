@@ -13,10 +13,8 @@ use VirgilSecurityPure\Core\CoreProtocol;
 use VirgilSecurityPure\Core\CredentialsManager;
 use VirgilSecurityPure\Core\FormHandler;
 use VirgilSecurityPure\Core\Logger;
-use VirgilSecurityPure\Core\passw0rdHash;
 use VirgilSecurityPure\Core\PluginValidator;
 use VirgilSecurityPure\Core\VirgilCryptoWrapper;
-use VirgilSecurityPure\Core\WPPasswordEnroller;
 use VirgilSecurityPure\Exceptions\PluginPureException;
 use VirgilSecurityPure\Helpers\ConfigHelper;
 use VirgilSecurityPure\Helpers\DBQueryHelper;
@@ -32,7 +30,7 @@ class Virgil_Pure_Admin
      * @var CoreFactory
      */
     private CoreFactory $coreFactory;
-    
+
     private Core|VirgilCryptoWrapper $virgilCryptoWrapper;
     private ?CoreProtocol $protocol;
     private Core|DBQueryHelper $dbqh;
@@ -52,7 +50,7 @@ class Virgil_Pure_Admin
         $this->coreFactory = new CoreFactory();
         /** @var CoreProtocol $coreProtocol */
         $coreProtocol = $this->coreFactory->buildCore('CoreProtocol');
-        
+
         $this->virgilCryptoWrapper = $this->coreFactory->buildCore('VirgilCryptoWrapper');
 
         $coreProtocol->init();
@@ -88,7 +86,7 @@ class Virgil_Pure_Admin
     {
         $devMode = get_option(Option::DEV_MODE);
         $extLoaded = extension_loaded(Config::EXTENSION_VSCE_PHE_PHP);
-        
+
         $title = $extLoaded ? "Action" : "Info";
 
         add_menu_page(Config::MAIN_PAGE_TITLE, Config::MAIN_PAGE_TITLE, Config::CAPABILITY, Config::ACTION_PAGE);
@@ -96,7 +94,7 @@ class Virgil_Pure_Admin
         if ($extLoaded) {
             add_submenu_page(Config::ACTION_PAGE, 'Log', 'Log', Config::CAPABILITY, Config::LOG_PAGE, array($this, 'virgil_pure_page_builder'));
             add_submenu_page(Config::ACTION_PAGE, 'FAQ', 'FAQ', Config::CAPABILITY, Config::FAQ_PAGE, array($this, 'virgil_pure_page_builder'));
-            if (InfoHelper::isAllUsersMigrated()&&ConfigHelper::isRecoveryKeyExists()&&0!==get_option(Option::DEMO_MODE)) {
+            if (InfoHelper::isAllUsersMigrated() && ConfigHelper::isRecoveryKeyExists() && 0 !== get_option(Option::DEMO_MODE)) {
                 add_submenu_page(
                     Config::ACTION_PAGE,
                     'Recovery',
@@ -240,7 +238,7 @@ class Virgil_Pure_Admin
      */
     public function virgil_pure_profile_update(int $user_id): void
     {
-        if ($this->pv->check()&&!empty(get_user_by('id', $user_id)->user_pass)) {
+        if ($this->pv->check() && !empty(get_user_by('id', $user_id)->user_pass)) {
             $this->encrypt($user_id);
             $this->enroll($user_id);
         }
@@ -270,18 +268,7 @@ class Virgil_Pure_Admin
      */
     private function enroll(int $userId): void
     {
-        $user = get_user_by('id', $userId);
-        /** @var WPPasswordEnroller $wppe */
-        $wppe = $this->coreFactory->buildCore('WPPasswordEnroller');
-
-        /** @var passw0rdHash $passw0rdHash */
-        $passw0rdHash = $this->coreFactory->buildCore('passwordHash');
-
-        $wppe->setDep($this->protocol, $passw0rdHash);
-
-        $wppe->enroll($user);
-
-        $this->dbqh->clearUserPass($user->ID);
+        throw new Exception('Method not implemented');
     }
 
     /**

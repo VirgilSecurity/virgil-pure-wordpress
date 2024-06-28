@@ -38,6 +38,7 @@
 namespace VirgilSecurityPure\Background;
 
 use Virgil\Crypto\Exceptions\VirgilCryptoException;
+use Virgil\CryptoWrapper\Phe\PheClient;
 use Virgil\PureKit\Pure\Exception\EmptyArgumentException;
 use Virgil\PureKit\Pure\Exception\IllegalStateException;
 use Virgil\PureKit\Pure\Exception\NullArgumentException;
@@ -52,7 +53,6 @@ use VirgilSecurityPure\Config\Log;
 use VirgilSecurityPure\Config\Option;
 use VirgilSecurityPure\Core\CoreProtocol;
 use VirgilSecurityPure\Core\Logger;
-use VirgilSecurityPure\Core\passw0rdHash;
 use VirgilSecurityPure\Core\VirgilCryptoWrapper;
 use VirgilSecurityPure\Exceptions\PluginPureException;
 use VirgilSecurityPure\Helpers\DBQueryHelper;
@@ -65,9 +65,9 @@ use WpOrg\Requests\Exception;
 class EncryptAndMigrateBackgroundProcess extends BaseBackgroundProcess
 {
     /**
-     * @var passw0rdHash|null
+     * @var string|null
      */
-    private ?passw0rdHash $passw0rdHash = null;
+    private ?string $passwordHash = null;
 
     /**
      * @var null|CoreProtocol
@@ -114,11 +114,33 @@ class EncryptAndMigrateBackgroundProcess extends BaseBackgroundProcess
      */
     protected function task(mixed $item): bool
     {
+        Logger::log('TEST CODE START');
+        $pheClient = new PheClient();
+        $pheClient->setupDefaults();
+        $clientPrivateKey = base64_decode("i08VHvNcRuBt+sny4GnRv+Ajf5lEpFIdvgykH1/SBYo=");
+        $serverPublicKey = base64_decode("BAR+T8LkfugpOb2K18TwRWXc9SkZJdqa+4Gd0PuwZwfWtNF0+Iy4vRDohrwbUxoN9C91D2sm4vfWsy1ShMpa1+k=");
+        $pheClient->setKeys($clientPrivateKey, $serverPublicKey);
+
+        $pwd = hex2bin("cb1e2b5fa8c8d9d8e45a43ead8fe081814131c0a0b9d2b52ca8716875581512af646305f5c6d95c68fd597ded8337a4f40beca747b7ab0e3725e4c35d3e1cc5e");
+        $enrollRecord = hex2bin("0a20f4056fbaf0490875ec841cfb6f9ad45b73b923fc1d6e55dfad20cf0c9ab2fb061220cde82a74f75d6b373ae120671bb7e7d6a36275eb97f8837e158108f63a746db01a41049ef6def3ed6c50959ae539fd4a95beaaf34941be6eb377b110d4b45676eb26b77c9769c09a2e622a479f7f3002b266b2c72e56bc30a76766b824373a2a6b0c30224104bf442de47b67a665b229d1425fc46f31d4ca32c5ff86099ab4a452bffd1fb3c9dc76cdf778e285fcc27d169f3629fb0eda73ffe949df8582446d23a9d9e3294c");
+
+        $request = $pheClient->createVerifyPasswordRequest($pwd, $enrollRecord);
+        if ($request === null) {
+            Logger::log('Error when createVerifyPasswordRequest');
+            return false;
+        }
+
+        Logger::log("SUCCESS: size of request:" . strlen($request));
+        Logger::log('TEST CODE END');
+        return false;
+
         try {
             $this->protocol->getPure()->authenticateUser($item->ID, $item->user_pass);
-        } catch (VirgilCryptoException|PureLogicException|PureCryptoException|PheClientException|NullPointerException|NullArgumentException|IllegalStateException|EmptyArgumentException $e) {
-            Logger::log('Error when auth User ID = ' . $item->ID);
+            Logger::log('Is already registered User ID = ' . $item->ID);
+        } catch (VirgilCryptoException | PureLogicException | PureCryptoException | PheClientException | NullPointerException | NullArgumentException | IllegalStateException | EmptyArgumentException $e) {
+            Logger::log('Error when auth User ID = ' . $item->ID . ' ' . $e->getMessage());
         } catch (PureStorageUserNotFoundException $e) {
+            Logger::log('Going to register = User ID ' . $item->ID);
             $this->protocol->getPure()->registerUser($item->ID, $item->user_pass);
             update_user_meta($item->ID, Option::MIGRATE_START, true);
             return false;
@@ -142,7 +164,7 @@ class EncryptAndMigrateBackgroundProcess extends BaseBackgroundProcess
      */
     protected function complete(): void
     {
-        Logger::log( "WE IN COMPLETE");
+        Logger::log("WE IN COMPLETE");
         if ($this->is_queue_empty()) {
 
             update_option(Option::MIGRATE_FINISH, microtime(true));

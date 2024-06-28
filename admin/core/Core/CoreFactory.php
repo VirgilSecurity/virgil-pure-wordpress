@@ -74,12 +74,6 @@ class CoreFactory
             case 'FormHandler':
                 return new FormHandler();
                 break;
-            case 'WPPasswordEnroller':
-                return new WPPasswordEnroller();
-                break;
-            case 'passw0rdHash':
-                return new passw0rdHash();
-                break;
             default:
                 $this->throwError($class);
         }
@@ -106,7 +100,7 @@ class CoreFactory
     /**
      * @param string $class
      */
-    private function throwError(string $class):void
+    private function throwError(string $class): void
     {
         var_dump("Invalid class name: $class");
         die;
