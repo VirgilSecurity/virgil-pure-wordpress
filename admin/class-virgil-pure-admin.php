@@ -168,15 +168,17 @@ class Virgil_Pure_Admin
      * @return bool
      * @throws Exception
      */
-    public function virgil_pure_check_password($check, $password, $hash, $user_id): bool
+    public function virgil_pure_check_password($check, $password, $hash, $userId): bool
     {
 
         /** @var PluginValidator $pluginValidator */
         $pluginValidator = $this->coreFactory->buildCore('PluginValidator');
 
-        if ($pluginValidator->check() && $user_id) {
+        if ($pluginValidator->check() && $userId) {
             if (InfoHelper::isAllUsersMigrated()) {
-                return !empty($this->protocol->getPure()->authenticateUser($user_id, $password)->getGrant()->getSessionId());
+                var_dump(get_user_by('id', $userId)->user_email);
+                var_dump($password);exit;
+                return !empty($this->protocol->getPure()->authenticateUser(get_user_by('id', $userId)->user_email, $password)->getGrant()->getSessionId());
             }
         }
 
@@ -240,7 +242,7 @@ class Virgil_Pure_Admin
     {
         if ($this->pv->check() && !empty(get_user_by('id', $user_id)->user_pass)) {
             $this->encrypt($user_id);
-            $this->enroll($user_id);
+            $this->enroll($user_id); //TODO: CHANGE METHOD UPDATE PROFILE
         }
     }
 
@@ -250,17 +252,18 @@ class Virgil_Pure_Admin
      * @throws PheClientException
      * @throws PluginPureException
      * @throws PureCryptoException
-     * @throws VirgilCryptoException
+     * @throws VirgilCryptoException|Exception
      */
     public function virgil_pure_password_reset(WP_User $user): void
     {
         if ($this->pv->check()) {
             $this->encrypt($user->ID);
-            $this->enroll($user->ID);
+            $this->enroll($user->ID); //TODO: CHANGE METHOD RESET PROFILE
         }
     }
 
     /**
+     * @deprecated
      * @param int $userId
      * @return void
      * @throws PheClientException

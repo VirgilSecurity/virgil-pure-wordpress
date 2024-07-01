@@ -45,10 +45,13 @@ use Virgil\PureKit\Pure\Exception\NullPointerException;
 use Virgil\PureKit\Pure\Exception\PheClientException;
 use Virgil\PureKit\Pure\Exception\PureCryptoException;
 use Virgil\PureKit\Pure\Exception\PureLogicException;
+use Virgil\PureKit\Pure\Exception\VirgilCloudStorageException;
 use Virgil\PureKit\Pure\Pure;
 use VirgilSecurityPure\Config\Config;
+use VirgilSecurityPure\Config\Log;
 use VirgilSecurityPure\Config\Option;
 use VirgilSecurityPure\Core\Core;
+use VirgilSecurityPure\Core\Logger;
 use wpdb;
 
 /**
@@ -87,7 +90,7 @@ class DBQueryHelper implements Core
 
         $this->charsetCollate = $this->wpdb->get_charset_collate();
         $this->tableLog = $this->wpdb->prefix . Config::PLUGIN_DB_LOG_TABLE;
-        $this->tableUsers = $this->wpdb->prefix.'users';
+        $this->tableUsers = $this->wpdb->prefix . 'users';
     }
 
     /**
@@ -97,7 +100,9 @@ class DBQueryHelper implements Core
      */
     public function getAllLogs(int $offset = 0, int $limit = 0): object|array|null
     {
-        return $this->wpdb->get_results("SELECT * FROM {$this->tableLog} ORDER BY id DESC LIMIT {$limit} OFFSET {$offset}");
+        return $this->wpdb->get_results(
+            "SELECT * FROM {$this->tableLog} ORDER BY id DESC LIMIT {$limit} OFFSET {$offset}"
+        );
     }
 
     /**
@@ -148,13 +153,17 @@ class DBQueryHelper implements Core
      */
     public function clearAllUsersPass(Pure $pure): void
     {
-        $users = $this->wpdb->get_results("SELECT ID, user_pass FROM {$this->tableUsers} WHERE user_pass != ''");
+        $users = $this->wpdb->get_results("SELECT ID, user_pass, user_email FROM {$this->tableUsers} WHERE user_pass != ''");
         foreach ($users as $user) {
-            if (get_user_meta($user->ID, Option::MIGRATE_START, true) === true) {
-                $authResult = $pure->authenticateUser($user->ID, $user->user_pass);
-                if ($authResult->getEncryptedGrant() !== null) {
-                    update_user_meta($user->ID, Option::MIGRATE_FINISH, true);
-                    $this->clearUserPass($user->ID);
+            if (get_user_meta($user->ID, Option::MIGRATE_START, true) === '1') {
+                try {
+                    $authResult = $pure->authenticateUser($user->user_email, $user->user_pass);
+                    if ($authResult->getEncryptedGrant() !== null) {
+                        update_user_meta($user->ID, Option::MIGRATE_FINISH, true);
+                        $this->clearUserPass($user->ID);
+                    }
+                } catch (VirgilCloudStorageException $e) {
+                    Logger::log("When clean all users have an error. User email = " . $user->user_email . " : " . $e->getMessage());
                 }
             }
         }
@@ -175,7 +184,7 @@ class DBQueryHelper implements Core
      */
     public function clearUserPass(int $id): void
     {
-        $this->wpdb->query("UPDATE {$this->tableUsers} SET user_pass='' WHERE ID=$id");
+        $this->wpdb->query("UPDATE {$this->tableUsers} SET user_pass='' WHERE ID={$id}");
     }
 
     /**
@@ -183,9 +192,11 @@ class DBQueryHelper implements Core
      */
     public function clearActionProcess(string $name): void
     {
-        $process = '%'.Config::PLUGIN_NAME.'_action_'.$name.'_process%';
-        $batch = '%'.Config::PLUGIN_NAME.'_action_'.$name.'_batch%';
-        $this->wpdb->query("DELETE FROM {$this->wpdb->options} WHERE option_name LIKE \"$process\" AND option_name LIKE \"$batch\"");
+        $process = '%' . Config::PLUGIN_NAME . '_action_' . $name . '_process%';
+        $batch = '%' . Config::PLUGIN_NAME . '_action_' . $name . '_batch%';
+        $this->wpdb->query(
+            "DELETE FROM {$this->wpdb->options} WHERE option_name LIKE \"$process\" AND option_name LIKE \"$batch\""
+        );
     }
 
     /**
@@ -197,6 +208,8 @@ class DBQueryHelper implements Core
         $params = Option::PARAMS;
         $record = Option::RECORD;
 
-        $this->wpdb->query("DELETE FROM {$this->wpdb->usermeta} WHERE meta_key IN ('$encrypted', '$params', '$record')");
+        $this->wpdb->query(
+            "DELETE FROM {$this->wpdb->usermeta} WHERE meta_key IN ('$encrypted', '$params', '$record')"
+        );
     }
 }

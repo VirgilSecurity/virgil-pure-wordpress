@@ -174,7 +174,7 @@ class FormHandler implements Core
      */
     public function migrate(): void
     {
-        $users = get_users(['fields' => ['ID', 'user_pass']]);
+        $users = get_users(['fields' => ['ID', 'user_pass', 'user_email']]);
 
         $migrateBackgroundProcess = new EncryptAndMigrateBackgroundProcess();
         // Make sure that migration without errors on background process too
@@ -188,7 +188,7 @@ class FormHandler implements Core
             foreach ($users as $user) {
                 if (empty(get_user_meta($user->ID, Option::RECORD)) && empty(get_user_meta($user->ID, Option::PARAMS))) {
                     // correct working push but must check process
-                    Logger::log('push to queue ' . $user->ID);
+                    Logger::log('push to queue ' . $user->user_email);
                     $migrateBackgroundProcess->push_to_queue($user);
                 }
             }

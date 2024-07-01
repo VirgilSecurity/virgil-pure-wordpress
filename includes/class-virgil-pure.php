@@ -73,7 +73,7 @@ class Virgil_Pure {
 		$this->loader->add_action('admin_post_virgil_pure', $plugin_admin, 'virgil_pure_form_handler');
 		$this->loader->add_action('plugins_loaded', $plugin_admin, 'virgil_pure_init_background_processes');
 		$this->loader->add_filter('check_password', $plugin_admin, 'virgil_pure_check_password', 1, 4);
-		$this->loader->add_action('after_password_reset', $plugin_admin, 'virgil_pure_password_reset', 1);
+		$this->loader->add_action('after_password_reset', $plugin_admin, 'virgil_pure_password_reset', 1); //TODO: Remake
 		$this->loader->add_action('profile_update', $plugin_admin, 'virgil_pure_profile_update', 1);
 	}
 
