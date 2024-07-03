@@ -319,9 +319,7 @@ abstract class WP_Background_Process extends WP_Async_Request
             $batch = $this->get_batch();
 
             foreach ($batch->data as $key => $value) {
-                Logger::log(get_class($this) . ' : ' . $key);
                 $task = $this->task($value);
-                Logger::log(get_class($this) . ' : FINISH');
                 if (false !== $task) {
                     $batch->data[$key] = true;
                 } else {

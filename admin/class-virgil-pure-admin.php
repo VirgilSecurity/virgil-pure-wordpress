@@ -176,9 +176,7 @@ class Virgil_Pure_Admin
 
         if ($pluginValidator->check() && $userId) {
             if (InfoHelper::isAllUsersMigrated()) {
-                var_dump(get_user_by('id', $userId)->user_email);
-                var_dump($password);exit;
-                return !empty($this->protocol->getPure()->authenticateUser(get_user_by('id', $userId)->user_email, $password)->getGrant()->getSessionId());
+                return !empty($this->protocol->auth(get_user_by('id', $userId)->user_email, $password)->getGrant()->getSessionId()); //todo:check
             }
         }
 

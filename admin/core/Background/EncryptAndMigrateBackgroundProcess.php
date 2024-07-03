@@ -113,13 +113,10 @@ class EncryptAndMigrateBackgroundProcess extends BaseBackgroundProcess
     protected function task(mixed $item): bool
     {
         try {
-            Logger::log('Start task with User email = ' . $item->user_email . ': ' . $item->user_pass);
             $this->protocol->getPure()->authenticateUser($item->user_email, $item->user_pass);
-            Logger::log('Is already registered User email = ' . $item->user_email);
         } catch (VirgilCryptoException|PureLogicException|PureCryptoException|PheClientException|NullPointerException|NullArgumentException|IllegalStateException|EmptyArgumentException $e) {
             Logger::log('Error when auth User email = ' . $item->user_email . ' ' . $e->getMessage());
         } catch (PureStorageUserNotFoundException|VirgilCloudStorageException $e) {
-            Logger::log('Start migrate User email = ' . $item->user_email);
             try {
                 $this->protocol->getPure()->registerUser($item->user_email, $item->user_pass);
                 update_user_meta($item->ID, Option::MIGRATE_START, true);
@@ -135,25 +132,15 @@ class EncryptAndMigrateBackgroundProcess extends BaseBackgroundProcess
 
     /**
      * @return void
-     * @throws PheClientException
-     * @throws PureCryptoException
-     * @throws VirgilCryptoException
-     * @throws EmptyArgumentException
-     * @throws IllegalStateException
-     * @throws NullArgumentException
-     * @throws NullPointerException
-     * @throws PureLogicException
      */
     protected function complete(): void
     {
-        Logger::log("WE IN COMPLETE");
         if ($this->is_queue_empty()) {
             update_option(Option::MIGRATE_FINISH, microtime(true));
 
             $duration = round(get_option(Option::MIGRATE_FINISH) - get_option(Option::MIGRATE_START), 2);
-            Logger::log(Log::FINISH_MIGRATION . " (duration: $duration sec.)");
 
-            $this->dbqh->clearAllUsersPass($this->protocol->getPure());
+            $this->dbqh->clearAllUsersPass($this->protocol->getPure(), $this->protocol->getPasswordHash());
 
             delete_option(Option::MIGRATE_START);
             delete_option(Option::MIGRATE_FINISH);

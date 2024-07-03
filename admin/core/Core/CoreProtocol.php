@@ -38,12 +38,14 @@
 namespace VirgilSecurityPure\Core;
 
 use Exception;
+use PasswordHash;
 use Virgil\Crypto\Exceptions\VirgilCryptoException;
 use Virgil\CryptoWrapper\Phe\PheClient;
-use Virgil\CryptoWrapper\Phe\PheServer;
+use Virgil\PureKit\Pure\AuthResult;
 use Virgil\PureKit\Pure\Exception\EmptyArgumentException;
 use Virgil\PureKit\Pure\Exception\IllegalStateException;
 use Virgil\PureKit\Pure\Exception\NullArgumentException;
+use Virgil\PureKit\Pure\Exception\NullPointerException;
 use Virgil\PureKit\Pure\Exception\PheClientException;
 use Virgil\PureKit\Pure\Exception\PureCryptoException;
 use Virgil\PureKit\Pure\Exception\PureLogicException;
@@ -53,6 +55,8 @@ use Virgil\PureKit\Pure\PureContext;
 use Virgil\PureKit\Pure\PureCrypto;
 use VirgilSecurityPure\Config\Credential;
 use VirgilSecurityPure\Helpers\Redirector;
+
+require_once(ABSPATH . 'wp-includes/class-phpass.php');
 
 /**
  * Class CoreProtocol
@@ -64,6 +68,7 @@ class CoreProtocol implements Core
     private PheManager $pheManager;
     private Pure $protocol;
     private PheClient $pheClient;
+    private PasswordHash $hashPassword;
 
     /**
      * @return null|static
@@ -117,6 +122,7 @@ class CoreProtocol implements Core
         $this->pureCrypto = new PureCrypto($context->getCrypto());
         $this->pheManager = new PheManager($context);
         $this->pheClient = new PheClient();
+        $this->hashPassword = new PasswordHash(8, true);
         return new Pure($context);
     }
 
@@ -170,6 +176,26 @@ class CoreProtocol implements Core
     }
 
     /**
+     * @param string $email
+     * @param string $password
+     * @return AuthResult
+     * @throws EmptyArgumentException
+     * @throws IllegalStateException
+     * @throws NullArgumentException
+     * @throws NullPointerException
+     * @throws PheClientException
+     * @throws PureCryptoException
+     * @throws PureLogicException
+     * @throws VirgilCryptoException
+     */
+    public function auth(string $email, string $password): AuthResult
+    {
+        $user = get_user_by('email', $email);
+        $preparedPassword = $this->hashPassword->crypt_private($password, $user->user_pass);
+        return $this->protocol->authenticateUser($email, $preparedPassword); // todo: check
+    }
+
+    /**
      * @return bool
      */
     public static function checkCredentials(): bool
@@ -177,5 +203,10 @@ class CoreProtocol implements Core
         return (!empty($_ENV[Credential::APP_TOKEN]) && !empty($_ENV[Credential::APP_SECRET_KEY]) && !empty(
             $_ENV[Credential::SERVICE_PUBLIC_KEY]
             ) && !empty($_ENV[Credential::NONROTATABLE_MASTER_SECRET]) && !empty($_ENV[Credential::BACKUP_PUBLIC_KEY]));
+    }
+
+    public function getPasswordHash(): PasswordHash
+    {
+        return $this->hashPassword;
     }
 }
