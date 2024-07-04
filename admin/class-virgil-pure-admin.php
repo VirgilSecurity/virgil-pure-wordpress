@@ -176,10 +176,15 @@ class Virgil_Pure_Admin
 
         if ($pluginValidator->check() && $userId) {
             if (InfoHelper::isAllUsersMigrated()) {
-                return !empty($this->protocol->auth(get_user_by('id', $userId)->user_email, $password)->getGrant()->getSessionId()); //todo:check
+                try {
+                    $this->protocol->auth(get_user_by('id', $userId)->user_email, $password, $hash);
+                    return true;
+                } catch (Exception $e) {
+                    //todo: handle error
+                    return false;
+                }
             }
         }
-
         return $check;
     }
 

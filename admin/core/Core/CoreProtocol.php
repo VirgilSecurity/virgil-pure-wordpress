@@ -56,7 +56,7 @@ use Virgil\PureKit\Pure\PureCrypto;
 use VirgilSecurityPure\Config\Credential;
 use VirgilSecurityPure\Helpers\Redirector;
 
-require_once(ABSPATH . 'wp-includes/class-phpass.php');
+require_once (ABSPATH . 'wp-includes/class-phpass.php');
 
 /**
  * Class CoreProtocol
@@ -188,11 +188,10 @@ class CoreProtocol implements Core
      * @throws PureLogicException
      * @throws VirgilCryptoException
      */
-    public function auth(string $email, string $password): AuthResult
+    public function auth(string $email, string $password, string $hash): AuthResult
     {
-        $user = get_user_by('email', $email);
-        $preparedPassword = $this->hashPassword->crypt_private($password, $user->user_pass);
-        return $this->protocol->authenticateUser($email, $preparedPassword); // todo: check
+        $preparedPassword = $this->hashPassword->crypt_private($password, $hash);
+        return $this->protocol->authenticateUser($email, $preparedPassword);
     }
 
     /**
@@ -202,7 +201,7 @@ class CoreProtocol implements Core
     {
         return (!empty($_ENV[Credential::APP_TOKEN]) && !empty($_ENV[Credential::APP_SECRET_KEY]) && !empty(
             $_ENV[Credential::SERVICE_PUBLIC_KEY]
-            ) && !empty($_ENV[Credential::NONROTATABLE_MASTER_SECRET]) && !empty($_ENV[Credential::BACKUP_PUBLIC_KEY]));
+        ) && !empty($_ENV[Credential::NONROTATABLE_MASTER_SECRET]) && !empty($_ENV[Credential::BACKUP_PUBLIC_KEY]));
     }
 
     public function getPasswordHash(): PasswordHash
