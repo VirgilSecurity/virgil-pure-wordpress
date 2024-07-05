@@ -56,7 +56,7 @@ use Virgil\PureKit\Pure\PureCrypto;
 use VirgilSecurityPure\Config\Credential;
 use VirgilSecurityPure\Helpers\Redirector;
 
-require_once (ABSPATH . 'wp-includes/class-phpass.php');
+require_once(ABSPATH . 'wp-includes/class-phpass.php');
 
 /**
  * Class CoreProtocol
@@ -178,6 +178,7 @@ class CoreProtocol implements Core
     /**
      * @param string $email
      * @param string $password
+     * @param string $hash
      * @return AuthResult
      * @throws EmptyArgumentException
      * @throws IllegalStateException
@@ -202,10 +203,5 @@ class CoreProtocol implements Core
         return (!empty($_ENV[Credential::APP_TOKEN]) && !empty($_ENV[Credential::APP_SECRET_KEY]) && !empty(
             $_ENV[Credential::SERVICE_PUBLIC_KEY]
         ) && !empty($_ENV[Credential::NONROTATABLE_MASTER_SECRET]) && !empty($_ENV[Credential::BACKUP_PUBLIC_KEY]));
-    }
-
-    public function getPasswordHash(): PasswordHash
-    {
-        return $this->hashPassword;
     }
 }

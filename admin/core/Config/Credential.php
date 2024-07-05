@@ -52,6 +52,14 @@ class Credential
         self::BACKUP_PUBLIC_KEY
     ];
 
+    public const REQUIRED_CREDENTIALS = [
+        self::APP_TOKEN,
+        self::SERVICE_PUBLIC_KEY,
+        self::APP_SECRET_KEY,
+        self::NONROTATABLE_MASTER_SECRET,
+        self::BACKUP_PUBLIC_KEY
+    ];
+
     public const APP_TOKEN = 'APP_TOKEN';
     public const SERVICE_PUBLIC_KEY = 'SERVICE_PUBLIC_KEY';
     public const APP_SECRET_KEY = 'APP_SECRET_KEY';

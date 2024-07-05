@@ -58,25 +58,19 @@ class CoreFactory
         switch ($class) {
             case 'CoreProtocol':
                 return new CoreProtocol();
-                break;
             case 'VirgilCryptoWrapper':
                 return new VirgilCryptoWrapper();
-                break;
             case 'PluginValidator':
                 return new PluginValidator();
-                break;
             case 'DBQuery':
                 return new DBQueryHelper();
-                break;
             case 'CredentialsManager':
                 return new CredentialsManager();
-                break;
             case 'FormHandler':
                 return new FormHandler();
-                break;
-            default:
-                $this->throwError($class);
         }
+
+        $this->throwError($class);
     }
 
     /**
@@ -92,9 +86,9 @@ class CoreFactory
                 return new UpdateBackgroundProcess();
             case 'Recovery':
                 return new RecoveryBackgroundProcess();
-            default:
-                $this->throwError($class);
         }
+
+        $this->throwError($class);
     }
 
     /**
@@ -102,6 +96,7 @@ class CoreFactory
      */
     private function throwError(string $class): void
     {
+        Logger::log("Invalid class name: " . $class);
         var_dump("Invalid class name: $class");
         die;
     }

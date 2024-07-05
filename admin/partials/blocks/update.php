@@ -10,11 +10,23 @@ use VirgilSecurityPure\Config\Credential;
         enrollment records in your database. This action doesn't require changing users’ passwords or modifying the
         scheme of the existing table.</p>
 
-    <p class="virgil-pure-rotate-desc">Navigate to your Pure application in the <a href="https://dashboard.virgilsecurity.com" target="_blank">Virgil Security dashboard</a>, get your
-        update token and insert it into the field below. <a href="https://developer.virgilsecurity.com/docs/use-cases/v1/passwords-and-data-protection#update-user-record" target="_blank">Learn more about records
-            rotation here</a></p>
+    <p class="virgil-pure-rotate-desc">
+        Navigate to your Pure application in the
+        <a href="https://dashboard.virgilsecurity.com" target="_blank">
+            Virgil Security dashboard
+        </a>
+        , get your update token and insert it into the field below.
+        <a href="https://developer.virgilsecurity.com/docs/purekit/password-encryption/"
+           target="_blank">
+            Learn more about records rotation here
+        </a>
+    </p>
 
-    <form autocomplete="off" class="virgil-pure-credentials-form" action="<?php echo esc_url(admin_url('admin-post.php')); ?>" method="post">
+    <form autocomplete="off"
+          class="virgil-pure-credentials-form"
+          action="<?php echo esc_url(admin_url('admin-post.php')); ?>"
+          method="post"
+    >
         <div class="virgil-pure-global-field">
             <label class="virgil-pure-global-field-label" for="virgil-update-token">
                 <?= Credential::UPDATE_TOKEN ?>

@@ -60,4 +60,9 @@ class ConfigHelper
     {
         return get_option(Option::RECOVERY_PUBLIC_KEY);
     }
+
+    public static function isDemoMode(): bool
+    {
+        return get_option(Option::DEMO_MODE) !== 0;
+    }
 }

@@ -58,11 +58,11 @@ class PageBuilderPublic extends PageBuilderProtected
      */
     public function credentials(): bool
     {
-        if ($this->disabled()||!$this->isRecoveryPublicKeyExists()) {
+        if ($this->disabled() || !$this->isRecoveryPublicKeyExists()) {
             return false;
         }
 
-        return (!$this->isCredentialsSet()&&$this->isMainPage());
+        return (!$this->isCredentialsSet() && $this->isMainPage());
     }
 
     /**
@@ -70,11 +70,11 @@ class PageBuilderPublic extends PageBuilderProtected
      */
     public function migrate(): bool
     {
-        if ($this->disabled()||!$this->isRecoveryPublicKeyExists()) {
+        if ($this->disabled() || !$this->isRecoveryPublicKeyExists()) {
             return false;
         }
 
-        return ($this->isCredentialsSet()&&$this->isMainPage()&&!$this->isAllUsersMigrated());
+        return ($this->isCredentialsSet() && $this->isMainPage() && !$this->isAllUsersMigrated());
     }
 
     /**
@@ -82,11 +82,11 @@ class PageBuilderPublic extends PageBuilderProtected
      */
     public function update(): bool
     {
-        if ($this->disabled()||!$this->isRecoveryPublicKeyExists()) {
+        if ($this->disabled() || !$this->isRecoveryPublicKeyExists()) {
             return false;
         }
 
-        return ($this->isCredentialsSet()&&$this->isMainPage()&&$this->isAllUsersMigrated());
+        return ($this->isCredentialsSet() && $this->isMainPage() && $this->isAllUsersMigrated());
     }
 
     /**
@@ -97,7 +97,7 @@ class PageBuilderPublic extends PageBuilderProtected
         if ($this->disabled()) {
             return false;
         }
-    // can't find where we use it
+        // can't find where we use it
         return $this->isLogPage();
     }
 
@@ -126,7 +126,7 @@ class PageBuilderPublic extends PageBuilderProtected
      */
     public function generate_recovery_keys(): bool
     {
-        return !$this->isRecoveryPublicKeyExists()&&(!$this->isFAQPage()&&!$this->isLogPage());
+        return !$this->isRecoveryPublicKeyExists() && (!$this->isFAQPage() && !$this->isLogPage());
     }
 
     /**
@@ -134,6 +134,6 @@ class PageBuilderPublic extends PageBuilderProtected
      */
     public function info(): bool
     {
-        return ($this->isMainPage()||$this->disabled())&&!$this->generate_recovery_keys();
+        return ($this->isMainPage() || $this->disabled()) && !$this->generate_recovery_keys();
     }
 }

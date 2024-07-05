@@ -1,6 +1,9 @@
 <?php
 
 use Virgil\Crypto\Exceptions\VirgilCryptoException;
+use Virgil\PureKit\Pure\Exception\EmptyArgumentException;
+use Virgil\PureKit\Pure\Exception\IllegalStateException;
+use Virgil\PureKit\Pure\Exception\NullArgumentException;
 use Virgil\PureKit\Pure\Exception\PheClientException;
 use Virgil\PureKit\Pure\Exception\PureCryptoException;
 use VirgilSecurityPure\Config\Config;
@@ -40,6 +43,8 @@ class Virgil_Pure_Admin
     private string $virgilPure;
     private string $version;
 
+    private const PAGE_BUILDER = 'virgil_pure_page_builder';
+
     /**
      * Virgil_Pure_Admin constructor.
      * @param string $virgilPure
@@ -74,7 +79,7 @@ class Virgil_Pure_Admin
         wp_enqueue_style(
             $this->virgilPure,
             plugin_dir_url(__FILE__) . 'css/virgil-pure-admin.css',
-            array(),
+            [],
             $this->version
         );
     }
@@ -90,24 +95,41 @@ class Virgil_Pure_Admin
         $title = $extLoaded ? "Action" : "Info";
 
         add_menu_page(Config::MAIN_PAGE_TITLE, Config::MAIN_PAGE_TITLE, Config::CAPABILITY, Config::ACTION_PAGE);
-        add_submenu_page(Config::ACTION_PAGE, $title, $title, Config::CAPABILITY, Config::ACTION_PAGE, array($this, 'virgil_pure_page_builder'));
+        $pageBuilder = [$this, self::PAGE_BUILDER];
+        add_submenu_page(Config::ACTION_PAGE, $title, $title, Config::CAPABILITY, Config::ACTION_PAGE, $pageBuilder);
         if ($extLoaded) {
-            add_submenu_page(Config::ACTION_PAGE, 'Log', 'Log', Config::CAPABILITY, Config::LOG_PAGE, array($this, 'virgil_pure_page_builder'));
-            add_submenu_page(Config::ACTION_PAGE, 'FAQ', 'FAQ', Config::CAPABILITY, Config::FAQ_PAGE, array($this, 'virgil_pure_page_builder'));
-            if (InfoHelper::isAllUsersMigrated() && ConfigHelper::isRecoveryKeyExists() && 0 !== get_option(Option::DEMO_MODE)) {
+            add_submenu_page(Config::ACTION_PAGE, 'Log', 'Log', Config::CAPABILITY, Config::LOG_PAGE, $pageBuilder);
+            add_submenu_page(Config::ACTION_PAGE, 'FAQ', 'FAQ', Config::CAPABILITY, Config::FAQ_PAGE, $pageBuilder);
+            if ($this->isAddSubmenuPage()) {
                 add_submenu_page(
                     Config::ACTION_PAGE,
                     'Recovery',
                     'Recovery',
                     Config::CAPABILITY,
                     Config::RECOVERY_PAGE,
-                    array($this, 'virgil_pure_page_builder')
+                    $pageBuilder
                 );
             }
             if ($devMode) {
-                add_submenu_page(Config::ACTION_PAGE, 'Dev', 'Dev', Config::CAPABILITY, Config::DEV_PAGE, array($this, 'virgil_pure_page_dev'));
+                add_submenu_page(
+                    Config::ACTION_PAGE,
+                    'Dev',
+                    'Dev',
+                    Config::CAPABILITY,
+                    Config::DEV_PAGE,
+                    [$this, 'virgil_pure_page_dev']
+                );
             }
         }
+    }
+
+    /**
+     * @return bool
+     */
+    private function isAddSubmenuPage(): bool
+    {
+        return InfoHelper::isAllUsersMigrated() && ConfigHelper::isRecoveryKeyExists() && ConfigHelper::isDemoMode();
+
     }
 
     /**
@@ -163,10 +185,11 @@ class Virgil_Pure_Admin
     }
 
     /**
+     * @param $check
      * @param $password
-     * @param $user_id
+     * @param $hash
+     * @param $userId
      * @return bool
-     * @throws Exception
      */
     public function virgil_pure_check_password($check, $password, $hash, $userId): bool
     {
@@ -177,10 +200,11 @@ class Virgil_Pure_Admin
         if ($pluginValidator->check() && $userId) {
             if (InfoHelper::isAllUsersMigrated()) {
                 try {
-                    $this->protocol->auth(get_user_by('id', $userId)->user_email, $password, $hash);
+                    $wpUser = get_user_by('id', $userId);
+                    $this->protocol->auth($wpUser->user_email, $password, $hash);
                     return true;
                 } catch (Exception $e) {
-                    //todo: handle error
+                    Logger::log("Invalid auth " . $wpUser->user_email . ': ' . $e->getMessage(), 0);
                     return false;
                 }
             }
@@ -234,19 +258,20 @@ class Virgil_Pure_Admin
     }
 
     /**
-     * @param int $user_id
+     * @param int $userId
      * @return void
+     * @throws EmptyArgumentException
+     * @throws IllegalStateException
+     * @throws NullArgumentException
      * @throws PheClientException
      * @throws PluginPureException
      * @throws PureCryptoException
      * @throws VirgilCryptoException
      */
-    public function virgil_pure_profile_update(int $user_id): void
+    public function virgil_pure_profile_update(int $userId): void
     {
-        if ($this->pv->check() && !empty(get_user_by('id', $user_id)->user_pass)) {
-            $this->encrypt($user_id);
-            $this->enroll($user_id); //TODO: CHANGE METHOD UPDATE PROFILE
-        }
+        $wpUser = get_user_by('id', $userId);
+        $this->updatePassword($wpUser);
     }
 
     /**
@@ -259,22 +284,27 @@ class Virgil_Pure_Admin
      */
     public function virgil_pure_password_reset(WP_User $user): void
     {
-        if ($this->pv->check()) {
-            $this->encrypt($user->ID);
-            $this->enroll($user->ID); //TODO: CHANGE METHOD RESET PROFILE
-        }
+        $this->updatePassword($user);
     }
 
     /**
-     * @deprecated
-     * @param int $userId
+     * @param WP_User $user
      * @return void
+     * @throws EmptyArgumentException
+     * @throws IllegalStateException
+     * @throws NullArgumentException
      * @throws PheClientException
+     * @throws PluginPureException
      * @throws PureCryptoException
+     * @throws VirgilCryptoException
      */
-    private function enroll(int $userId): void
+    private function updatePassword(WP_User $user): void
     {
-        throw new Exception('Method not implemented');
+        if ($this->pv->check()) {
+            $this->encrypt($user->ID);
+            $this->protocol->getPure()->resetUserPassword($user->user_email, $user->user_pass, true);
+            $this->dbqh->clearUserPass($user->ID);
+        }
     }
 
     /**

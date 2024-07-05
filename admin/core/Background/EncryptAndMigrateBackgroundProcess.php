@@ -38,6 +38,8 @@
 namespace VirgilSecurityPure\Background;
 
 use Virgil\Crypto\Exceptions\VirgilCryptoException;
+use Virgil\Crypto\Exceptions\VirgilException;
+use Virgil\PureKit\Pure\Exception\ClientException;
 use Virgil\PureKit\Pure\Exception\EmptyArgumentException;
 use Virgil\PureKit\Pure\Exception\IllegalStateException;
 use Virgil\PureKit\Pure\Exception\NullArgumentException;
@@ -45,11 +47,11 @@ use Virgil\PureKit\Pure\Exception\NullPointerException;
 use Virgil\PureKit\Pure\Exception\PheClientException;
 use Virgil\PureKit\Pure\Exception\ProtocolException;
 use Virgil\PureKit\Pure\Exception\PureCryptoException;
-use Virgil\PureKit\Pure\Exception\PureLogicException;
+use Virgil\PureKit\Pure\Exception\PureException;
 use Virgil\PureKit\Pure\Exception\PureStorageUserNotFoundException;
+use Virgil\PureKit\Pure\Exception\ValidateException;
 use Virgil\PureKit\Pure\Exception\VirgilCloudStorageException;
 use VirgilSecurityPure\Config\Config;
-use VirgilSecurityPure\Config\Log;
 use VirgilSecurityPure\Config\Option;
 use VirgilSecurityPure\Core\CoreProtocol;
 use VirgilSecurityPure\Core\Logger;
@@ -114,7 +116,7 @@ class EncryptAndMigrateBackgroundProcess extends BaseBackgroundProcess
     {
         try {
             $this->protocol->getPure()->authenticateUser($item->user_email, $item->user_pass);
-        } catch (VirgilCryptoException|PureLogicException|PureCryptoException|PheClientException|NullPointerException|NullArgumentException|IllegalStateException|EmptyArgumentException $e) {
+        } catch (VirgilException|PureException|PureException|ClientException|ValidateException $e) {
             Logger::log('Error when auth User email = ' . $item->user_email . ' ' . $e->getMessage());
         } catch (PureStorageUserNotFoundException|VirgilCloudStorageException $e) {
             try {
@@ -132,15 +134,20 @@ class EncryptAndMigrateBackgroundProcess extends BaseBackgroundProcess
 
     /**
      * @return void
+     * @throws EmptyArgumentException
+     * @throws IllegalStateException
+     * @throws NullArgumentException
+     * @throws PheClientException
+     * @throws PureCryptoException
+     * @throws VirgilCryptoException
+     * @throws NullPointerException
      */
     protected function complete(): void
     {
         if ($this->is_queue_empty()) {
             update_option(Option::MIGRATE_FINISH, microtime(true));
 
-            $duration = round(get_option(Option::MIGRATE_FINISH) - get_option(Option::MIGRATE_START), 2);
-
-            $this->dbqh->clearAllUsersPass($this->protocol->getPure(), $this->protocol->getPasswordHash());
+            $this->dbqh->clearAllUsersPass($this->protocol->getPure());
 
             delete_option(Option::MIGRATE_START);
             delete_option(Option::MIGRATE_FINISH);

@@ -6,12 +6,13 @@ use VirgilSecurityPure\Helpers\DBQueryHelper;
 /**
  * Class Virgil_Pure_Deactivator
  */
-class Virgil_Pure_Deactivator {
+class Virgil_Pure_Deactivator
+{
 
     /**
      * @return void
      */
-	public static function deactivate(): void
+    public static function deactivate(): void
     {
         $dbQuery = new DBQueryHelper();
         $dbQuery->dropTableLog();
@@ -24,5 +25,5 @@ class Virgil_Pure_Deactivator {
         }
 
         delete_option(Option::DEV_MODE);
-	}
+    }
 }

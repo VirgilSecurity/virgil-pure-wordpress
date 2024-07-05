@@ -186,9 +186,9 @@ class FormHandler implements Core
 
         try {
             foreach ($users as $user) {
-                if (empty(get_user_meta($user->ID, Option::RECORD)) && empty(get_user_meta($user->ID, Option::PARAMS))) {
-                    // correct working push but must check process
-                    Logger::log('push to queue ' . $user->user_email);
+                $metaRecord = get_user_meta($user->ID, Option::RECORD);
+                $metaParams = get_user_meta($user->ID, Option::PARAMS);
+                if (empty($metaRecord) && empty($metaParams)) {
                     $migrateBackgroundProcess->push_to_queue($user);
                 }
             }

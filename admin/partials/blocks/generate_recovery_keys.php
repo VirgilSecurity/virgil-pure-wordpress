@@ -13,8 +13,10 @@ use VirgilSecurityPure\Config\Config;
 
              <p class="virgil-pure-demo-desc">
              You’ll need to generate a recovery key so that the password hashes that are currently in your database
-                 can be recovered if you ever need to deactivate the Pure plugin. Please read more in the <a
-                         class="virgil-pure-demo-desc" href="<?= admin_url("/admin.php?page=" . Config::FAQ_PAGE) ?>">FAQ section</a>.
+                 can be recovered if you ever need to deactivate the Pure plugin. Please read more in the
+                 <a class="virgil-pure-demo-desc" href="<?= admin_url("/admin.php?page=" . Config::FAQ_PAGE) ?>">
+                     FAQ section
+                 </a>.
                  <br><br>
                  Please securely store your Recovery Key on an external device.
          </p>
@@ -22,13 +24,20 @@ use VirgilSecurityPure\Config\Config;
                     <input type="hidden" name="action" value="<?= Form::ACTION ?>">
                     <input type="hidden" name="form_type" value="<?= Form::DOWNLOAD_RECOVERY_PRIVATE_KEY ?>">
                     <?php wp_nonce_field('nonce', Form::NONCE) ?>
-                    <input type="submit" name="submit" id="submit" class="virgil-pure-global-button virgil-pure-demo-button"
-                           value="Generate and Download">
+                    <input type="submit"
+                           name="submit"
+                           id="submit"
+                           class="virgil-pure-global-button virgil-pure-demo-button"
+                           value="Generate and Download"
+                    >
                 </form>
             </div>
         </div>
 
-        <form class="virgil-pure-credentials-form" action="<?php echo esc_url(admin_url('admin-post.php')); ?>" method="post">
+        <form class="virgil-pure-credentials-form"
+              action="<?php echo esc_url(admin_url('admin-post.php')); ?>"
+              method="post"
+        >
 
             <label for="phe-agree-checkbox">
                 <input id="phe-agree-checkbox" type="checkbox" onchange="document

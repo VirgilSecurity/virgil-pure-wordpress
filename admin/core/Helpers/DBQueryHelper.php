@@ -49,7 +49,6 @@ use Virgil\PureKit\Pure\Exception\PureLogicException;
 use Virgil\PureKit\Pure\Exception\VirgilCloudStorageException;
 use Virgil\PureKit\Pure\Pure;
 use VirgilSecurityPure\Config\Config;
-use VirgilSecurityPure\Config\Log;
 use VirgilSecurityPure\Config\Option;
 use VirgilSecurityPure\Core\Core;
 use VirgilSecurityPure\Core\Logger;
@@ -96,18 +95,6 @@ class DBQueryHelper implements Core
     }
 
     /**
-     * @param int $offset
-     * @param int $limit
-     * @return array|null|object
-     */
-    public function getAllLogs(int $offset = 0, int $limit = 0): object|array|null
-    {
-        return $this->wpdb->get_results(
-            "SELECT * FROM {$this->tableLog} ORDER BY id DESC LIMIT {$limit} OFFSET {$offset}"
-        );
-    }
-
-    /**
      * @return void
      */
     public function createTableLog(): void
@@ -143,7 +130,6 @@ class DBQueryHelper implements Core
 
     /**
      * @param Pure $pure
-     * @param PasswordHash $passwordHash
      * @return void
      * @throws EmptyArgumentException
      * @throws IllegalStateException
@@ -153,19 +139,16 @@ class DBQueryHelper implements Core
      * @throws PureCryptoException
      * @throws VirgilCryptoException
      */
-    public function clearAllUsersPass(Pure $pure, PasswordHash $passwordHash): void
+    public function clearAllUsersPass(Pure $pure): void
     {
         $query = "SELECT ID, user_pass, user_email FROM {$this->tableUsers} WHERE user_pass != ''";
         $users = $this->wpdb->get_results($query);
         foreach ($users as $user) {
-            Logger::log($user->ID . ' - ' . get_user_meta($user->ID, Option::MIGRATE_START, true));
-            Logger::log(get_user_meta($user->ID, Option::MIGRATE_START, true) === '1');
             if (get_user_meta($user->ID, Option::MIGRATE_START, true) === '1') {
                 try {
                     $pure->authenticateUser($user->user_email, $user->user_pass);
                     update_user_meta($user->ID, Option::MIGRATE_FINISH, true);
-                    $newUserPass = substr($user->user_pass, 0, 12);
-                    $this->clearUserPass($user->ID, $newUserPass);
+                    $this->clearUserPass($user->ID);
                     update_user_meta($user->ID, Option::RECORD, true);
                 } catch (VirgilCloudStorageException $e) {
                     Logger::log("When clean all users have an error: " . $e->getMessage());
@@ -180,51 +163,47 @@ class DBQueryHelper implements Core
         }
     }
 
-        /**
-         * @param int $id
-         * @param string $password
-         * @return void
-         */
-        public function passRecovery(int $id, string $password): void
-        {
-            $this->wpdb->query("UPDATE {$this->tableUsers} SET user_pass='{$password}' WHERE id={$id}");
-        }
+    /**
+     * @param int $id
+     * @param string $password
+     * @return void
+     */
+    public function passRecovery(int $id, string $password): void
+    {
+        $this->wpdb->query("UPDATE {$this->tableUsers} SET user_pass='{$password}' WHERE id={$id}");
+    }
 
-        /**
-         * @param int $id
-         * @param string $newUserPass
-         */
-        public
-        function clearUserPass(int $id, string $newUserPass): void
-        {
-            $this->wpdb->query("UPDATE {$this->tableUsers} SET user_pass='{$newUserPass}' WHERE ID={$id}");
-        }
+    /**
+     * @param int $id
+     */
+    public function clearUserPass(int $id): void
+    {
+        $this->wpdb->query("UPDATE {$this->tableUsers} SET user_pass=SUBSTRING(user_pass,1,12) WHERE ID={$id}");
+    }
 
         /**
          * @param string $name
          */
-        public
-        function clearActionProcess(string $name): void
-        {
-            $process = '%' . Config::PLUGIN_NAME . '_action_' . $name . '_process%';
-            $batch = '%' . Config::PLUGIN_NAME . '_action_' . $name . '_batch%';
-            $this->wpdb->query(
-                "DELETE FROM {$this->wpdb->options} WHERE option_name LIKE \"$process\" AND option_name LIKE \"$batch\""
-            );
-        }
+    public function clearActionProcess(string $name): void
+    {
+        $process = '%' . Config::PLUGIN_NAME . '_action_' . $name . '_process%';
+        $batch = '%' . Config::PLUGIN_NAME . '_action_' . $name . '_batch%';
+        $this->wpdb->query(
+            "DELETE FROM {$this->wpdb->options} WHERE option_name LIKE \"$process\" AND option_name LIKE \"$batch\""
+        );
+    }
 
         /**
          * @return void
          */
-        public
-        function clearPureParams(): void
-        {
-            $encrypted = Option::ENCRYPTED;
-            $params = Option::PARAMS;
-            $record = Option::RECORD;
+    public function clearPureParams(): void
+    {
+        $encrypted = Option::ENCRYPTED;
+        $params = Option::PARAMS;
+        $record = Option::RECORD;
 
-            $this->wpdb->query(
-                "DELETE FROM {$this->wpdb->usermeta} WHERE meta_key IN ('$encrypted', '$params', '$record')"
-            );
-        }
+        $this->wpdb->query(
+            "DELETE FROM {$this->wpdb->usermeta} WHERE meta_key IN ('$encrypted', '$params', '$record')"
+        );
     }
+}

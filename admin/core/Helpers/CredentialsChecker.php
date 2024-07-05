@@ -81,9 +81,41 @@ class CredentialsChecker implements Helper
         $this->checkServicePublicKey();
         $this->checkAppSecretKey();
         $this->checkUpdateToken();
+        $this->checkNonrotatableMasterSecret();
+        $this->checkBackupPublicKey();
         $this->checkVersions();
 
         return true;
+    }
+
+    /**
+     * @return void
+     * @throws PluginPureException
+     */
+    private function checkNonrotatableMasterSecret(): void
+    {
+        if (!is_string($this->nonrotatableMasterSecret)) {
+            throw new PluginPureException(Credential::NONROTATABLE_MASTER_SECRET." is not a string");
+        }
+
+        if (empty($this->nonrotatableMasterSecret)) {
+            throw new PluginPureException("Empty ".Credential::NONROTATABLE_MASTER_SECRET);
+        }
+    }
+
+    /**
+     * @return void
+     * @throws PluginPureException
+     */
+    private function checkBackupPublicKey(): void
+    {
+        if (!is_string($this->backupPublicKey)) {
+            throw new PluginPureException(Credential::BACKUP_PUBLIC_KEY." is not a string");
+        }
+
+        if (empty($this->backupPublicKey)) {
+            throw new PluginPureException("Empty ".Credential::BACKUP_PUBLIC_KEY);
+        }
     }
 
 
@@ -227,14 +259,16 @@ class CredentialsChecker implements Helper
         $appSecretKeyVersion = (int)$this->explode(Credential::APP_SECRET_KEY, 1);
 
         if ($servicePublicKeyVersion != $appSecretKeyVersion) {
-            throw new PluginPureException("Versions of ".Credential::SERVICE_PUBLIC_KEY. " and ".Credential::APP_SECRET_KEY. " are not equals");
+            throw new PluginPureException("Versions of ".Credential::SERVICE_PUBLIC_KEY. " and "
+                .Credential::APP_SECRET_KEY. " are not equals");
         }
 
         if (!empty($this->updateToken)) {
             $updateTokenVersion = (int)$this->explode(Credential::UPDATE_TOKEN, 1);
 
             if ($updateTokenVersion-$servicePublicKeyVersion != 1) {
-                throw new PluginPureException("Version of ".Credential::UPDATE_TOKEN." must be greater (+1) then versions of "
+                throw new PluginPureException("Version of ".Credential::UPDATE_TOKEN
+                    ." must be greater (+1) then versions of "
                     .Credential::SERVICE_PUBLIC_KEY." and ".Credential::APP_SECRET_KEY);
             }
         }

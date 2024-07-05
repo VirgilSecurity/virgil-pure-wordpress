@@ -92,7 +92,13 @@ class PageBuilderProtected
      */
     protected function isCredentialsSet(): bool
     {
-        return(!empty($_ENV[Credential::APP_TOKEN])&&!empty($_ENV[Credential::APP_SECRET_KEY])&&!empty($_ENV[Credential::SERVICE_PUBLIC_KEY]));
+        $isCredentialsSet = true;
+        foreach (Credential::REQUIRED_CREDENTIALS as $credentials) {
+            if (empty($_ENV[$credentials])) {
+                $isCredentialsSet = false;
+            }
+        }
+        return $isCredentialsSet;
     }
 
     /**

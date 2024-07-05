@@ -102,7 +102,6 @@ class VirgilCryptoWrapper implements Core
      */
     public function downloadPrivateKey(): void
     {
-        // earlier here been 'to PEM'
         $prefix = get_bloginfo('name');
         $file = $prefix.Crypto::RECOVERY_PRIVATE_KEY_FILE;
         $prk = $this->getKey(Crypto::PRIVATE_KEY);
@@ -113,7 +112,8 @@ class VirgilCryptoWrapper implements Core
         header('Content-type: text/plain');
         header("Content-disposition: attachment; filename=$file");
         echo $this->derToPem($this->vc->exportPrivateKey($keyPair->getPrivateKey()));
-        update_option(Option::RECOVERY_PUBLIC_KEY, $this->derToPem($this->vc->exportPublicKey($keyPair->getPublicKey())));
+        $derToPem = $this->derToPem($this->vc->exportPublicKey($keyPair->getPublicKey()));
+        update_option(Option::RECOVERY_PUBLIC_KEY, $derToPem);
         Logger::log($file." downloaded");
         exit;
     }

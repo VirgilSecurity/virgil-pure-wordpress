@@ -72,7 +72,6 @@ class Redirector
             wp_redirect(admin_url("/admin.php?page=" . Config::LOG_PAGE), 301);
             exit;
         }
-
     }
 
     /**

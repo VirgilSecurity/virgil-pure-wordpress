@@ -54,15 +54,29 @@ class ENVFormatter
      * @param string|null $updateToken
      * @return string
      */
-    public static function formatData(string $appToken, string $servicePublicKey, string $appSecretKey, string $updateNonrotatableMasterSecret, string $backupPublicKey, string $updateToken = null): string
-    {
-        $titleAT = Credential::APP_TOKEN;
-        $titlePK = Credential::SERVICE_PUBLIC_KEY;
-        $titleSK = Credential::APP_SECRET_KEY;
-        $titleUT = Credential::UPDATE_TOKEN;
-        $titleNM = Credential::NONROTATABLE_MASTER_SECRET;
-        $titleBP = Credential::BACKUP_PUBLIC_KEY;
+    public static function formatData(
+        string $appToken,
+        string $servicePublicKey,
+        string $appSecretKey,
+        string $updateNonrotatableMasterSecret,
+        string $backupPublicKey,
+        string $updateToken = null
+    ): string {
+        $data = [
+            Credential::APP_TOKEN => $appToken,
+            Credential::SERVICE_PUBLIC_KEY => $servicePublicKey,
+            Credential::APP_SECRET_KEY => $appSecretKey,
+            Credential::UPDATE_TOKEN => $updateToken,
+            Credential::NONROTATABLE_MASTER_SECRET => $updateNonrotatableMasterSecret,
+            Credential::BACKUP_PUBLIC_KEY => $backupPublicKey
+        ];
 
-        return "$titleAT=\"$appToken\"\n$titlePK=\"$servicePublicKey\"\n$titleSK=\"$appSecretKey\"\n$titleNM=\"$updateNonrotatableMasterSecret\"\n$titleBP=\"$backupPublicKey\"\n$titleUT=\"$updateToken\"";
+        $formattedData = '';
+        foreach ($data as $key => $value) {
+            $formattedData .= "$key=\"$value\"\n";
+        }
+
+        return $formattedData;
     }
+
 }

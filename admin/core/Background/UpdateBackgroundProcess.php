@@ -90,11 +90,9 @@ class UpdateBackgroundProcess extends BaseBackgroundProcess
         try {
             $newRecordRaw = $this->protocol->performRotation(base64_decode($record[0]));
         } catch (Exception $e) {
-            if("PHE Client error"==$e->getMessage())
-            {
+            if ("PHE Client error"==$e->getMessage()) {
                 $msg = "Invalid ".Credential::UPDATE_TOKEN;
-            }
-            else {
+            } else {
                 $msg = $e->getMessage();
             }
 
