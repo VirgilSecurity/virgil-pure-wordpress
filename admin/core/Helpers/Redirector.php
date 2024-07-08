@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright (C) 2015-2019 Virgil Security Inc.
+ * Copyright (C) 2015-2024 Virgil Security Inc.
  *
  * All rights reserved.
  *
@@ -68,8 +68,10 @@ class Redirector
      */
     public static function toPageLog(): void
     {
-        wp_redirect(admin_url("/admin.php?page=".Config::LOG_PAGE), 301);
-        exit;
+        if (function_exists('wp_redirect')) {
+            wp_redirect(admin_url("/admin.php?page=" . Config::LOG_PAGE), 301);
+            exit;
+        }
     }
 
     /**
@@ -80,5 +82,4 @@ class Redirector
         wp_redirect(home_url());
         exit;
     }
-
 }

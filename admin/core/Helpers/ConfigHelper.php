@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright (C) 2015-2019 Virgil Security Inc.
+ * Copyright (C) 2015-2024 Virgil Security Inc.
  *
  * All rights reserved.
  *
@@ -59,5 +59,10 @@ class ConfigHelper
     public static function isRecoveryKeyExists(): bool
     {
         return get_option(Option::RECOVERY_PUBLIC_KEY);
+    }
+
+    public static function isDemoMode(): bool
+    {
+        return get_option(Option::DEMO_MODE) !== 0;
     }
 }

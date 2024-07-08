@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright (C) 2015-2019 Virgil Security Inc.
+ * Copyright (C) 2015-2024 Virgil Security Inc.
  *
  * All rights reserved.
  *
@@ -49,18 +49,34 @@ class ENVFormatter
      * @param string $appToken
      * @param string $servicePublicKey
      * @param string $appSecretKey
+     * @param string $updateNonrotatableMasterSecret
+     * @param string $backupPublicKey
      * @param string|null $updateToken
      * @return string
      */
-    public static function formatData(string $appToken, string $servicePublicKey, string $appSecretKey, string $updateToken = null): string
-    {
-        $titleAT = Credential::APP_TOKEN;
-        $titlePK = Credential::SERVICE_PUBLIC_KEY;
-        $titleSK = Credential::APP_SECRET_KEY;
-        $titleUT = Credential::UPDATE_TOKEN;
+    public static function formatData(
+        string $appToken,
+        string $servicePublicKey,
+        string $appSecretKey,
+        string $updateNonrotatableMasterSecret,
+        string $backupPublicKey,
+        string $updateToken = null
+    ): string {
+        $data = [
+            Credential::APP_TOKEN => $appToken,
+            Credential::SERVICE_PUBLIC_KEY => $servicePublicKey,
+            Credential::APP_SECRET_KEY => $appSecretKey,
+            Credential::UPDATE_TOKEN => $updateToken,
+            Credential::NONROTATABLE_MASTER_SECRET => $updateNonrotatableMasterSecret,
+            Credential::BACKUP_PUBLIC_KEY => $backupPublicKey
+        ];
 
-        $formatData = "$titleAT=\"$appToken\"\n$titlePK=\"$servicePublicKey\"\n$titleSK=\"$appSecretKey\"\n$titleUT=\"$updateToken\"";
+        $formattedData = '';
+        foreach ($data as $key => $value) {
+            $formattedData .= "$key=\"$value\"\n";
+        }
 
-        return $formatData;
+        return $formattedData;
     }
+
 }

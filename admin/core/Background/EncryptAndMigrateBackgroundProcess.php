@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright (C) 2015-2019 Virgil Security Inc.
+ * Copyright (C) 2015-2024 Virgil Security Inc.
  *
  * All rights reserved.
  *
@@ -37,13 +37,24 @@
 
 namespace VirgilSecurityPure\Background;
 
-use Virgil\PureKit\Protocol\Protocol;
+use Virgil\Crypto\Exceptions\VirgilCryptoException;
+use Virgil\Crypto\Exceptions\VirgilException;
+use Virgil\PureKit\Pure\Exception\ClientException;
+use Virgil\PureKit\Pure\Exception\EmptyArgumentException;
+use Virgil\PureKit\Pure\Exception\IllegalStateException;
+use Virgil\PureKit\Pure\Exception\NullArgumentException;
+use Virgil\PureKit\Pure\Exception\NullPointerException;
+use Virgil\PureKit\Pure\Exception\PheClientException;
+use Virgil\PureKit\Pure\Exception\ProtocolException;
+use Virgil\PureKit\Pure\Exception\PureCryptoException;
+use Virgil\PureKit\Pure\Exception\PureException;
+use Virgil\PureKit\Pure\Exception\PureStorageUserNotFoundException;
+use Virgil\PureKit\Pure\Exception\ValidateException;
+use Virgil\PureKit\Pure\Exception\VirgilCloudStorageException;
 use VirgilSecurityPure\Config\Config;
-use VirgilSecurityPure\Config\Crypto;
-use VirgilSecurityPure\Config\Log;
 use VirgilSecurityPure\Config\Option;
+use VirgilSecurityPure\Core\CoreProtocol;
 use VirgilSecurityPure\Core\Logger;
-use VirgilSecurityPure\Core\passw0rdHash;
 use VirgilSecurityPure\Core\VirgilCryptoWrapper;
 use VirgilSecurityPure\Helpers\DBQueryHelper;
 
@@ -54,31 +65,37 @@ use VirgilSecurityPure\Helpers\DBQueryHelper;
 class EncryptAndMigrateBackgroundProcess extends BaseBackgroundProcess
 {
     /**
-     * @var
+     * @var string|null
      */
-    private $passw0rdHash;
+    private ?string $passwordHash = null;
 
     /**
-     * @var null|\Virgil\PureKit\Protocol\Protocol
+     * @var null|CoreProtocol
      */
-    private $protocol;
+    private ?CoreProtocol $protocol;
 
     /**
-     * @var
+     * @var DBQueryHelper|null
      */
-    private $dbqh;
+    private ?DBQueryHelper $dbqh;
 
     /**
-     * @var
+     * @var VirgilCryptoWrapper|null
      */
-    private $vcw;
+    private ?VirgilCryptoWrapper $vcw;
 
     /**
      * @var string
      */
-    protected $action = Config::BACKGROUND_ACTION_MIGRATE;
+    protected string $action = Config::BACKGROUND_ACTION_MIGRATE;
 
-    public function setDep(Protocol $protocol, DBQueryHelper $dbqh, VirgilCryptoWrapper $vcw)
+    /**
+     * @param CoreProtocol $protocol
+     * @param DBQueryHelper $dbqh
+     * @param VirgilCryptoWrapper $vcw
+     * @return void
+     */
+    public function setDep(CoreProtocol $protocol, DBQueryHelper $dbqh, VirgilCryptoWrapper $vcw): void
     {
         $this->protocol = $protocol;
         $this->dbqh = $dbqh;
@@ -86,53 +103,55 @@ class EncryptAndMigrateBackgroundProcess extends BaseBackgroundProcess
     }
 
     /**
-     * @param mixed $user
-     * @return bool|mixed
-     * @throws \GuzzleHttp\Exception\GuzzleException
-     * @throws \Virgil\PureKit\Exceptions\ProtocolException
+     * @param mixed $item
+     * @return bool
+     * @throws EmptyArgumentException
+     * @throws IllegalStateException
+     * @throws NullArgumentException
+     * @throws PheClientException
+     * @throws PureCryptoException
+     * @throws VirgilCryptoException
      */
-    protected function task($user)
+    protected function task(mixed $item): bool
     {
-        if (is_null($this->passw0rdHash))
-            $this->passw0rdHash = new passw0rdHash();
-
-        $pk = get_option(Option::RECOVERY_PUBLIC_KEY);
-
-        $virgilPublicKey = $this->vcw->importKey(Crypto::PUBLIC_KEY, $pk);
-
-        $encrypted = $this->vcw->encrypt($user->user_pass, $virgilPublicKey);
-
-        $hash = $this->passw0rdHash->get($user->user_pass, 'hash');
-        $params = $this->passw0rdHash->get($user->user_pass, 'params');
-
-        $enrollment = $this->protocol->enrollAccount($hash);
-        $record = base64_encode($enrollment[0]);
-
-        update_user_meta($user->ID, Option::RECORD, $record);
-        update_user_meta($user->ID, Option::PARAMS, $params);
-        update_user_meta($user->ID, Option::ENCRYPTED, $encrypted);
+        try {
+            $this->protocol->getPure()->authenticateUser($item->user_email, $item->user_pass);
+        } catch (VirgilException|PureException|PureException|ClientException|ValidateException $e) {
+            Logger::log('Error when auth User email = ' . $item->user_email . ' ' . $e->getMessage());
+        } catch (PureStorageUserNotFoundException|VirgilCloudStorageException $e) {
+            try {
+                $this->protocol->getPure()->registerUser($item->user_email, $item->user_pass);
+                update_user_meta($item->ID, Option::MIGRATE_START, true);
+                return false;
+            } catch (ProtocolException $e) {
+                Logger::log('When migrate email = ' . $item->user_email . ' : ' . $e->getMessage());
+            }
+        }
+        update_user_meta($item->ID, Option::MIGRATE_FINISH, true);
 
         return false;
     }
 
     /**
-     *
+     * @return void
+     * @throws EmptyArgumentException
+     * @throws IllegalStateException
+     * @throws NullArgumentException
+     * @throws PheClientException
+     * @throws PureCryptoException
+     * @throws VirgilCryptoException
+     * @throws NullPointerException
      */
-    protected function complete()
+    protected function complete(): void
     {
-
         if ($this->is_queue_empty()) {
             update_option(Option::MIGRATE_FINISH, microtime(true));
 
-            $duration = round(get_option(Option::MIGRATE_FINISH) - get_option
-                (Option::MIGRATE_START), 2);
-            Logger::log(Log::FINISH_MIGRATION . " (duration: $duration sec.)");
+            $this->dbqh->clearAllUsersPass($this->protocol->getPure());
 
             delete_option(Option::MIGRATE_START);
             delete_option(Option::MIGRATE_FINISH);
-            $this->dbqh->clearAllUsersPass();
+            parent::complete();
         }
-
-        parent::complete();
     }
 }

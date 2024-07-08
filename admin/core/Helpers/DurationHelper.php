@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright (C) 2015-2019 Virgil Security Inc.
+ * Copyright (C) 2015-2024 Virgil Security Inc.
  *
  * All rights reserved.
  *
@@ -48,7 +48,7 @@ class DurationHelper
      * @param int $precision
      * @return float
      */
-    public static function getDuration(float $start, int $precision=2): float
+    public static function getDuration(float $start, int $precision = 2): float
     {
         return round(microtime(true)-$start, $precision);
     }

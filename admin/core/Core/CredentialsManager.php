@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright (C) 2015-2019 Virgil Security Inc.
+ * Copyright (C) 2015-2024 Virgil Security Inc.
  *
  * All rights reserved.
  *
@@ -38,6 +38,7 @@
 namespace VirgilSecurityPure\Core;
 
 use Dotenv\Dotenv;
+use Exception;
 use VirgilSecurityPure\Config\Credential;
 use VirgilSecurityPure\Helpers\CredentialsChecker;
 use VirgilSecurityPure\Helpers\ENVFormatter;
@@ -49,31 +50,29 @@ use VirgilSecurityPure\Helpers\Redirector;
  */
 class CredentialsManager implements Core
 {
-    /**
-     * @var 
-     */
-    private $updateToken;
 
     /**
      * @return bool
      */
     public function addEmptyCredentials(): bool
     {
-        $formatString = ENVFormatter::formatData("", "", "", "");
+        $formatString = ENVFormatter::formatData('', '', '', '', '', '');
         file_put_contents(VIRGIL_PURE_CORE_ENV_FILE, $formatString);
         $this->updateENV();
         return true;
     }
 
     /**
-     * @param string $appToken
-     * @param string $servicePK
-     * @param string $appSK
+     * @param string $aToken
+     * @param string $sPK
+     * @param string $aSK
+     * @param string $uNMS
+     * @param string $bPKey
      * @return bool
      */
-    public function addInitialCredentials(string $appToken, string $servicePK, string $appSK): bool
+    public function addInitialCredentials(string $aT, string $sPK, string $aSK, string $uNMS, string $bPKey): bool
     {
-        return $this->addCredentials($appToken, $servicePK, $appSK);
+        return $this->addCredentials($aT, $sPK, $aSK, $uNMS, $bPKey);
     }
 
     /**
@@ -82,43 +81,59 @@ class CredentialsManager implements Core
      */
     public function addUpdateTokenToOldCredentials(string $updateToken): bool
     {
-        $this->updateToken = $updateToken;
-
-        return $this->addCredentials($_ENV[Credential::APP_TOKEN], $_ENV[Credential::SERVICE_PUBLIC_KEY],
-        $_ENV[Credential::APP_SECRET_KEY], $updateToken);
-    }
-
-    public function addRotatedCredentials(string $servicePK, string $appSK): bool
-    {
-        return $this->addCredentials($_ENV[Credential::APP_TOKEN], $servicePK, $appSK);
+        return $this->addCredentials(
+            $_ENV[Credential::APP_TOKEN],
+            $_ENV[Credential::SERVICE_PUBLIC_KEY],
+            $_ENV[Credential::APP_SECRET_KEY],
+            $_ENV[Credential::NONROTATABLE_MASTER_SECRET],
+            $_ENV[Credential::BACKUP_PUBLIC_KEY],
+            $updateToken
+        );
     }
 
     /**
-     * @param string $appToken
      * @param string $servicePK
      * @param string $appSK
+     * @return bool
+     */
+    public function addRotatedCredentials(string $servicePK, string $appSK): bool
+    {
+        $appToken = $_ENV[Credential::APP_TOKEN];
+        $nonrotableMasterSecret = $_ENV[Credential::NONROTATABLE_MASTER_SECRET];
+        $backupPublicKey = $_ENV[Credential::BACKUP_PUBLIC_KEY];
+        return $this->addCredentials($appToken, $servicePK, $appSK, $nonrotableMasterSecret, $backupPublicKey);
+    }
+
+    /**
+     * @param string $aT
+     * @param string $sPK
+     * @param string $aSK
+     * @param string $uNMS
+     * @param string $bPK
      * @param string|null $ut
      * @return bool
      */
-    private function addCredentials(string $appToken, string $servicePK, string $appSK, string $ut=null): bool
+    private function addCredentials(string $aT, string $sPK, string $aSK, string $uNMS, string $bPK, string $ut = null): bool
     {
         $credentials = [
-            Credential::APP_TOKEN => $appToken,
-            Credential::SERVICE_PUBLIC_KEY => $servicePK,
-            Credential::APP_SECRET_KEY => $appSK,
+            Credential::APP_TOKEN => $aT,
+            Credential::SERVICE_PUBLIC_KEY => $sPK,
+            Credential::APP_SECRET_KEY => $aSK,
             Credential::UPDATE_TOKEN => $ut,
+            Credential::NONROTATABLE_MASTER_SECRET => $uNMS,
+            Credential::BACKUP_PUBLIC_KEY => $bPK
         ];
 
         $credentialsChecker = new CredentialsChecker();
         try {
             $credentialsChecker->check($credentials);
-        }
-        catch (\Exception $e) {
+        } catch (Exception $e) {
             Logger::log($e->getMessage(), 0);
             Redirector::toPageLog();
         }
 
-        $formatString = ENVFormatter::formatData($appToken, $servicePK, $appSK, $ut);
+        $formatString = ENVFormatter::formatData($aT, $sPK, $aSK, $uNMS, $bPK, $ut);
+
         file_put_contents(VIRGIL_PURE_CORE_ENV_FILE, $formatString);
 
         $this->updateENV();
@@ -132,15 +147,16 @@ class CredentialsManager implements Core
      */
     public function getVersion(string $updateToken): int
     {
-        $version = CredentialExploder::explode($updateToken, 1);
-        return $version;
+        return CredentialExploder::explode($updateToken, 1);
     }
 
     /**
-     * @return array
+     * @return void
      */
-    private function updateENV()
+    private function updateENV(): void
     {
-        return (new Dotenv(VIRGIL_PURE_CORE))->overload();
+        $dotenv = Dotenv::createImmutable(dirname(VIRGIL_PURE_CORE), basename(VIRGIL_PURE_CORE));
+        // we need make sure we've entered all the data
+        $dotenv->load();
     }
 }

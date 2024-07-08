@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright (C) 2015-2019 Virgil Security Inc.
+ * Copyright (C) 2015-2024 Virgil Security Inc.
  *
  * All rights reserved.
  *
@@ -37,11 +37,13 @@
 
 namespace VirgilSecurityPure\Exceptions;
 
+use Exception;
+
 /**
  * Class PluginPureException
  * @package VirgilSecurityPure\Exceptions
  */
-class PluginPureException extends \Exception
+class PluginPureException extends Exception
 {
 
 }

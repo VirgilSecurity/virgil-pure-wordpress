@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright (C) 2015-2019 Virgil Security Inc.
+ * Copyright (C) 2015-2024 Virgil Security Inc.
  *
  * All rights reserved.
  *
@@ -38,7 +38,6 @@
 namespace VirgilSecurityPure\Core;
 
 use VirgilSecurityPure\Config\Config;
-use VirgilSecurityPure\Config\Option;
 
 /**
  * Class PageBuilder
@@ -51,7 +50,7 @@ class PageBuilderPublic extends PageBuilderProtected
      */
     public function disabled(): bool
     {
-        return !extension_loaded(Config::EXTENSION_VSCE_PHE_PHP)||!extension_loaded(Config::EXTENSION_VIRGIL_CRYPTO_PHP);
+        return !extension_loaded(Config::EXTENSION_VSCE_PHE_PHP);
     }
 
     /**
@@ -59,10 +58,11 @@ class PageBuilderPublic extends PageBuilderProtected
      */
     public function credentials(): bool
     {
-        if($this->disabled()||!$this->isRecoveryPublicKeyExists())
+        if ($this->disabled() || !$this->isRecoveryPublicKeyExists()) {
             return false;
+        }
 
-        return (!$this->isCredentialsSet()&&$this->isMainPage());
+        return (!$this->isCredentialsSet() && $this->isMainPage());
     }
 
     /**
@@ -70,10 +70,11 @@ class PageBuilderPublic extends PageBuilderProtected
      */
     public function migrate(): bool
     {
-        if($this->disabled()||!$this->isRecoveryPublicKeyExists())
+        if ($this->disabled() || !$this->isRecoveryPublicKeyExists()) {
             return false;
+        }
 
-        return ($this->isCredentialsSet()&&$this->isMainPage()&&!$this->isAllUsersMigrated());
+        return ($this->isCredentialsSet() && $this->isMainPage() && !$this->isAllUsersMigrated());
     }
 
     /**
@@ -81,10 +82,11 @@ class PageBuilderPublic extends PageBuilderProtected
      */
     public function update(): bool
     {
-        if($this->disabled()||!$this->isRecoveryPublicKeyExists())
+        if ($this->disabled() || !$this->isRecoveryPublicKeyExists()) {
             return false;
+        }
 
-        return ($this->isCredentialsSet()&&$this->isMainPage()&&$this->isAllUsersMigrated());
+        return ($this->isCredentialsSet() && $this->isMainPage() && $this->isAllUsersMigrated());
     }
 
     /**
@@ -92,9 +94,10 @@ class PageBuilderPublic extends PageBuilderProtected
      */
     public function log(): bool
     {
-        if($this->disabled())
+        if ($this->disabled()) {
             return false;
-
+        }
+        // can't find where we use it
         return $this->isLogPage();
     }
 
@@ -111,8 +114,9 @@ class PageBuilderPublic extends PageBuilderProtected
      */
     public function recovery(): bool
     {
-        if($this->disabled())
+        if ($this->disabled()) {
             return false;
+        }
 
         return $this->isRecoveryPage();
     }
@@ -122,7 +126,7 @@ class PageBuilderPublic extends PageBuilderProtected
      */
     public function generate_recovery_keys(): bool
     {
-        return !$this->isRecoveryPublicKeyExists()&&(!$this->isFAQPage()&&!$this->isLogPage());
+        return !$this->isRecoveryPublicKeyExists() && (!$this->isFAQPage() && !$this->isLogPage());
     }
 
     /**
@@ -130,6 +134,6 @@ class PageBuilderPublic extends PageBuilderProtected
      */
     public function info(): bool
     {
-        return ($this->isMainPage()||$this->disabled())&&!$this->generate_recovery_keys();
+        return ($this->isMainPage() || $this->disabled()) && !$this->generate_recovery_keys();
     }
 }

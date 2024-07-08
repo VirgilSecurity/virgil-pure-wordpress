@@ -8,18 +8,30 @@ use VirgilSecurityPure\Config\Credential;
     <hr class="virgil-pure-global-line"/>
 
     <p class="virgil-pure-global-info-p">
-        You'll have to briefly visit the Virgil Security site to get your application credentials, and come back here to paste them in the
-        corresponding fields below.
+        You'll have to briefly visit the Virgil Security site to get your application credentials,
+        and come back here to paste them in the corresponding fields below.
     </p>
 
     <ol type="1" class="virgil-pure-global-credentials-ol">
-        <li>Navigate to <a href="https://dashboard.virgilsecurity.com" target="_blank">dashboard.virgilsecurity.com</a>, sign up for a free account, and create a new Pure application.</li>
-        <li>You can generate all three credentials either in the browser or via CLI.</li>
-        <li>Copy and paste them into the corresponding fields below. Be sure to save the <?= Credential::APP_SECRET_KEY ?> in a safe place.</li>
+        <li>
+            Navigate to
+            <a href="https://dashboard.virgilsecurity.com" target="_blank">dashboard.virgilsecurity.com</a>
+            , sign up for a free account, and create a new Pure application.
+        </li>
+        <li>
+            You can generate all three credentials either in the browser or via CLI.
+        </li>
+        <li>
+            Copy and paste them into the corresponding fields below. Be sure to save the
+            <?= Credential::APP_SECRET_KEY ?> in a safe place.
+        </li>
     </ol>
 
-    <form autocomplete="off" class="virgil-pure-credentials-form" action="<?php echo esc_url(admin_url('admin-post.php')); ?>"
-          method="post">
+    <form autocomplete="off"
+          class="virgil-pure-credentials-form"
+          action="<?php echo esc_url(admin_url('admin-post.php')); ?>"
+          method="post"
+    >
         <div class="virgil-pure-global-field">
             <label class="virgil-pure-global-field-label" for="virgil-id-app-secret-key">
                 <?= Credential::APP_SECRET_KEY ?>

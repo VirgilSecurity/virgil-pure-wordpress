@@ -73,6 +73,13 @@ There is no way to restore the `APP_SECRET_KEY`. The database records become ina
 
 == Changelog ==
 
+= 0.3.0 =
+* Updating the modules via composer to the current latest versions as of May 29, 2024
+(vlucas/phpdotenv, virgil/purekit, virgil/sdk) and delete deprecated
+* Remove Protocol class to Pure
+* Update functions for work on PHP 8.0 and higher
+* Update structure for save/load/remove/update crypto keys for clients and server
+
 = 0.2.0 =
 * Add recovery feature (Warning! If you switch off Demo Mode in the 0.1.x releases, the recovery feature will not be
 available for you)

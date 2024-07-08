@@ -4,7 +4,7 @@ use VirgilSecurityPure\Config\Config;
 
 $systemInfoArr = [
     'EXTENSION VSCE_PHE_PHP' => Config::EXTENSION_VSCE_PHE_PHP,
-    'EXTENSION VIRGIL_CRYPTO_PHP' => Config::EXTENSION_VIRGIL_CRYPTO_PHP,
+    //'EXTENSION VIRGIL_CRYPTO_PHP' => Config::EXTENSION_VIRGIL_CRYPTO_PHP,
     'OS' => PHP_OS,
     'PHP' => PHP_MAJOR_VERSION.".".PHP_MINOR_VERSION,
     'PATH TO EXTENSION DIR' => PHP_EXTENSION_DIR,
@@ -16,7 +16,7 @@ $pluginInfoArr = [
     'CREDENTIALS' => InfoHelper::getEnvFilePath(),
 ];
 
-$infoArr = !extension_loaded(Config::EXTENSION_VIRGIL_CRYPTO_PHP) || !extension_loaded(Config::EXTENSION_VSCE_PHE_PHP) ?
+$infoArr = !extension_loaded(Config::EXTENSION_VSCE_PHE_PHP) ?
     $systemInfoArr :
     $pluginInfoArr;
 

@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright (C) 2015-2019 Virgil Security Inc.
+ * Copyright (C) 2015-2024 Virgil Security Inc.
  *
  * All rights reserved.
  *
@@ -37,7 +37,8 @@
 
 namespace VirgilSecurityPure\Background;
 
-use Virgil\CryptoImpl\VirgilCryptoException;
+use Exception;
+use Virgil\Crypto\Exceptions\VirgilCryptoException;
 use VirgilSecurityPure\Config\Crypto;
 use VirgilSecurityPure\Config\Log;
 use VirgilSecurityPure\Config\Option;
@@ -45,6 +46,7 @@ use VirgilSecurityPure\Core\CredentialsManager;
 use VirgilSecurityPure\Core\Logger;
 use VirgilSecurityPure\Config\Config;
 use VirgilSecurityPure\Core\VirgilCryptoWrapper;
+use VirgilSecurityPure\Exceptions\PluginPureException;
 use VirgilSecurityPure\Helpers\DBQueryHelper;
 
 /**
@@ -56,47 +58,50 @@ class RecoveryBackgroundProcess extends BaseBackgroundProcess
     /**
      * @var string
      */
-    protected $action = Config::BACKGROUND_ACTION_RECOVERY;
+    protected string $action = Config::BACKGROUND_ACTION_RECOVERY;
 
     /**
-     * @var
+     * @var VirgilCryptoWrapper|null
      */
-    private $vcw;
+    private ?VirgilCryptoWrapper $vcw;
     /**
-     * @var
+     * @var DBQueryHelper|null
      */
-    private $dbqh;
+    private ?DBQueryHelper $dbqh;
     /**
-     * @var
+     * @var CredentialsManager|null
      */
-    private $credentialsManager;
+    private ?CredentialsManager $credentialsManager;
 
     /**
      * @param DBQueryHelper $dbqh
      * @param VirgilCryptoWrapper $vcw
      * @param CredentialsManager $credentialsManager
      */
-    public function setDep(DBQueryHelper $dbqh, VirgilCryptoWrapper $vcw, CredentialsManager $credentialsManager) {
+    public function setDep(DBQueryHelper $dbqh, VirgilCryptoWrapper $vcw, CredentialsManager $credentialsManager): void
+    {
         $this->vcw = $vcw;
         $this->dbqh = $dbqh;
         $this->credentialsManager = $credentialsManager;
     }
 
     /**
-     * @param mixed $data
-     * @return bool|mixed
+     * @param mixed $item
+     * @return bool
+     * @throws PluginPureException
+     * @throws VirgilCryptoException
      */
-    protected function task($data) {
-        if($data) {
-            $user = $data['user'];
+    protected function task(mixed $item): bool
+    {
+        if ($item) {
+            $user = $item['user'];
             $id = $user->ID;
-            $privateKeyIn = $data['private_key_in'];
+            $privateKeyIn = $item['private_key_in'];
             $encryptedIn = get_user_meta($id, Option::ENCRYPTED)[0];
-            $privateKey = $this->vcw->importKey(Crypto::PRIVATE_KEY, $privateKeyIn);
+            $privateKey = $this->vcw->importKey(Crypto::PRIVATE_KEY, $privateKeyIn)->getPrivateKey();
             try {
                 $decrypted = $this->vcw->decrypt(base64_decode($encryptedIn), $privateKey);
-            }
-            catch (VirgilCryptoException $exception) {
+            } catch (Exception) {
                 Logger::log("Invalid ".Crypto::RECOVERY_PRIVATE_KEY, 0);
                 $this->cancel_process();
                 $this->getFinalLog(0);
@@ -105,17 +110,18 @@ class RecoveryBackgroundProcess extends BaseBackgroundProcess
             }
 
             $this->dbqh->passRecovery($id, $decrypted);
-            return false;
         }
+
+        return false;
     }
 
     /**
-     *
+     * @return void
      */
-    protected function complete() {
+    protected function complete(): void
+    {
 
-        if($this->is_queue_empty())
-        {
+        if ($this->is_queue_empty()) {
             $this->getFinalLog();
             $this->dbqh->clearPureParams();
             delete_option(Option::RECOVERY_PUBLIC_KEY);
@@ -127,13 +133,14 @@ class RecoveryBackgroundProcess extends BaseBackgroundProcess
 
     /**
      * @param int $status
+     * @return void
      */
-    private function getFinalLog(int $status=1) {
+    private function getFinalLog(int $status = 1): void
+    {
         update_option(Option::RECOVERY_FINISH, microtime(true));
 
-        $duration = round(get_option(Option::RECOVERY_FINISH)-get_option
-            (Option::RECOVERY_START), 2);
-        Logger::log( Log::FINISH_RECOVERY." (duration: $duration sec.)", $status);
+        $duration = round(get_option(Option::RECOVERY_FINISH)-get_option(Option::RECOVERY_START), 2);
+        Logger::log(Log::FINISH_RECOVERY." (duration: $duration sec.)", $status);
 
         delete_option(Option::RECOVERY_START);
         delete_option(Option::RECOVERY_FINISH);

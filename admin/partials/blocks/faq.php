@@ -27,6 +27,6 @@
     </p>
     <hr>
     <p class="virgil-pure-global-faq-answer"><a
-                href="https://developer.virgilsecurity.com/docs/use-cases/v1/passwords-and-data-protection?_ga=2.124234441.238283218.1553788809-677779594.1553687510"
+                href="https://developer.virgilsecurity.com/docs/purekit/"
                 target="_blank">Learn more from our documentation</a></p>
 </div>

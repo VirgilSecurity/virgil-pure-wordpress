@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright (C) 2015-2019 Virgil Security Inc.
+ * Copyright (C) 2015-2024 Virgil Security Inc.
  *
  * All rights reserved.
  *
@@ -37,10 +37,12 @@
 
 namespace VirgilSecurityPure\Core;
 
-use Virgil\CryptoImpl\VirgilCrypto;
-use Virgil\CryptoImpl\VirgilKeyPair;
-use Virgil\CryptoImpl\VirgilPrivateKey;
-use Virgil\CryptoImpl\VirgilPublicKey;
+use Virgil\Crypto\Core\VirgilKeys\VirgilPublicKeyCollection;
+use Virgil\Crypto\Exceptions\VirgilCryptoException;
+use Virgil\Crypto\VirgilCrypto;
+use Virgil\Crypto\Core\VirgilKeys\VirgilKeyPair;
+use Virgil\Crypto\Core\VirgilKeys\VirgilPrivateKey;
+use Virgil\Crypto\Core\VirgilKeys\VirgilPublicKey;
 use VirgilSecurityPure\Config\Crypto;
 use VirgilSecurityPure\Config\Option;
 use VirgilSecurityPure\Exceptions\PluginPureException;
@@ -52,123 +54,116 @@ use VirgilSecurityPure\Exceptions\PluginPureException;
 class VirgilCryptoWrapper implements Core
 {
     /**
-     * @var
+     * @var VirgilCrypto
      */
-    private $vc;
+    private VirgilCrypto $vc;
 
     /**
-     * @var \Virgil\CryptoImpl\VirgilKeyPair
+     * @var VirgilKeyPair
      */
-    private $keyPair;
+    private VirgilKeyPair $keyPair;
 
     /**
      * VirgilCryptoWrapper constructor.
      */
-    public function __construct() {
+    public function __construct()
+    {
         $this->vc = new VirgilCrypto();
     }
 
     /**
      * @return void
-     * @throws \Virgil\CryptoImpl\VirgilCryptoException
+     * @throws VirgilCryptoException
      */
     public function generateKeys(): void
     {
-        $this->keyPair = $this->vc->generateKeys();
+        $this->keyPair = $this->vc->generateKeyPair();
     }
 
     /**
      * @param int $type
      * @return string
      * @throws PluginPureException
-     * @throws \Virgil\CryptoImpl\VirgilCryptoException
+     * @throws VirgilCryptoException
      */
-    public function getKey(int $type): string {
-        if(!($this->keyPair instanceof VirgilKeyPair))
-            throw new PluginPureException("Invalid or empty key pair");
-
-        switch ($type) {
-            case Crypto::PUBLIC_KEY:
-                $keyObject = $this->keyPair->getPublicKey();
-                $res = $this->vc->exportPublicKey($keyObject);
-                break;
-            case Crypto::PRIVATE_KEY:
-                $keyObject = $this->keyPair->getPrivateKey();
-                $res = $this->vc->exportPrivateKey($keyObject, Crypto::PRIVATE_KEY_PASSWORD);
-                break;
-            default:
-                throw new PluginPureException('Invalid key type (Get key)');
-                break;
-        }
-
-        return $res;
+    public function getKey(int $type): string
+    {
+        return match ($type) {
+            Crypto::PUBLIC_KEY => $this->vc->exportPublicKey($this->keyPair->getPublicKey()),
+            Crypto::PRIVATE_KEY => $this->vc->exportPrivateKey($this->keyPair->getPrivateKey()),
+            default => throw new PluginPureException('Invalid key type (Get key)'),
+        };
     }
 
     /**
+     * @return void
      * @throws PluginPureException
-     * @throws \Virgil\CryptoImpl\VirgilCryptoException
+     * @throws VirgilCryptoException
      */
-    public function downloadPrivateKey() {
+    public function downloadPrivateKey(): void
+    {
         $prefix = get_bloginfo('name');
         $file = $prefix.Crypto::RECOVERY_PRIVATE_KEY_FILE;
-        $pk = $this->getKey(Crypto::PUBLIC_KEY);
         $prk = $this->getKey(Crypto::PRIVATE_KEY);
-
-        $pemPrK = \VirgilKeyPair::privateKeyToPEM($prk, Crypto::PRIVATE_KEY_PASSWORD);
-        $pemPK = \VirgilKeyPair::publicKeyToPEM($pk);
+        $keyPair = $this->vc->importPrivateKey($prk);
 
         header('Content-Type: application/octet-stream');
         header("Content-Transfer-Encoding: Binary");
         header('Content-type: text/plain');
         header("Content-disposition: attachment; filename=$file");
-        echo $pemPrK;
-        update_option(Option::RECOVERY_PUBLIC_KEY, $pemPK);
+        echo $this->derToPem($this->vc->exportPrivateKey($keyPair->getPrivateKey()));
+        $derToPem = $this->derToPem($this->vc->exportPublicKey($keyPair->getPublicKey()));
+        update_option(Option::RECOVERY_PUBLIC_KEY, $derToPem);
         Logger::log($file." downloaded");
         exit;
     }
 
     /**
+     * @param string $der
+     * @return string
+     */
+    private function derToPem(string $der): string
+    {
+        return '-----BEGIN PRIVATE KEY-----' . PHP_EOL .
+        chunk_split(base64_encode($der), 64, PHP_EOL) .
+        '-----END PRIVATE KEY-----' . PHP_EOL;
+    }
+
+    /**
      * @param int $type
      * @param string $key
-     * @return \Virgil\CryptoImpl\VirgilPrivateKey|VirgilPublicKey
+     * @return VirgilPublicKey|VirgilKeyPair
      * @throws PluginPureException
-     * @throws \Virgil\CryptoImpl\VirgilCryptoException
+     * @throws VirgilCryptoException
      */
-    public function importKey(int $type, string $key)
+    public function importKey(int $type, string $key): VirgilPublicKey|VirgilKeyPair
     {
-        switch ($type) {
-            case Crypto::PUBLIC_KEY:
-                $keyData = \VirgilKeyPair::publicKeyToDER($key);
-                $keyObject = $this->vc->importPublicKey($keyData);
-                break;
-            case Crypto::PRIVATE_KEY:
-                $keyData = \VirgilKeyPair::privateKeyToDER($key, Crypto::PRIVATE_KEY_PASSWORD);
-                $keyObject = $this->vc->importPrivateKey($keyData, Crypto::PRIVATE_KEY_PASSWORD);
-                break;
-            default:
-                throw new PluginPureException('Invalid key type (Import Key)');
-                break;
-        }
-
-        return $keyObject;
+        // earlier here been 'to DER'
+        return match ($type) {
+            Crypto::PUBLIC_KEY => $this->vc->importPublicKey($key),
+            Crypto::PRIVATE_KEY => $this->vc->importPrivateKey($key),
+            default => throw new PluginPureException('Invalid key type (Import Key)'),
+        };
     }
 
     /**
      * @param string $password
      * @param VirgilPublicKey $virgilPublicKey
      * @return string
-     * @throws \Virgil\CryptoImpl\VirgilCryptoException
+     * @throws VirgilCryptoException
      */
     public function encrypt(string $password, VirgilPublicKey $virgilPublicKey): string
     {
-        return base64_encode($this->vc->encrypt($password, [$virgilPublicKey]));
+        $keyCollection = new VirgilPublicKeyCollection;
+        $keyCollection->addPublicKey($virgilPublicKey);
+        return base64_encode($this->vc->encrypt($password, $keyCollection));
     }
 
     /**
      * @param string $encryptedPassword
      * @param VirgilPrivateKey $virgilPrivateKey
      * @return string
-     * @throws \Virgil\CryptoImpl\VirgilCryptoException
+     * @throws VirgilCryptoException
      */
     public function decrypt(string $encryptedPassword, VirgilPrivateKey $virgilPrivateKey): string
     {
