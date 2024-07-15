@@ -116,8 +116,6 @@ class EncryptAndMigrateBackgroundProcess extends BaseBackgroundProcess
     {
         try {
             $this->protocol->getPure()->authenticateUser($item->user_email, $item->user_pass);
-        } catch (VirgilException|PureException|PureException|ClientException|ValidateException $e) {
-            Logger::log('Error when auth User email = ' . $item->user_email . ' ' . $e->getMessage());
         } catch (PureStorageUserNotFoundException|VirgilCloudStorageException $e) {
             try {
                 $this->protocol->getPure()->registerUser($item->user_email, $item->user_pass);
@@ -126,6 +124,9 @@ class EncryptAndMigrateBackgroundProcess extends BaseBackgroundProcess
             } catch (ProtocolException $e) {
                 Logger::log('When migrate email = ' . $item->user_email . ' : ' . $e->getMessage());
             }
+        } catch (VirgilException|PureException|PureException|ClientException|ValidateException $e) {
+            Logger::log(get_debug_type($e));
+            Logger::log('Error when auth User email = ' . $item->user_email . ' ' . $e->getMessage());
         }
         update_user_meta($item->ID, Option::MIGRATE_FINISH, true);
 

@@ -141,7 +141,7 @@ class DBQueryHelper implements Core
      */
     public function clearAllUsersPass(Pure $pure): void
     {
-        $query = "SELECT ID, user_pass, user_email FROM {$this->tableUsers} WHERE user_pass != ''";
+        $query = "SELECT ID, user_pass, user_email FROM {$this->tableUsers} WHERE LENGTH(user_pass) > 12";
         $users = $this->wpdb->get_results($query);
         foreach ($users as $user) {
             if (get_user_meta($user->ID, Option::MIGRATE_START, true) === '1') {
@@ -154,7 +154,7 @@ class DBQueryHelper implements Core
                     Logger::log("When clean all users have an error: " . $e->getMessage());
                 } catch (PureLogicException $e) {
                     if ($e->getMessage() === 'Invalid password') {
-                        Logger::log('Invalid password for user ' . $user->user_email . ' when compete migration');
+                        Logger::log('Invalid password for user ' . $user->user_email . ' when complete migration');
                     }
                 } catch (Exception $e) {
                     Logger::log($e->getMessage());
