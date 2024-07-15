@@ -19,17 +19,20 @@ use VirgilSecurityPure\Config\Config;
                  </a>.
                  <br><br>
                  Please securely store your Recovery Key on an external device.
-             </p>
-             <p>
-                 ╰─$ virgil purekit keygen all <br />
-                 ---------------------------------------------------------------------------------- <br />
-                 Warning! Backup keypair - is used to decrypt any data in case of some failure <br />
-                 Backup Public Key: BU.MCow..... <br />
-                 Backup Private key (must be placed in some cold storage (HSM or safe)): MC4CAQA.... <br />
-
-             </p>
-         </div>
-     </div>
+         </p>
+                <form action="<?php echo esc_url(admin_url('admin-post.php')); ?>" method="post">
+                    <input type="hidden" name="action" value="<?= Form::ACTION ?>">
+                    <input type="hidden" name="form_type" value="<?= Form::DOWNLOAD_RECOVERY_PRIVATE_KEY ?>">
+                    <?php wp_nonce_field('nonce', Form::NONCE) ?>
+                    <input type="submit"
+                           name="submit"
+                           id="submit"
+                           class="virgil-pure-global-button virgil-pure-demo-button"
+                           value="Generate and Download"
+                    >
+                </form>
+            </div>
+        </div>
 
         <form class="virgil-pure-credentials-form"
               action="<?php echo esc_url(admin_url('admin-post.php')); ?>"
@@ -39,7 +42,7 @@ use VirgilSecurityPure\Config\Config;
             <label for="phe-agree-checkbox">
                 <input id="phe-agree-checkbox" type="checkbox" onchange="document
                 .getElementById('submitNextStep').disabled = !this.checked;">
-                <span>I'm aware that Backup keypair is used to decrypt any data in case of some failure and if I lose the Recovery Key, I will not  be able to recover encrypted
+                <span>I'm aware that if I lose the Recovery Key, I will not  be able to recover encrypted
                     records</span>
             </label>
 
