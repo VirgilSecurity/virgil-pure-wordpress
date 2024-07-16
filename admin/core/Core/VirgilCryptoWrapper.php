@@ -44,7 +44,6 @@ use Virgil\Crypto\Core\VirgilKeys\VirgilKeyPair;
 use Virgil\Crypto\Core\VirgilKeys\VirgilPrivateKey;
 use Virgil\Crypto\Core\VirgilKeys\VirgilPublicKey;
 use VirgilSecurityPure\Config\Crypto;
-use VirgilSecurityPure\Config\Option;
 use VirgilSecurityPure\Exceptions\PluginPureException;
 
 /**
@@ -72,15 +71,6 @@ class VirgilCryptoWrapper implements Core
     }
 
     /**
-     * @return void
-     * @throws VirgilCryptoException
-     */
-    public function generateKeys(): void
-    {
-        $this->keyPair = $this->vc->generateKeyPair();
-    }
-
-    /**
      * @param int $type
      * @return string
      * @throws PluginPureException
@@ -96,40 +86,6 @@ class VirgilCryptoWrapper implements Core
     }
 
     /**
-     * @return void
-     * @throws PluginPureException
-     * @throws VirgilCryptoException
-     */
-    public function downloadPrivateKey(): void
-    {
-        $prefix = get_bloginfo('name');
-        $file = $prefix.Crypto::RECOVERY_PRIVATE_KEY_FILE;
-        $prk = $this->getKey(Crypto::PRIVATE_KEY);
-        $keyPair = $this->vc->importPrivateKey($prk);
-
-        header('Content-Type: application/octet-stream');
-        header("Content-Transfer-Encoding: Binary");
-        header('Content-type: text/plain');
-        header("Content-disposition: attachment; filename=$file");
-        echo $this->derToPem($this->vc->exportPrivateKey($keyPair->getPrivateKey()));
-        $derToPem = $this->derToPem($this->vc->exportPublicKey($keyPair->getPublicKey()));
-        update_option(Option::RECOVERY_PUBLIC_KEY, $derToPem);
-        Logger::log($file." downloaded");
-        exit;
-    }
-
-    /**
-     * @param string $der
-     * @return string
-     */
-    private function derToPem(string $der): string
-    {
-        return '-----BEGIN PRIVATE KEY-----' . PHP_EOL .
-        chunk_split(base64_encode($der), 64, PHP_EOL) .
-        '-----END PRIVATE KEY-----' . PHP_EOL;
-    }
-
-    /**
      * @param int $type
      * @param string $key
      * @return VirgilPublicKey|VirgilKeyPair
@@ -138,7 +94,6 @@ class VirgilCryptoWrapper implements Core
      */
     public function importKey(int $type, string $key): VirgilPublicKey|VirgilKeyPair
     {
-        // earlier here been 'to DER'
         return match ($type) {
             Crypto::PUBLIC_KEY => $this->vc->importPublicKey($key),
             Crypto::PRIVATE_KEY => $this->vc->importPrivateKey($key),

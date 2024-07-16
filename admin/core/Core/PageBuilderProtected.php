@@ -104,8 +104,8 @@ class PageBuilderProtected
     /**
      * @return bool
      */
-    protected function isRecoveryPublicKeyExists(): bool
+    protected function isRecoveryPublicKeyCheckboxAgree(): bool
     {
-        return InfoHelper::isRecoveryPrivateKeyExists();
+        return InfoHelper::isRecoveryCheckboxAgree();
     }
 }

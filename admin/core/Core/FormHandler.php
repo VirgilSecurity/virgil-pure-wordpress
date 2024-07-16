@@ -48,7 +48,6 @@ use VirgilSecurityPure\Config\Config;
 use VirgilSecurityPure\Config\Option;
 use VirgilSecurityPure\Config\Credential;
 use VirgilSecurityPure\Config\Log;
-use VirgilSecurityPure\Exceptions\PluginPureException;
 use VirgilSecurityPure\Helpers\DBQueryHelper;
 use VirgilSecurityPure\Helpers\Redirector;
 use VirgilSecurityPure\Config\Crypto;
@@ -117,20 +116,7 @@ class FormHandler implements Core
      */
     public function demo(): void
     {
-        if (!get_option(Option::RECOVERY_PUBLIC_KEY)) {
-            Logger::log(Log::GENERATE_RECOVERY_KEYS, 0);
-        }
-    }
-
-    /**
-     * @return void
-     * @throws PluginPureException
-     * @throws VirgilCryptoException
-     */
-    public function downloadRecoveryPrivateKey(): void
-    {
-        $this->virgilCryptoWrapper->generateKeys();
-        $this->virgilCryptoWrapper->downloadPrivateKey();
+        update_option(Option::RECOVERY_CHECKBOX_AGREE, true);
     }
 
     /**
@@ -177,7 +163,6 @@ class FormHandler implements Core
         $users = get_users(['fields' => ['ID', 'user_pass', 'user_email']]);
 
         $migrateBackgroundProcess = new EncryptAndMigrateBackgroundProcess();
-        // Make sure that migration without errors on background process too
         $migrateBackgroundProcess->setDep($this->coreProtocol->init(), $this->dbq, $this->virgilCryptoWrapper);
 
         update_option(Option::MIGRATE_START, microtime(true));
@@ -326,7 +311,6 @@ class FormHandler implements Core
         delete_option(Option::MIGRATE_FINISH);
         delete_option(Option::UPDATE_START);
         delete_option(Option::UPDATE_FINISH);
-        delete_option(Option::RECOVERY_PUBLIC_KEY);
         delete_option('_transient_doing_cron');
 
         foreach (Config::ALL_BACKGROUND_PROCESSES as $bp) {

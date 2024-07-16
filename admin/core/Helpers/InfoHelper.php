@@ -141,8 +141,8 @@ SQL;
     /**
      * @return bool
      */
-    public static function isRecoveryPrivateKeyExists(): bool
+    public static function isRecoveryCheckboxAgree(): bool
     {
-        return (bool) get_option(Option::RECOVERY_PUBLIC_KEY);
+        return (bool) get_option(Option::RECOVERY_CHECKBOX_AGREE);
     }
 }

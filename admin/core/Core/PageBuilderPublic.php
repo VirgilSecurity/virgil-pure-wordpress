@@ -58,7 +58,7 @@ class PageBuilderPublic extends PageBuilderProtected
      */
     public function credentials(): bool
     {
-        if ($this->disabled() || !$this->isRecoveryPublicKeyExists()) {
+        if ($this->disabled()) {
             return false;
         }
 
@@ -70,7 +70,7 @@ class PageBuilderPublic extends PageBuilderProtected
      */
     public function migrate(): bool
     {
-        if ($this->disabled() || !$this->isRecoveryPublicKeyExists()) {
+        if ($this->disabled() || !$this->isRecoveryPublicKeyCheckboxAgree()) {
             return false;
         }
 
@@ -82,7 +82,7 @@ class PageBuilderPublic extends PageBuilderProtected
      */
     public function update(): bool
     {
-        if ($this->disabled() || !$this->isRecoveryPublicKeyExists()) {
+        if ($this->disabled()) {
             return false;
         }
 
@@ -126,7 +126,7 @@ class PageBuilderPublic extends PageBuilderProtected
      */
     public function generate_recovery_keys(): bool
     {
-        return !$this->isRecoveryPublicKeyExists() && (!$this->isFAQPage() && !$this->isLogPage());
+        return !$this->isRecoveryPublicKeyCheckboxAgree() && (!$this->isFAQPage() && !$this->isLogPage());
     }
 
     /**

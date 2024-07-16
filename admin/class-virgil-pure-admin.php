@@ -128,14 +128,12 @@ class Virgil_Pure_Admin
      */
     private function isAddSubmenuPage(): bool
     {
-        return InfoHelper::isAllUsersMigrated() && ConfigHelper::isRecoveryKeyExists() && ConfigHelper::isDemoMode();
+        return InfoHelper::isAllUsersMigrated() && ConfigHelper::isDemoMode();
 
     }
 
     /**
      * @return void
-     * @throws PluginPureException
-     * @throws VirgilCryptoException
      */
     public function virgil_pure_form_handler(): void
     {
@@ -144,10 +142,6 @@ class Virgil_Pure_Admin
                 switch ($_POST[Form::TYPE]) {
                     case Form::DEMO:
                         $this->fh->demo();
-                        break;
-
-                    case Form::DOWNLOAD_RECOVERY_PRIVATE_KEY:
-                        $this->fh->downloadRecoveryPrivateKey();
                         break;
 
                     case Form::CREDENTIALS:
@@ -278,7 +272,6 @@ class Virgil_Pure_Admin
      * @param WP_User $user
      * @return void
      * @throws PheClientException
-     * @throws PluginPureException
      * @throws PureCryptoException
      * @throws VirgilCryptoException|Exception
      */
@@ -294,36 +287,14 @@ class Virgil_Pure_Admin
      * @throws IllegalStateException
      * @throws NullArgumentException
      * @throws PheClientException
-     * @throws PluginPureException
      * @throws PureCryptoException
      * @throws VirgilCryptoException
      */
     private function updatePassword(WP_User $user): void
     {
         if ($this->pv->check()) {
-            $this->encrypt($user->ID);
             $this->protocol->getPure()->resetUserPassword($user->user_email, $user->user_pass, true);
             $this->dbqh->clearUserPass($user->ID);
-        }
-    }
-
-    /**
-     * @param int $userId
-     * @return void
-     * @throws PluginPureException
-     * @throws VirgilCryptoException
-     */
-    private function encrypt(int $userId): void
-    {
-        $user = get_user_by('id', $userId);
-        $pk = get_option(Option::RECOVERY_PUBLIC_KEY);
-        if ($pk) {
-            $virgilPublicKey = $this->virgilCryptoWrapper->importKey(Crypto::PUBLIC_KEY, $pk);
-
-            $password = $user->user_pass;
-            $encrypted = $this->virgilCryptoWrapper->encrypt($password, $virgilPublicKey);
-
-            update_user_meta($user->ID, Option::ENCRYPTED, $encrypted);
         }
     }
 }

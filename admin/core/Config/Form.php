@@ -45,7 +45,7 @@ class Form
 {
     const PREFIX = Config::PLUGIN_NAME."_form_";
 
-    const ALL = [self::DEMO, self::DOWNLOAD_RECOVERY_PRIVATE_KEY, self::CREDENTIALS, self::MIGRATE, self::UPDATE,
+    const ALL = [self::DEMO, self::CREDENTIALS, self::MIGRATE, self::UPDATE,
         self::DEV_ADD_USERS, self::DEV_RESTORE_DEFAULTS, self::RECOVERY];
 
     const NONCE = self::PREFIX.'nonce';

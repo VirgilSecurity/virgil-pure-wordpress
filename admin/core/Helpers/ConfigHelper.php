@@ -53,14 +53,6 @@ class ConfigHelper
         return (bool) get_option(Option::DEV_MODE);
     }
 
-    /**
-     * @return bool
-     */
-    public static function isRecoveryKeyExists(): bool
-    {
-        return get_option(Option::RECOVERY_PUBLIC_KEY);
-    }
-
     public static function isDemoMode(): bool
     {
         return get_option(Option::DEMO_MODE) !== 0;
