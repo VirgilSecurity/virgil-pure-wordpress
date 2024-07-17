@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright (C) 2015-2019 Virgil Security Inc.
+ * Copyright (C) 2015-2024 Virgil Security Inc.
  *
  * All rights reserved.
  *
@@ -92,15 +92,20 @@ class PageBuilderProtected
      */
     protected function isCredentialsSet(): bool
     {
-        return(!empty($_ENV[Credential::APP_TOKEN])&&!empty($_ENV[Credential::APP_SECRET_KEY])&&!empty
-            ($_ENV[Credential::SERVICE_PUBLIC_KEY]));
+        $isCredentialsSet = true;
+        foreach (Credential::REQUIRED_CREDENTIALS as $credentials) {
+            if (empty($_ENV[$credentials])) {
+                $isCredentialsSet = false;
+            }
+        }
+        return $isCredentialsSet;
     }
 
     /**
      * @return bool
      */
-    protected function isRecoveryPublicKeyExists(): bool
+    protected function isRecoveryPublicKeyCheckboxAgree(): bool
     {
-        return InfoHelper::isRecoveryPrivateKeyExists();
+        return InfoHelper::isRecoveryCheckboxAgree();
     }
 }

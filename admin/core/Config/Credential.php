@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright (C) 2015-2019 Virgil Security Inc.
+ * Copyright (C) 2015-2024 Virgil Security Inc.
  *
  * All rights reserved.
  *
@@ -43,12 +43,29 @@ namespace VirgilSecurityPure\Config;
  */
 class Credential
 {
-    const ALL = [self::APP_TOKEN, self::SERVICE_PUBLIC_KEY, self::APP_SECRET_KEY, self::UPDATE_TOKEN];
+    public const ALL = [
+        self::APP_TOKEN,
+        self::SERVICE_PUBLIC_KEY,
+        self::APP_SECRET_KEY,
+        self::UPDATE_TOKEN,
+        self::NONROTATABLE_MASTER_SECRET,
+        self::BACKUP_PUBLIC_KEY
+    ];
 
-    const APP_TOKEN = 'APP_TOKEN';
-    const SERVICE_PUBLIC_KEY = 'SERVICE_PUBLIC_KEY';
-    const APP_SECRET_KEY = 'APP_SECRET_KEY';
-    const UPDATE_TOKEN = 'UPDATE_TOKEN';
+    public const REQUIRED_CREDENTIALS = [
+        self::APP_TOKEN,
+        self::SERVICE_PUBLIC_KEY,
+        self::APP_SECRET_KEY,
+        self::NONROTATABLE_MASTER_SECRET,
+        self::BACKUP_PUBLIC_KEY
+    ];
+
+    public const APP_TOKEN = 'APP_TOKEN';
+    public const SERVICE_PUBLIC_KEY = 'SERVICE_PUBLIC_KEY';
+    public const APP_SECRET_KEY = 'APP_SECRET_KEY';
+    public const UPDATE_TOKEN = 'UPDATE_TOKEN';
+    public const NONROTATABLE_MASTER_SECRET = 'NONROTATABLE_MASTER_SECRET';
+    public const BACKUP_PUBLIC_KEY = 'BACKUP_PUBLIC_KEY';
 
     const APP_TOKEN_PREFIX = 'AT';
     const SERVICE_PUBLIC_KEY_PREFIX = 'PK';

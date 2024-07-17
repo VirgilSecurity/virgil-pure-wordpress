@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright (C) 2015-2019 Virgil Security Inc.
+ * Copyright (C) 2015-2024 Virgil Security Inc.
  *
  * All rights reserved.
  *
@@ -44,8 +44,9 @@ namespace VirgilSecurityPure\Config;
 class Config
 {
     const EXTENSION_VSCE_PHE_PHP = 'vsce_phe_php';
+    /** @deprecated  */
     const EXTENSION_VIRGIL_CRYPTO_PHP = 'virgil_crypto_php';
-    const EXTENSIONS = [self::EXTENSION_VSCE_PHE_PHP, self::EXTENSION_VIRGIL_CRYPTO_PHP];
+    const EXTENSIONS = [self::EXTENSION_VSCE_PHE_PHP];
 
     const PLUGIN_NAME = 'virgil-pure';
     const PLUGIN_NAME_UNDERSCORE = 'virgil_pure';

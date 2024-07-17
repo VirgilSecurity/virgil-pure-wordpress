@@ -23,7 +23,11 @@ $message = $mbp->is_process_running() ? "- $migratedPercents% complete.<br>Pleas
     <div class="virgil-pure-migration-container">
 
         <p class="virgil-pure-migration-users">
-            Migration is a phase during which the plugin requests cryptographic data from Virgil server to associate users' passwords or their hash (or whatever you use) with cryptographic enrollment, provided by the server. Then enrollment records are created and stored in your database instead of users’ passwords.</p>
+            Migration is a phase during which the plugin requests cryptographic data from Virgil server
+            to associate users' passwords or their hash (or whatever you use) with cryptographic enrollment,
+            provided by the server. Then enrollment records are created and stored in your database instead of users’
+            passwords.
+        </p>
 
         <p class="virgil-pure-migration-users">
             <?= $migrated ?> out of <?= $total ?> users migrated

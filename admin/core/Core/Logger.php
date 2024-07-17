@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright (C) 2015-2019 Virgil Security Inc.
+ * Copyright (C) 2015-2024 Virgil Security Inc.
  *
  * All rights reserved.
  *
@@ -50,16 +50,24 @@ class Logger
      * @param int $status
      * @return bool
      */
-    public static function log(string $description, int $status=1): bool
+    public static function log(string $description, int $status = 1): bool
     {
         global $wpdb;
 
         $table_name = $wpdb->prefix . Config::PLUGIN_DB_LOG_TABLE;
-        $wpdb->insert($table_name, array(
+        $wpdb->insert($table_name, [
             'description' => $description,
             'status' => $status,
             'date' => current_time('mysql')
-        ));
+        ]);
+
+        if (!empty($wpdb->last_error)) {
+            $wpdb->insert($table_name, [
+                'description' => $wpdb->last_error,
+                'status' => $status,
+                'date' => current_time('mysql')
+            ]);
+        }
 
         return true;
     }

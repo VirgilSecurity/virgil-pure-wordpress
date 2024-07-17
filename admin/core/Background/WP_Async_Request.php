@@ -23,7 +23,7 @@ abstract class WP_Async_Request
      * @var string
      * @access protected
      */
-    protected $prefix = 'wp';
+    protected string $prefix = 'wp';
 
     /**
      * Action
@@ -33,15 +33,15 @@ abstract class WP_Async_Request
      * @var string
      * @access protected
      */
-    protected $action = 'async_request';
+    protected string $action = 'async_request';
 
     /**
      * Identifier
      *
-     * @var mixed
+     * @var string
      * @access protected
      */
-    protected $identifier;
+    protected string $identifier;
 
     /**
      * Data
@@ -51,7 +51,7 @@ abstract class WP_Async_Request
      * @var array
      * @access protected
      */
-    protected $data = array();
+    protected array $data = [];
 
     /**
      * Initiate new async request
@@ -60,8 +60,8 @@ abstract class WP_Async_Request
     {
         $this->identifier = $this->prefix . '_' . $this->action;
 
-        add_action('wp_ajax_' . $this->identifier, array($this, 'maybe_handle'));
-        add_action('wp_ajax_nopriv_' . $this->identifier, array($this, 'maybe_handle'));
+        add_action('wp_ajax_' . $this->identifier, [$this, 'maybe_handle']);
+        add_action('wp_ajax_nopriv_' . $this->identifier, [$this, 'maybe_handle']);
     }
 
     /**
@@ -71,7 +71,7 @@ abstract class WP_Async_Request
      *
      * @return $this
      */
-    public function data($data)
+    public function data(array $data): static
     {
         $this->data = $data;
 
@@ -81,9 +81,9 @@ abstract class WP_Async_Request
     /**
      * Dispatch the async request
      *
-     * @return array|WP_Error
+     * @return array
      */
-    public function dispatch()
+    public function dispatch(): array
     {
         $url = add_query_arg($this->get_query_args(), $this->get_query_url());
         $args = $this->get_post_args();
@@ -96,16 +96,16 @@ abstract class WP_Async_Request
      *
      * @return array
      */
-    protected function get_query_args()
+    protected function get_query_args(): array
     {
         if (property_exists($this, 'query_args')) {
             return $this->query_args;
         }
 
-        return array(
+        return [
             'action' => $this->identifier,
             'nonce' => wp_create_nonce($this->identifier),
-        );
+        ];
     }
 
     /**
@@ -113,7 +113,7 @@ abstract class WP_Async_Request
      *
      * @return string
      */
-    protected function get_query_url()
+    protected function get_query_url(): string
     {
         if (property_exists($this, 'query_url')) {
             return $this->query_url;
@@ -127,19 +127,19 @@ abstract class WP_Async_Request
      *
      * @return array
      */
-    protected function get_post_args()
+    protected function get_post_args(): array
     {
         if (property_exists($this, 'post_args')) {
             return $this->post_args;
         }
 
-        return array(
+        return [
             'timeout' => 0.01,
             'blocking' => false,
             'body' => $this->data,
             'cookies' => $_COOKIE,
             'sslverify' => apply_filters('https_local_ssl_verify', false),
-        );
+        ];
     }
 
     /**
@@ -147,7 +147,7 @@ abstract class WP_Async_Request
      *
      * Check for correct nonce and pass to handler.
      */
-    public function maybe_handle()
+    public function maybe_handle(): void
     {
         // Don't lock up other requests while processing
         session_write_close();
@@ -166,5 +166,4 @@ abstract class WP_Async_Request
      * during the async request.
      */
     abstract protected function handle();
-
 }

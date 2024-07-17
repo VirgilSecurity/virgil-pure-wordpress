@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright (C) 2015-2019 Virgil Security Inc.
+ * Copyright (C) 2015-2024 Virgil Security Inc.
  *
  * All rights reserved.
  *
@@ -61,6 +61,5 @@ class Option
     const PARAMS = Config::PLUGIN_NAME.'_params'.self::PREREALISE_PREFIX;
     const ENCRYPTED = Config::PLUGIN_NAME.'_encrypted'.self::PREREALISE_PREFIX;
 
-    const RECOVERY_PUBLIC_KEY = Config::PLUGIN_NAME.'_recovery_public_key';
-    const RECOVERY_PRIVATE_KEY = Config::PLUGIN_NAME.'_recovery_private_key';
+    const RECOVERY_CHECKBOX_AGREE = Config::PLUGIN_NAME.'_recovery_checkbox_agree';
 }

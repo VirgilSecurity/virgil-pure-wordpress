@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright (C) 2015-2019 Virgil Security Inc.
+ * Copyright (C) 2015-2024 Virgil Security Inc.
  *
  * All rights reserved.
  *
@@ -38,6 +38,7 @@
 namespace VirgilSecurityPure\Core;
 
 use VirgilSecurityPure\Config\Config;
+use wpdb;
 
 /**
  * Class LogPagination
@@ -48,27 +49,27 @@ class LogPagination implements Pagination
     /**
      * @var float|int
      */
-    private $offset;
+    private int|float $offset;
 
     /**
-     * @var \wpdb
+     * @var wpdb
      */
-    private $wpdb;
+    private wpdb $wpdb;
 
     /**
      * @var string
      */
-    private $query;
+    private string $query;
 
     /**
      * @var int
      */
-    private $ipp;
+    private int $ipp;
 
     /**
      * @var float|int
      */
-    private $p;
+    private float|int $p;
 
     /**
      * LogPagination constructor.
@@ -87,9 +88,10 @@ class LogPagination implements Pagination
     }
 
     /**
-     * @return string
+     * @return string|array
      */
-    public function getPag(): string {
+    public function getPag(): string|array
+    {
         $pag = "";
 
         $this->wpdb->get_results($this->query);
@@ -97,16 +99,15 @@ class LogPagination implements Pagination
 
         $totalPage = ceil($total/$this->ipp);
 
-        if($totalPage > 1){
-
-            $pag = paginate_links( array(
+        if ($totalPage > 1) {
+            $pag = paginate_links([
                     'base' => add_query_arg('p', '%#%'),
                     'format' => '',
                     'prev_text' => __('&laquo;'),
                     'next_text' => __('&raquo;'),
                     'total' => $totalPage,
                     'current' => $this->p,
-                ));
+                ]);
         }
 
         return $pag;
@@ -115,8 +116,8 @@ class LogPagination implements Pagination
     /**
      * @return array|null|object
      */
-    public function getData()
+    public function getData(): object|array|null
     {
-        return $this->wpdb->get_results( $this->query . " ORDER BY ID DESC LIMIT {$this->offset}, {$this->ipp}");
+        return $this->wpdb->get_results($this->query . " ORDER BY ID DESC LIMIT $this->offset, $this->ipp");
     }
 }

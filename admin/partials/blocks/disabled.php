@@ -11,7 +11,11 @@ use VirgilSecurityPure\Config\Config;
                 echo !extension_loaded($extension) ? "<b>$extension</b> can't be found.<br>" : null;
             }
             ?>
-            Please check <a href="https://github.com/VirgilSecurity/virgil-pure-wordpress#step-1-add-the-crypto-extensions-into-your-server-before-using-the-plugin" target="_blank">this guide</a> for more information.
+            Please check
+            <a href="https://github.com/VirgilSecurity/virgil-pure-wordpress#installation" target="_blank">
+                this guide
+            </a>
+            for more information.
         </p>
     </div>
 </div>

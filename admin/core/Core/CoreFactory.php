@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright (C) 2015-2019 Virgil Security Inc.
+ * Copyright (C) 2015-2024 Virgil Security Inc.
  *
  * All rights reserved.
  *
@@ -38,7 +38,6 @@
 namespace VirgilSecurityPure\Core;
 
 use VirgilSecurityPure\Background\BaseBackgroundProcess;
-use VirgilSecurityPure\Background\EncryptBackgroundProcess;
 use VirgilSecurityPure\Background\EncryptAndMigrateBackgroundProcess;
 use VirgilSecurityPure\Background\RecoveryBackgroundProcess;
 use VirgilSecurityPure\Background\UpdateBackgroundProcess;
@@ -53,38 +52,25 @@ class CoreFactory
     /**
      * @param string $class
      * @return Core
-     * @throws \Virgil\CryptoImpl\VirgilCryptoException
      */
     public function buildCore(string $class): Core
     {
         switch ($class) {
             case 'CoreProtocol':
                 return new CoreProtocol();
-                break;
             case 'VirgilCryptoWrapper':
                 return new VirgilCryptoWrapper();
-                break;
             case 'PluginValidator':
                 return new PluginValidator();
-                break;
             case 'DBQuery':
                 return new DBQueryHelper();
-                break;
             case 'CredentialsManager':
                 return new CredentialsManager();
-                break;
             case 'FormHandler':
                 return new FormHandler();
-                break;
-            case 'WPPasswordEnroller':
-                return new WPPasswordEnroller();
-                break;
-            case 'passw0rdHash':
-                return new passw0rdHash();
-                break;
-            default:
-                $this->throwError($class);
         }
+
+        $this->throwError($class);
     }
 
     /**
@@ -96,26 +82,21 @@ class CoreFactory
         switch ($class) {
             case 'EncryptAndMigrate':
                 return new EncryptAndMigrateBackgroundProcess();
-                break;
             case 'Update':
                 return new UpdateBackgroundProcess();
-                break;
-            case 'Encrypt':
-                return new EncryptBackgroundProcess();
-                break;
             case 'Recovery':
                 return new RecoveryBackgroundProcess();
-                break;
-            default:
-                $this->throwError($class);
         }
+
+        $this->throwError($class);
     }
 
     /**
      * @param string $class
      */
-    private function throwError(string $class)
+    private function throwError(string $class): void
     {
+        Logger::log("Invalid class name: " . $class);
         var_dump("Invalid class name: $class");
         die;
     }

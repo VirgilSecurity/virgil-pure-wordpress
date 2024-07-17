@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright (C) 2015-2019 Virgil Security Inc.
+ * Copyright (C) 2015-2024 Virgil Security Inc.
  *
  * All rights reserved.
  *
@@ -49,10 +49,10 @@ class CredentialExploder
 
         $res = explode(".", $credential);
 
-        if(!isset($res[$element]))
+        if (!isset($res[$element])) {
             wp_die("Correct delimiter dot (.) does not exists at $credential string");
+        }
 
         return $res[$element];
     }
-
 }

@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright (C) 2015-2019 Virgil Security Inc.
+ * Copyright (C) 2015-2024 Virgil Security Inc.
  *
  * All rights reserved.
  *
@@ -55,5 +55,5 @@ abstract class BaseBackgroundProcess extends WP_Background_Process
      * @param mixed $item
      * @return mixed
      */
-    abstract protected function task($item);
+    abstract protected function task(mixed $item): bool;
 }

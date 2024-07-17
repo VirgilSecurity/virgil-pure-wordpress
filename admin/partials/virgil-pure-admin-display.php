@@ -9,8 +9,9 @@ use VirgilSecurityPure\Core\PageBuilderPublic;
     $pageBuilderPublic = new PageBuilderPublic();
 
     foreach (get_class_methods($pageBuilderPublic) as $methodBlock) {
-        if($pageBuilderPublic->$methodBlock())
+        if ($pageBuilderPublic->$methodBlock()) {
             require_once "blocks/$methodBlock.php";
+        }
     }
     ?>
 </div>
