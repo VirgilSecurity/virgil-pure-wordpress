@@ -247,7 +247,7 @@ class Virgil_Pure_Admin
             $updateBP->setDep($this->protocol, $this->cm);
 
             $recoveryBP = $this->coreFactory->buildBackgroundProcess('Recovery');
-            $recoveryBP->setDep($this->dbqh, $this->virgilCryptoWrapper, $this->cm);
+            $recoveryBP->setDep($this->dbqh, $this->virgilCryptoWrapper, $this->cm, $this->protocol);
         }
     }
 

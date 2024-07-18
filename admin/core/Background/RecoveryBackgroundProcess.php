@@ -39,9 +39,11 @@ namespace VirgilSecurityPure\Background;
 
 use Exception;
 use Virgil\Crypto\Exceptions\VirgilCryptoException;
+use Virgil\Crypto\VirgilCrypto;
 use VirgilSecurityPure\Config\Crypto;
 use VirgilSecurityPure\Config\Log;
 use VirgilSecurityPure\Config\Option;
+use VirgilSecurityPure\Core\CoreProtocol;
 use VirgilSecurityPure\Core\CredentialsManager;
 use VirgilSecurityPure\Core\Logger;
 use VirgilSecurityPure\Config\Config;
@@ -72,17 +74,20 @@ class RecoveryBackgroundProcess extends BaseBackgroundProcess
      * @var CredentialsManager|null
      */
     private ?CredentialsManager $credentialsManager;
+    private CoreProtocol $protocol;
 
     /**
      * @param DBQueryHelper $dbqh
      * @param VirgilCryptoWrapper $vcw
      * @param CredentialsManager $credentialsManager
+     * @param CoreProtocol $protocol
      */
-    public function setDep(DBQueryHelper $dbqh, VirgilCryptoWrapper $vcw, CredentialsManager $credentialsManager): void
+    public function setDep(DBQueryHelper $dbqh, VirgilCryptoWrapper $vcw, CredentialsManager $credentialsManager, CoreProtocol $protocol): void
     {
         $this->vcw = $vcw;
         $this->dbqh = $dbqh;
         $this->credentialsManager = $credentialsManager;
+        $this->protocol = $protocol;
     }
 
     /**
@@ -94,22 +99,19 @@ class RecoveryBackgroundProcess extends BaseBackgroundProcess
     protected function task(mixed $item): bool
     {
         if ($item) {
-            $user = $item['user'];
-            $id = $user->ID;
-            $privateKeyIn = $item['private_key_in'];
-            $encryptedIn = get_user_meta($id, Option::ENCRYPTED)[0];
-            $privateKey = $this->vcw->importKey(Crypto::PRIVATE_KEY, $privateKeyIn)->getPrivateKey();
             try {
-                $decrypted = $this->vcw->decrypt(base64_decode($encryptedIn), $privateKey);
-            } catch (Exception) {
-                Logger::log("Invalid ".Crypto::RECOVERY_PRIVATE_KEY, 0);
+                $privateKey = $this->vcw->importKey(Crypto::PRIVATE_KEY, $item['private_key_in']);
+                $record = $this->protocol->getUser($item['user']->user_email);
+                $pwdHashDecrypted = $this->vcw->decrypt($record->getBackupPwdHash(), $privateKey->getPrivateKey());
+            } catch (Exception $e) {
+                Logger::log(">>> Invalid ".Crypto::RECOVERY_PRIVATE_KEY . ': ' . $e->getMessage(), 0);
                 $this->cancel_process();
                 $this->getFinalLog(0);
                 $this->dbqh->clearActionProcess('recovery');
                 exit;
             }
 
-            $this->dbqh->passRecovery($id, $decrypted);
+            $this->dbqh->passRecovery($item['user']->ID, substr($pwdHashDecrypted, 0, 12));
         }
 
         return false;

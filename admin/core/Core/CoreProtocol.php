@@ -49,6 +49,7 @@ use Virgil\PureKit\Pure\Exception\NullPointerException;
 use Virgil\PureKit\Pure\Exception\PheClientException;
 use Virgil\PureKit\Pure\Exception\PureCryptoException;
 use Virgil\PureKit\Pure\Exception\PureLogicException;
+use Virgil\PureKit\Pure\Model\UserRecord;
 use Virgil\PureKit\Pure\PheManager;
 use Virgil\PureKit\Pure\Pure;
 use Virgil\PureKit\Pure\PureContext;
@@ -203,5 +204,14 @@ class CoreProtocol implements Core
         return (!empty($_ENV[Credential::APP_TOKEN]) && !empty($_ENV[Credential::APP_SECRET_KEY]) && !empty(
             $_ENV[Credential::SERVICE_PUBLIC_KEY]
         ) && !empty($_ENV[Credential::NONROTATABLE_MASTER_SECRET]) && !empty($_ENV[Credential::BACKUP_PUBLIC_KEY]));
+    }
+
+    /**
+     * @param string $userEmail
+     * @return UserRecord
+     */
+    public function getUser(string $userEmail): UserRecord
+    {
+        return $this->protocol->getStorage()->selectUser($userEmail);
     }
 }

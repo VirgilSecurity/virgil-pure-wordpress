@@ -48,6 +48,7 @@ use Virgil\PureKit\Pure\Exception\PheClientException;
 use Virgil\PureKit\Pure\Exception\ProtocolException;
 use Virgil\PureKit\Pure\Exception\PureCryptoException;
 use Virgil\PureKit\Pure\Exception\PureException;
+use Virgil\PureKit\Pure\Exception\PureLogicException;
 use Virgil\PureKit\Pure\Exception\PureStorageUserNotFoundException;
 use Virgil\PureKit\Pure\Exception\ValidateException;
 use Virgil\PureKit\Pure\Exception\VirgilCloudStorageException;
@@ -125,7 +126,6 @@ class EncryptAndMigrateBackgroundProcess extends BaseBackgroundProcess
                 Logger::log('When migrate email = ' . $item->user_email . ' : ' . $e->getMessage());
             }
         } catch (VirgilException|PureException|PureException|ClientException|ValidateException $e) {
-            Logger::log(get_debug_type($e));
             Logger::log('Error when auth User email = ' . $item->user_email . ' ' . $e->getMessage());
         }
         update_user_meta($item->ID, Option::MIGRATE_FINISH, true);
