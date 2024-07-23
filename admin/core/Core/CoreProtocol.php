@@ -49,12 +49,12 @@ use Virgil\PureKit\Pure\Exception\NullPointerException;
 use Virgil\PureKit\Pure\Exception\PheClientException;
 use Virgil\PureKit\Pure\Exception\PureCryptoException;
 use Virgil\PureKit\Pure\Exception\PureLogicException;
-use Virgil\PureKit\Pure\Model\UserRecord;
 use Virgil\PureKit\Pure\PheManager;
 use Virgil\PureKit\Pure\Pure;
 use Virgil\PureKit\Pure\PureContext;
 use Virgil\PureKit\Pure\PureCrypto;
 use VirgilSecurityPure\Config\Credential;
+use VirgilSecurityPure\Config\Option;
 use VirgilSecurityPure\Helpers\Redirector;
 
 require_once(ABSPATH . 'wp-includes/class-phpass.php');
@@ -160,17 +160,6 @@ class CoreProtocol implements Core
         return $this->pheManager->performRotation($value);
     }
 
-    /**
-     * @param $inputHash
-     * @param $userPass
-     * @return bool
-     * @throws Exception
-     */
-    public function verifyPassword($inputHash, $userPass): bool
-    {
-        return is_string($this->pheClient->createVerifyPasswordRequest($inputHash, $userPass));
-    }
-
     public function getPure(): Pure
     {
         return $this->protocol;
@@ -207,11 +196,14 @@ class CoreProtocol implements Core
     }
 
     /**
-     * @param string $userEmail
-     * @return UserRecord
+     * @param $userId
+     * @param $userPass
+     * @return void
+     * @throws PureCryptoException
      */
-    public function getUser(string $userEmail): UserRecord
+    public function encryptAndSaveKeyForBackup($userId, $userPass): void
     {
-        return $this->protocol->getStorage()->selectUser($userEmail);
+        $encryptedKey = $this->pureCrypto->encryptForBackup($userPass, $this->getPure()->getBuppk(), $this->getPure()->getOskp()->getPrivateKey());
+        update_user_meta($userId, Option::ENCRYPT_BACKUP_KEY, base64_encode($encryptedKey));
     }
 }

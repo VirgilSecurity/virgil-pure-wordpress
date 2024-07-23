@@ -62,4 +62,5 @@ class Option
     const ENCRYPTED = Config::PLUGIN_NAME.'_encrypted'.self::PREREALISE_PREFIX;
 
     const RECOVERY_CHECKBOX_AGREE = Config::PLUGIN_NAME.'_recovery_checkbox_agree';
+    const ENCRYPT_BACKUP_KEY = Config::PLUGIN_NAME.'_encrypt_backup_key';
 }

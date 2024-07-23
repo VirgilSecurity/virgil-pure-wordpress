@@ -80,38 +80,36 @@ class RecoveryBackgroundProcess extends BaseBackgroundProcess
      * @param DBQueryHelper $dbqh
      * @param VirgilCryptoWrapper $vcw
      * @param CredentialsManager $credentialsManager
-     * @param CoreProtocol $protocol
      */
-    public function setDep(DBQueryHelper $dbqh, VirgilCryptoWrapper $vcw, CredentialsManager $credentialsManager, CoreProtocol $protocol): void
+    public function setDep(DBQueryHelper $dbqh, VirgilCryptoWrapper $vcw, CredentialsManager $credentialsManager): void
     {
         $this->vcw = $vcw;
         $this->dbqh = $dbqh;
         $this->credentialsManager = $credentialsManager;
-        $this->protocol = $protocol;
     }
 
     /**
      * @param mixed $item
      * @return bool
-     * @throws PluginPureException
-     * @throws VirgilCryptoException
      */
     protected function task(mixed $item): bool
     {
         if ($item) {
+            $user = $item['user'];
+            Logger::log('we gotta power!');
             try {
                 $privateKey = $this->vcw->importKey(Crypto::PRIVATE_KEY, $item['private_key_in']);
-                $record = $this->protocol->getUser($item['user']->user_email);
-                $pwdHashDecrypted = $this->vcw->decrypt($record->getBackupPwdHash(), $privateKey->getPrivateKey());
+                $backupPwdHash = base64_decode(get_user_meta($user->ID, Option::ENCRYPT_BACKUP_KEY, true));
+                $pwdHashDecrypted = $this->vcw->decrypt($backupPwdHash, $privateKey->getPrivateKey());
             } catch (Exception $e) {
-                Logger::log(">>> Invalid ".Crypto::RECOVERY_PRIVATE_KEY . ': ' . $e->getMessage(), 0);
+                Logger::log("Invalid ".Crypto::RECOVERY_PRIVATE_KEY . ': ' . $e->getMessage(), 0);
                 $this->cancel_process();
                 $this->getFinalLog(0);
                 $this->dbqh->clearActionProcess('recovery');
                 exit;
             }
 
-            $this->dbqh->passRecovery($item['user']->ID, substr($pwdHashDecrypted, 0, 12));
+            $this->dbqh->passRecovery($user->ID, $pwdHashDecrypted);
         }
 
         return false;

@@ -170,7 +170,7 @@ class DBQueryHelper implements Core
      */
     public function passRecovery(int $id, string $password): void
     {
-        $this->wpdb->query("UPDATE {$this->tableUsers} SET user_pass='{$password}' WHERE id={$id}");
+        $this->wpdb->query("UPDATE {$this->tableUsers} SET user_pass='{$password}' WHERE ID={$id}");
     }
 
     /**
