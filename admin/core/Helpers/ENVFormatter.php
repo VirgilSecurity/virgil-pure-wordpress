@@ -55,11 +55,11 @@ class ENVFormatter
      * @return string
      */
     public static function formatData(
-        string $appToken,
-        string $servicePublicKey,
-        string $appSecretKey,
-        string $updateNonrotatableMasterSecret,
-        string $backupPublicKey,
+        string $appToken = '',
+        string $servicePublicKey = '',
+        string $appSecretKey = '',
+        string $updateNonrotatableMasterSecret = '',
+        string $backupPublicKey = '',
         string $updateToken = null
     ): string {
         $data = [
@@ -78,5 +78,4 @@ class ENVFormatter
 
         return $formattedData;
     }
-
 }

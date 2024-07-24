@@ -56,14 +56,14 @@ class CredentialsManager implements Core
      */
     public function addEmptyCredentials(): bool
     {
-        $formatString = ENVFormatter::formatData('', '', '', '', '', '');
+        $formatString = ENVFormatter::formatData();
         file_put_contents(VIRGIL_PURE_CORE_ENV_FILE, $formatString);
         $this->updateENV();
         return true;
     }
 
     /**
-     * @param string $aToken
+     * @param string $aT
      * @param string $sPK
      * @param string $aSK
      * @param string $uNMS
@@ -72,7 +72,7 @@ class CredentialsManager implements Core
      */
     public function addInitialCredentials(string $aT, string $sPK, string $aSK, string $uNMS, string $bPKey): bool
     {
-        return $this->addCredentials($aT, $sPK, $aSK, $uNMS, $bPKey);
+        return $this->add($aT, $sPK, $aSK, $uNMS, $bPKey);
     }
 
     /**
@@ -81,7 +81,7 @@ class CredentialsManager implements Core
      */
     public function addUpdateTokenToOldCredentials(string $updateToken): bool
     {
-        return $this->addCredentials(
+        return $this->add(
             $_ENV[Credential::APP_TOKEN],
             $_ENV[Credential::SERVICE_PUBLIC_KEY],
             $_ENV[Credential::APP_SECRET_KEY],
@@ -101,26 +101,26 @@ class CredentialsManager implements Core
         $appToken = $_ENV[Credential::APP_TOKEN];
         $nonrotableMasterSecret = $_ENV[Credential::NONROTATABLE_MASTER_SECRET];
         $backupPublicKey = $_ENV[Credential::BACKUP_PUBLIC_KEY];
-        return $this->addCredentials($appToken, $servicePK, $appSK, $nonrotableMasterSecret, $backupPublicKey);
+        return $this->add($appToken, $servicePK, $appSK, $nonrotableMasterSecret, $backupPublicKey);
     }
 
     /**
      * @param string $aT
      * @param string $sPK
      * @param string $aSK
-     * @param string $uNMS
+     * @param string $nMS
      * @param string $bPK
      * @param string|null $ut
      * @return bool
      */
-    private function addCredentials(string $aT, string $sPK, string $aSK, string $uNMS, string $bPK, string $ut = null): bool
+    private function add(string $aT, string $sPK, string $aSK, string $nMS, string $bPK, string $ut = null): bool
     {
         $credentials = [
             Credential::APP_TOKEN => $aT,
             Credential::SERVICE_PUBLIC_KEY => $sPK,
             Credential::APP_SECRET_KEY => $aSK,
             Credential::UPDATE_TOKEN => $ut,
-            Credential::NONROTATABLE_MASTER_SECRET => $uNMS,
+            Credential::NONROTATABLE_MASTER_SECRET => $nMS,
             Credential::BACKUP_PUBLIC_KEY => $bPK
         ];
 
@@ -132,7 +132,7 @@ class CredentialsManager implements Core
             Redirector::toPageLog();
         }
 
-        $formatString = ENVFormatter::formatData($aT, $sPK, $aSK, $uNMS, $bPK, $ut);
+        $formatString = ENVFormatter::formatData($aT, $sPK, $aSK, $nMS, $bPK, $ut);
 
         file_put_contents(VIRGIL_PURE_CORE_ENV_FILE, $formatString);
 

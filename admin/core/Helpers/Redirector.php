@@ -46,24 +46,6 @@ use VirgilSecurityPure\Config\Config;
 class Redirector
 {
     /**
-     * @param string $page
-     */
-    public static function toPage(string $page): void
-    {
-        wp_redirect(admin_url("/admin.php?page=".$page), 301);
-        exit;
-    }
-
-    /**
-     * @return void
-     */
-    public static function toPageAdmin(): void
-    {
-        wp_redirect(admin_url("/admin.php"), 301);
-        exit;
-    }
-
-    /**
      * @return void
      */
     public static function toPageLog(): void
@@ -72,14 +54,5 @@ class Redirector
             wp_redirect(admin_url("/admin.php?page=" . Config::LOG_PAGE), 301);
             exit;
         }
-    }
-
-    /**
-     * @return void
-     */
-    public static function toPageHome(): void
-    {
-        wp_redirect(home_url());
-        exit;
     }
 }

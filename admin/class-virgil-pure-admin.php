@@ -6,8 +6,9 @@ use Virgil\PureKit\Pure\Exception\IllegalStateException;
 use Virgil\PureKit\Pure\Exception\NullArgumentException;
 use Virgil\PureKit\Pure\Exception\PheClientException;
 use Virgil\PureKit\Pure\Exception\PureCryptoException;
+use VirgilSecurityPure\Config\BackgroundProcess;
+use VirgilSecurityPure\Config\BuildCore;
 use VirgilSecurityPure\Config\Config;
-use VirgilSecurityPure\Config\Crypto;
 use VirgilSecurityPure\Config\Form;
 use VirgilSecurityPure\Config\Option;
 use VirgilSecurityPure\Core\Core;
@@ -18,7 +19,6 @@ use VirgilSecurityPure\Core\FormHandler;
 use VirgilSecurityPure\Core\Logger;
 use VirgilSecurityPure\Core\PluginValidator;
 use VirgilSecurityPure\Core\VirgilCryptoWrapper;
-use VirgilSecurityPure\Exceptions\PluginPureException;
 use VirgilSecurityPure\Helpers\ConfigHelper;
 use VirgilSecurityPure\Helpers\DBQueryHelper;
 use VirgilSecurityPure\Helpers\Redirector;
@@ -54,16 +54,16 @@ class Virgil_Pure_Admin
     {
         $this->coreFactory = new CoreFactory();
         /** @var CoreProtocol $coreProtocol */
-        $coreProtocol = $this->coreFactory->buildCore('CoreProtocol');
+        $coreProtocol = $this->coreFactory->buildCore(BuildCore::CORE_PROTOCOL);
 
-        $this->virgilCryptoWrapper = $this->coreFactory->buildCore('VirgilCryptoWrapper');
+        $this->virgilCryptoWrapper = $this->coreFactory->buildCore(BuildCore::VIRGIL_CRYPTO_WRAPPER);
 
         $coreProtocol->init();
         $this->protocol = $coreProtocol;
-        $this->dbqh = $this->coreFactory->buildCore('DBQuery');
-        $this->fh = $this->coreFactory->buildCore('FormHandler');
-        $this->cm = $this->coreFactory->buildCore('CredentialsManager');
-        $this->pv = $this->coreFactory->buildCore('PluginValidator');
+        $this->dbqh = $this->coreFactory->buildCore(BuildCore::DB_QUERY_HELPER);
+        $this->fh = $this->coreFactory->buildCore(BuildCore::FORM_HANDLER);
+        $this->cm = $this->coreFactory->buildCore(BuildCore::CREDENTIALS_MANAGER);
+        $this->pv = $this->coreFactory->buildCore(BuildCore::PLUGIN_VALIDATOR);
 
         $this->fh->setDep($coreProtocol, $this->virgilCryptoWrapper, $this->cm, $this->dbqh);
 
@@ -90,8 +90,8 @@ class Virgil_Pure_Admin
     public function virgil_pure_menu(): void
     {
         $devMode = get_option(Option::DEV_MODE);
-        $extLoaded = extension_loaded(Config::EXTENSION_VSCE_PHE_PHP);
 
+        $extLoaded = Config::isAllExtensionEnabled();
         $title = $extLoaded ? "Action" : "Info";
 
         add_menu_page(Config::MAIN_PAGE_TITLE, Config::MAIN_PAGE_TITLE, Config::CAPABILITY, Config::ACTION_PAGE);
@@ -129,7 +129,6 @@ class Virgil_Pure_Admin
     private function isAddSubmenuPage(): bool
     {
         return InfoHelper::isAllUsersMigrated() && ConfigHelper::isDemoMode();
-
     }
 
     /**
@@ -161,7 +160,8 @@ class Virgil_Pure_Admin
                         break;
 
                     case Form::DEV_ADD_USERS:
-                        $this->fh->addUsers();
+                        $this->fh->
+                        addUsers();
                         break;
 
                     case Form::DEV_RESTORE_DEFAULTS:
@@ -189,7 +189,7 @@ class Virgil_Pure_Admin
     {
 
         /** @var PluginValidator $pluginValidator */
-        $pluginValidator = $this->coreFactory->buildCore('PluginValidator');
+        $pluginValidator = $this->coreFactory->buildCore(BuildCore::PLUGIN_VALIDATOR);
 
         if ($pluginValidator->check() && $userId) {
             if (InfoHelper::isAllUsersMigrated()) {
@@ -240,13 +240,13 @@ class Virgil_Pure_Admin
     public function virgil_pure_init_background_processes(): void
     {
         if ($this->protocol) {
-            $migrateBP = $this->coreFactory->buildBackgroundProcess('EncryptAndMigrate');
+            $migrateBP = $this->coreFactory->buildBackgroundProcess(BackgroundProcess::ENCRYPT_AND_MIGRATE);
             $migrateBP->setDep($this->protocol, $this->dbqh);
 
-            $updateBP = $this->coreFactory->buildBackgroundProcess('Update');
+            $updateBP = $this->coreFactory->buildBackgroundProcess(BackgroundProcess::UPDATE);
             $updateBP->setDep($this->protocol, $this->cm);
 
-            $recoveryBP = $this->coreFactory->buildBackgroundProcess('Recovery');
+            $recoveryBP = $this->coreFactory->buildBackgroundProcess(BackgroundProcess::RECOVERY);
             $recoveryBP->setDep($this->dbqh, $this->virgilCryptoWrapper, $this->cm);
         }
     }

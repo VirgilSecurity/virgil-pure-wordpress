@@ -49,47 +49,6 @@ class InfoHelper
     /**
      * @return string
      */
-    public static function getPHPVersion(): string
-    {
-        return PHP_MAJOR_VERSION . '.' . PHP_MINOR_VERSION;
-    }
-
-    /**
-     * @return string
-     */
-    public static function getExtensionDir(): string
-    {
-        return PHP_EXTENSION_DIR;
-    }
-
-    /**
-     * @return string
-     */
-    public static function getExtensionIniFile(): string
-    {
-        return php_ini_scanned_files();
-    }
-
-    /**
-     * @return string
-     */
-    public static function getOSVersion(): string
-    {
-        return PHP_OS;
-    }
-
-    /**
-     * @return string
-     */
-    public static function getExtensionType(): string
-    {
-        $ee = 'Windows'==self::getOSVersion() ? 'dll' : 'so';
-        return ".".$ee;
-    }
-
-    /**
-     * @return string
-     */
     public static function getMigrated(): string
     {
         global $wpdb;

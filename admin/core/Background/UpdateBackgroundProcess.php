@@ -100,7 +100,6 @@ class UpdateBackgroundProcess extends BaseBackgroundProcess
             Logger::log($msg, 0);
         }
 
-
         if (isset($newRecordRaw)) {
             $newRecord = base64_encode($newRecordRaw);
             update_user_meta($item->ID, Option::RECORD, $newRecord);
@@ -115,7 +114,6 @@ class UpdateBackgroundProcess extends BaseBackgroundProcess
      */
     protected function complete(): void
     {
-
         if ($this->is_queue_empty()) {
             update_option(Option::UPDATE_FINISH, microtime(true));
 

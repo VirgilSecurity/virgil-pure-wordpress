@@ -8,5 +8,8 @@
     "psr-4": {
       "VirgilSecurityPure\\": ""
     }
+  },
+  "require-dev": {
+    "squizlabs/php_codesniffer": "^3.10"
   }
 }

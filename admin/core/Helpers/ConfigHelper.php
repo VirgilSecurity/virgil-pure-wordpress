@@ -45,13 +45,6 @@ use VirgilSecurityPure\Config\Option;
  */
 class ConfigHelper
 {
-    /**
-     * @return bool
-     */
-    public static function isDevMode(): bool
-    {
-        return (bool) get_option(Option::DEV_MODE);
-    }
 
     public static function isDemoMode(): bool
     {

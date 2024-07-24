@@ -52,10 +52,10 @@ use Virgil\PureKit\Pure\Exception\PureStorageUserNotFoundException;
 use Virgil\PureKit\Pure\Exception\ValidateException;
 use Virgil\PureKit\Pure\Exception\VirgilCloudStorageException;
 use VirgilSecurityPure\Config\Config;
+use VirgilSecurityPure\Config\Log;
 use VirgilSecurityPure\Config\Option;
 use VirgilSecurityPure\Core\CoreProtocol;
 use VirgilSecurityPure\Core\Logger;
-use VirgilSecurityPure\Core\VirgilCryptoWrapper;
 use VirgilSecurityPure\Helpers\DBQueryHelper;
 
 /**
@@ -102,7 +102,6 @@ class EncryptAndMigrateBackgroundProcess extends BaseBackgroundProcess
     protected function task(mixed $item): bool
     {
         try {
-            Logger::log('In task!');
             $this->protocol->getPure()->authenticateUser($item->user_email, $item->user_pass);
         } catch (PureStorageUserNotFoundException|VirgilCloudStorageException $e) {
             try {
@@ -116,6 +115,7 @@ class EncryptAndMigrateBackgroundProcess extends BaseBackgroundProcess
         } catch (VirgilException|PureException|PureException|ClientException|ValidateException $e) {
             Logger::log('Error when auth User email = ' . $item->user_email . ' ' . $e->getMessage());
         }
+
         update_user_meta($item->ID, Option::MIGRATE_FINISH, true);
 
         return false;
@@ -140,6 +140,7 @@ class EncryptAndMigrateBackgroundProcess extends BaseBackgroundProcess
 
             delete_option(Option::MIGRATE_START);
             delete_option(Option::MIGRATE_FINISH);
+            Logger::log(Log::FINISH_MIGRATION);
             parent::complete();
         }
     }

@@ -71,4 +71,19 @@ class Credential
     const SERVICE_PUBLIC_KEY_PREFIX = 'PK';
     const APP_SECRET_KEY_PREFIX = 'SK';
     const UPDATE_TOKEN_PREFIX = 'UT';
+
+    /**
+     * @return bool
+     */
+    public static function isAllRequiredCredentialsSet(): bool
+    {
+        $allSet = true;
+        foreach (self::REQUIRED_CREDENTIALS as $credential) {
+            if (empty($_ENV[$credential])) {
+                $allSet = false;
+            }
+        }
+
+        return $allSet;
+    }
 }

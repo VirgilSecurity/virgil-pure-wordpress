@@ -58,16 +58,8 @@ class PluginValidator implements Core
     /**
      * @return bool
      */
-    public function checkEnvCredentials(): bool
-    {
-        return CoreProtocol::checkCredentials();
-    }
-
-    /**
-     * @return bool
-     */
     public function check(): bool
     {
-        return $this->isPluginActive()&&$this->checkEnvCredentials();
+        return $this->isPluginActive() && Credential::isAllRequiredCredentialsSet();
     }
 }

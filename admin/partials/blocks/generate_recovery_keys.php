@@ -27,14 +27,14 @@ use VirgilSecurityPure\Config\Config;
 
     <form class="virgil-pure-credentials-form"
           action="<?php
-          echo esc_url(admin_url('admin-post.php')); ?>"
+            echo esc_url(admin_url('admin-post.php')); ?>"
           method="post"
     >
 
         <label for="phe-agree-checkbox">
             <input id="phe-agree-checkbox" type="checkbox" onchange="document
                 .getElementById('submitNextStep').disabled = !this.checked;">
-            <span>I'm aware that if I lose the Recovery Key, I will not  be able to recover encrypted                records</span>
+            <span>I'm aware that if I lose the Recovery Key, I will not  be able to recover encrypted records</span>
         </label>
 
         <input type="hidden" name="action" value="<?= Form::ACTION ?>">

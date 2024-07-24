@@ -59,31 +59,11 @@ class VirgilCryptoWrapper implements Core
     private VirgilCrypto $vc;
 
     /**
-     * @var VirgilKeyPair
-     */
-    private VirgilKeyPair $keyPair;
-
-    /**
      * VirgilCryptoWrapper constructor.
      */
     public function __construct()
     {
         $this->vc = new VirgilCrypto();
-    }
-
-    /**
-     * @param int $type
-     * @return string
-     * @throws PluginPureException
-     * @throws VirgilCryptoException
-     */
-    public function getKey(int $type): string
-    {
-        return match ($type) {
-            Crypto::PUBLIC_KEY => $this->vc->exportPublicKey($this->keyPair->getPublicKey()),
-            Crypto::PRIVATE_KEY => $this->vc->exportPrivateKey($this->keyPair->getPrivateKey()),
-            default => throw new PluginPureException('Invalid key type (Get key)'),
-        };
     }
 
     /**
