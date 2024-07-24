@@ -42,10 +42,14 @@ class Crypto
     const ALL = [self::PUBLIC_KEY, self::PRIVATE_KEY];
 
     const PUBLIC_KEY = 1;
+
     const PRIVATE_KEY = 2;
 
+    /** @deprecated  */
     const PRIVATE_KEY_PASSWORD = "wordpress_plugin";
 
     const RECOVERY_PRIVATE_KEY = 'Recovery_Private_Key';
+
+    /** @deprecated  */
     const RECOVERY_PRIVATE_KEY_FILE = '_recovery_private_key.pem';
 }

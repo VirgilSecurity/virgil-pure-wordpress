@@ -49,7 +49,10 @@ class Log
     const FINISH_MIGRATION = "The end of the migration process";
     const START_UPDATE = "Start of the update process";
     const FINISH_UPDATE = "The end of the update process";
+
+    /** @deprecated  */
     const START_ENCRYPT = "Start of the encrypt process";
+    /** @deprecated  */
     const FINISH_ENCRYPT = "The end of the encrypt process";
     const START_RECOVERY = "Start of the recovery process";
     const FINISH_RECOVERY = "The end of the recovery process";
@@ -61,6 +64,7 @@ class Log
     const INVALID_PROOF = "Invalid ".Credential::SERVICE_PUBLIC_KEY." or ".
     Credential::APP_SECRET_KEY;
 
+    /** @deprecated  */
     const GENERATE_RECOVERY_KEYS = "Generate Recovery Keys";
     const RECOVERY_ERROR = "Invalid ".Crypto::RECOVERY_PRIVATE_KEY;
 }

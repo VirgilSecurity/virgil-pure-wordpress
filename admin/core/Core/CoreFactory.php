@@ -41,6 +41,8 @@ use VirgilSecurityPure\Background\BaseBackgroundProcess;
 use VirgilSecurityPure\Background\EncryptAndMigrateBackgroundProcess;
 use VirgilSecurityPure\Background\RecoveryBackgroundProcess;
 use VirgilSecurityPure\Background\UpdateBackgroundProcess;
+use VirgilSecurityPure\Config\BackgroundProcess;
+use VirgilSecurityPure\Config\BuildCore;
 use VirgilSecurityPure\Helpers\DBQueryHelper;
 
 /**
@@ -56,17 +58,17 @@ class CoreFactory
     public function buildCore(string $class): Core
     {
         switch ($class) {
-            case 'CoreProtocol':
+            case BuildCore::CORE_PROTOCOL:
                 return new CoreProtocol();
-            case 'VirgilCryptoWrapper':
+            case BuildCore::VIRGIL_CRYPTO_WRAPPER:
                 return new VirgilCryptoWrapper();
-            case 'PluginValidator':
+            case BuildCore::PLUGIN_VALIDATOR:
                 return new PluginValidator();
-            case 'DBQuery':
+            case BuildCore::DB_QUERY_HELPER:
                 return new DBQueryHelper();
-            case 'CredentialsManager':
+            case BuildCore::CREDENTIALS_MANAGER:
                 return new CredentialsManager();
-            case 'FormHandler':
+            case BuildCore::FORM_HANDLER:
                 return new FormHandler();
         }
 
@@ -80,11 +82,11 @@ class CoreFactory
     public function buildBackgroundProcess(string $class): BaseBackgroundProcess
     {
         switch ($class) {
-            case 'EncryptAndMigrate':
+            case BackgroundProcess::ENCRYPT_AND_MIGRATE:
                 return new EncryptAndMigrateBackgroundProcess();
-            case 'Update':
+            case BackgroundProcess::UPDATE:
                 return new UpdateBackgroundProcess();
-            case 'Recovery':
+            case BackgroundProcess::RECOVERY:
                 return new RecoveryBackgroundProcess();
         }
 

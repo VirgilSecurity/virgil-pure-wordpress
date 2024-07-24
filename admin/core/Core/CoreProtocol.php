@@ -77,7 +77,7 @@ class CoreProtocol implements Core
     public function init(): ?static
     {
         try {
-            if ($this->checkCredentials()) {
+            if (Credential::isAllRequiredCredentialsSet()) {
                 $this->protocol = $this->createProtocol();
             } else {
                 Logger::log("Invalid credentials: Fill all Credentials", 0);
@@ -186,16 +186,6 @@ class CoreProtocol implements Core
     }
 
     /**
-     * @return bool
-     */
-    public static function checkCredentials(): bool
-    {
-        return (!empty($_ENV[Credential::APP_TOKEN]) && !empty($_ENV[Credential::APP_SECRET_KEY]) && !empty(
-            $_ENV[Credential::SERVICE_PUBLIC_KEY]
-        ) && !empty($_ENV[Credential::NONROTATABLE_MASTER_SECRET]) && !empty($_ENV[Credential::BACKUP_PUBLIC_KEY]));
-    }
-
-    /**
      * @param $userId
      * @param $userPass
      * @return void
@@ -203,7 +193,9 @@ class CoreProtocol implements Core
      */
     public function encryptAndSaveKeyForBackup($userId, $userPass): void
     {
-        $encryptedKey = $this->pureCrypto->encryptForBackup($userPass, $this->getPure()->getBuppk(), $this->getPure()->getOskp()->getPrivateKey());
+        $buppk = $this->getPure()->getBuppk();
+        $privateKey = $this->getPure()->getOskp()->getPrivateKey();
+        $encryptedKey = $this->pureCrypto->encryptForBackup($userPass, $buppk, $privateKey);
         update_user_meta($userId, Option::ENCRYPT_BACKUP_KEY, base64_encode($encryptedKey));
     }
 }

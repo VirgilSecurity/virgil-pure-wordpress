@@ -90,20 +90,6 @@ class PageBuilderProtected
     /**
      * @return bool
      */
-    protected function isCredentialsSet(): bool
-    {
-        $isCredentialsSet = true;
-        foreach (Credential::REQUIRED_CREDENTIALS as $credentials) {
-            if (empty($_ENV[$credentials])) {
-                $isCredentialsSet = false;
-            }
-        }
-        return $isCredentialsSet;
-    }
-
-    /**
-     * @return bool
-     */
     protected function isRecoveryPublicKeyCheckboxAgree(): bool
     {
         return InfoHelper::isRecoveryCheckboxAgree();

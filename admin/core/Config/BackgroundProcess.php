@@ -35,21 +35,15 @@
  * Lead Maintainer: Virgil Security Inc. <support@virgilsecurity.com>
  */
 
-namespace VirgilSecurityPure\Helpers;
+namespace VirgilSecurityPure\Config;
 
 /**
- * Class DurationHelper
- * @package VirgilSecurityPure\Helpers
+ * Class Config
+ * @package VirgilSecurityPure\Config
  */
-class DurationHelper
+class BackgroundProcess
 {
-    /**
-     * @param float $start
-     * @param int $precision
-     * @return float
-     */
-    public static function getDuration(float $start, int $precision = 2): float
-    {
-        return round(microtime(true)-$start, $precision);
-    }
+    const ENCRYPT_AND_MIGRATE = 'EncryptAndMigrate';
+    const UPDATE = 'Update';
+    const RECOVERY = 'Recovery';
 }

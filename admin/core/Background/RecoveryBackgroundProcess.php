@@ -38,8 +38,6 @@
 namespace VirgilSecurityPure\Background;
 
 use Exception;
-use Virgil\Crypto\Exceptions\VirgilCryptoException;
-use Virgil\Crypto\VirgilCrypto;
 use VirgilSecurityPure\Config\Crypto;
 use VirgilSecurityPure\Config\Log;
 use VirgilSecurityPure\Config\Option;
@@ -48,7 +46,6 @@ use VirgilSecurityPure\Core\CredentialsManager;
 use VirgilSecurityPure\Core\Logger;
 use VirgilSecurityPure\Config\Config;
 use VirgilSecurityPure\Core\VirgilCryptoWrapper;
-use VirgilSecurityPure\Exceptions\PluginPureException;
 use VirgilSecurityPure\Helpers\DBQueryHelper;
 
 /**
@@ -74,7 +71,6 @@ class RecoveryBackgroundProcess extends BaseBackgroundProcess
      * @var CredentialsManager|null
      */
     private ?CredentialsManager $credentialsManager;
-    private CoreProtocol $protocol;
 
     /**
      * @param DBQueryHelper $dbqh
@@ -96,7 +92,6 @@ class RecoveryBackgroundProcess extends BaseBackgroundProcess
     {
         if ($item) {
             $user = $item['user'];
-            Logger::log('we gotta power!');
             try {
                 $privateKey = $this->vcw->importKey(Crypto::PRIVATE_KEY, $item['private_key_in']);
                 $backupPwdHash = base64_decode(get_user_meta($user->ID, Option::ENCRYPT_BACKUP_KEY, true));
@@ -120,7 +115,6 @@ class RecoveryBackgroundProcess extends BaseBackgroundProcess
      */
     protected function complete(): void
     {
-
         if ($this->is_queue_empty()) {
             $this->getFinalLog();
             $this->dbqh->clearPureParams();

@@ -44,9 +44,14 @@ namespace VirgilSecurityPure\Config;
 class Config
 {
     const EXTENSION_VSCE_PHE_PHP = 'vsce_phe_php';
-    /** @deprecated  */
-    const EXTENSION_VIRGIL_CRYPTO_PHP = 'virgil_crypto_php';
-    const EXTENSIONS = [self::EXTENSION_VSCE_PHE_PHP];
+
+    const EXTENSION_VSCF_FOUNDATION_PHP = 'vscf_foundation_php';
+    const EXTENSION_VSCP_PYTHIA_PHP = 'vscp_pythia_php';
+    const EXTENSIONS = [
+        self::EXTENSION_VSCE_PHE_PHP,
+        self::EXTENSION_VSCF_FOUNDATION_PHP,
+        self::EXTENSION_VSCP_PYTHIA_PHP
+    ];
 
     const PLUGIN_NAME = 'virgil-pure';
     const PLUGIN_NAME_UNDERSCORE = 'virgil_pure';
@@ -61,6 +66,7 @@ class Config
     const FAQ_PAGE = self::MAIN_PAGE.'_FAQ';
     const RECOVERY_PAGE = self::MAIN_PAGE.'_Recovery';
     const DEV_PAGE = self::MAIN_PAGE.'_Dev';
+    /** @deprecated  */
     const CHANGE_MODE = self::MAIN_PAGE.'_Change_Mode';
 
     const CAPABILITY = 'administrator';
@@ -74,4 +80,16 @@ class Config
     const BACKGROUND_ACTION_RECOVERY = self::PLUGIN_NAME."_action_recovery";
 
     const ALL_BACKGROUND_PROCESSES = ['encrypt_and_migrate', 'update', 'recovery'];
+
+    public static function isAllExtensionEnabled(): bool
+    {
+        $extLoaded = true;
+        foreach (self::EXTENSIONS as $extension) {
+            if (!extension_loaded($extension)) {
+                $extLoaded = false;
+            }
+        }
+
+        return $extLoaded;
+    }
 }

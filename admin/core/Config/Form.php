@@ -53,6 +53,8 @@ class Form
     const TYPE = 'form_type';
 
     const DEMO = self::PREFIX.'demo';
+
+    /** @deprecated  */
     const DOWNLOAD_RECOVERY_PRIVATE_KEY = self::PREFIX.'downloadRecoveryPrivateKey';
     const CREDENTIALS = self::PREFIX.'credentials';
     const MIGRATE = self::PREFIX.'migrate';

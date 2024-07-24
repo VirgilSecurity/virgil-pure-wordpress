@@ -38,6 +38,7 @@
 namespace VirgilSecurityPure\Core;
 
 use VirgilSecurityPure\Config\Config;
+use VirgilSecurityPure\Config\Credential;
 
 /**
  * Class PageBuilder
@@ -50,7 +51,13 @@ class PageBuilderPublic extends PageBuilderProtected
      */
     public function disabled(): bool
     {
-        return !extension_loaded(Config::EXTENSION_VSCE_PHE_PHP);
+        $extLoaded = false;
+        foreach (Config::EXTENSIONS as $extension) {
+            if (!extension_loaded($extension)) {
+                $extLoaded = true;
+            }
+        }
+        return $extLoaded;
     }
 
     /**
@@ -62,7 +69,7 @@ class PageBuilderPublic extends PageBuilderProtected
             return false;
         }
 
-        return (!$this->isCredentialsSet() && $this->isMainPage());
+        return (!Credential::isAllRequiredCredentialsSet() && $this->isMainPage());
     }
 
     /**
@@ -74,7 +81,7 @@ class PageBuilderPublic extends PageBuilderProtected
             return false;
         }
 
-        return ($this->isCredentialsSet() && $this->isMainPage() && !$this->isAllUsersMigrated());
+        return (Credential::isAllRequiredCredentialsSet() && $this->isMainPage() && !$this->isAllUsersMigrated());
     }
 
     /**
@@ -86,7 +93,7 @@ class PageBuilderPublic extends PageBuilderProtected
             return false;
         }
 
-        return ($this->isCredentialsSet() && $this->isMainPage() && $this->isAllUsersMigrated());
+        return (Credential::isAllRequiredCredentialsSet() && $this->isMainPage() && $this->isAllUsersMigrated());
     }
 
     /**

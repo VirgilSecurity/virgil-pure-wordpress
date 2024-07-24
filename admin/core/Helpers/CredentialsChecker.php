@@ -185,7 +185,8 @@ class CredentialsChecker implements Helper
         }
 
         if (65!= strlen((base64_decode($this->explode(Credential::SERVICE_PUBLIC_KEY, 2))))) {
-            throw new PluginPureException("Invalid key length (base64 decoded) of ".Credential::SERVICE_PUBLIC_KEY);
+            $message = "Invalid key length (base64 decoded) of " . Credential::SERVICE_PUBLIC_KEY;
+            throw new PluginPureException($message);
         }
 
         if (Credential::SERVICE_PUBLIC_KEY_PREFIX!=$this->explode(Credential::SERVICE_PUBLIC_KEY, 0)) {
@@ -236,7 +237,8 @@ class CredentialsChecker implements Helper
             }
 
             if (68!= strlen((base64_decode($this->explode(Credential::UPDATE_TOKEN, 2))))) {
-                throw new PluginPureException("Invalid key length (base64 decoded) of ".Credential::UPDATE_TOKEN);
+                $message = "Invalid key length (base64 decoded) of " . Credential::UPDATE_TOKEN;
+                throw new PluginPureException($message);
             }
 
             if (Credential::UPDATE_TOKEN_PREFIX!=$this->explode(Credential::UPDATE_TOKEN, 0)) {

@@ -37,7 +37,6 @@
 
 namespace VirgilSecurityPure\Helpers;
 
-use PasswordHash;
 use Virgil\Crypto\Exceptions\VirgilCryptoException;
 use Virgil\PureKit\Pure\Exception\EmptyArgumentException;
 use Virgil\PureKit\Pure\Exception\IllegalStateException;
@@ -154,7 +153,7 @@ class DBQueryHelper implements Core
                     Logger::log("When clean all users have an error: " . $e->getMessage());
                 } catch (PureLogicException $e) {
                     if ($e->getMessage() === 'Invalid password') {
-                        Logger::log('Invalid password for user ' . $user->user_email . ' when complete migration');
+                        Logger::log('Invalid password for user ' . $user->user_email); // delete it ?
                     }
                 } catch (Exception $e) {
                     Logger::log($e->getMessage());

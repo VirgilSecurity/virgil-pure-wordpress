@@ -250,7 +250,7 @@ class FormHandler implements Core
 
             try {
                 $recoveryBackgroundProcess = new RecoveryBackgroundProcess();
-                $recoveryBackgroundProcess->setDep($this->dbq, $this->virgilCryptoWrapper, $this->cm, $this->coreProtocol);
+                $recoveryBackgroundProcess->setDep($this->dbq, $this->virgilCryptoWrapper, $this->cm);
 
                 $data['private_key_in'] = $privateKeyIn;
 
@@ -281,7 +281,6 @@ class FormHandler implements Core
     public function addUsers(): void
     {
         for ($i = 0; $i < (int)$_POST['number_of_users']; $i++) {
-//        $user = wp_generate_password(8, false, false);
             $user = 'user_' . rand(100, 999) . '_' . $i;
             $password = &$user;
             wp_create_user($user, $password, $user . '@mailinator.com');
