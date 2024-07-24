@@ -43,6 +43,7 @@ use Virgil\Crypto\VirgilCrypto;
 use Virgil\Crypto\Core\VirgilKeys\VirgilKeyPair;
 use Virgil\Crypto\Core\VirgilKeys\VirgilPrivateKey;
 use Virgil\Crypto\Core\VirgilKeys\VirgilPublicKey;
+use VirgilSecurityPure\Config\Credential;
 use VirgilSecurityPure\Config\Crypto;
 use VirgilSecurityPure\Exceptions\PluginPureException;
 
@@ -95,8 +96,8 @@ class VirgilCryptoWrapper implements Core
     public function importKey(int $type, string $key): VirgilPublicKey|VirgilKeyPair
     {
         return match ($type) {
-            Crypto::PUBLIC_KEY => $this->vc->importPublicKey($key),
-            Crypto::PRIVATE_KEY => $this->vc->importPrivateKey($key),
+            Crypto::PUBLIC_KEY => $this->vc->importPublicKey(base64_decode($_ENV[Credential::BACKUP_PUBLIC_KEY])),
+            Crypto::PRIVATE_KEY => $this->vc->importPrivateKey(base64_decode($key)),
             default => throw new PluginPureException('Invalid key type (Import Key)'),
         };
     }

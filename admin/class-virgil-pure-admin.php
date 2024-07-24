@@ -241,7 +241,7 @@ class Virgil_Pure_Admin
     {
         if ($this->protocol) {
             $migrateBP = $this->coreFactory->buildBackgroundProcess('EncryptAndMigrate');
-            $migrateBP->setDep($this->protocol, $this->dbqh, $this->virgilCryptoWrapper);
+            $migrateBP->setDep($this->protocol, $this->dbqh);
 
             $updateBP = $this->coreFactory->buildBackgroundProcess('Update');
             $updateBP->setDep($this->protocol, $this->cm);
@@ -258,7 +258,6 @@ class Virgil_Pure_Admin
      * @throws IllegalStateException
      * @throws NullArgumentException
      * @throws PheClientException
-     * @throws PluginPureException
      * @throws PureCryptoException
      * @throws VirgilCryptoException
      */

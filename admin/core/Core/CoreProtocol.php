@@ -54,6 +54,7 @@ use Virgil\PureKit\Pure\Pure;
 use Virgil\PureKit\Pure\PureContext;
 use Virgil\PureKit\Pure\PureCrypto;
 use VirgilSecurityPure\Config\Credential;
+use VirgilSecurityPure\Config\Option;
 use VirgilSecurityPure\Helpers\Redirector;
 
 require_once(ABSPATH . 'wp-includes/class-phpass.php');
@@ -159,17 +160,6 @@ class CoreProtocol implements Core
         return $this->pheManager->performRotation($value);
     }
 
-    /**
-     * @param $inputHash
-     * @param $userPass
-     * @return bool
-     * @throws Exception
-     */
-    public function verifyPassword($inputHash, $userPass): bool
-    {
-        return is_string($this->pheClient->createVerifyPasswordRequest($inputHash, $userPass));
-    }
-
     public function getPure(): Pure
     {
         return $this->protocol;
@@ -203,5 +193,17 @@ class CoreProtocol implements Core
         return (!empty($_ENV[Credential::APP_TOKEN]) && !empty($_ENV[Credential::APP_SECRET_KEY]) && !empty(
             $_ENV[Credential::SERVICE_PUBLIC_KEY]
         ) && !empty($_ENV[Credential::NONROTATABLE_MASTER_SECRET]) && !empty($_ENV[Credential::BACKUP_PUBLIC_KEY]));
+    }
+
+    /**
+     * @param $userId
+     * @param $userPass
+     * @return void
+     * @throws PureCryptoException
+     */
+    public function encryptAndSaveKeyForBackup($userId, $userPass): void
+    {
+        $encryptedKey = $this->pureCrypto->encryptForBackup($userPass, $this->getPure()->getBuppk(), $this->getPure()->getOskp()->getPrivateKey());
+        update_user_meta($userId, Option::ENCRYPT_BACKUP_KEY, base64_encode($encryptedKey));
     }
 }

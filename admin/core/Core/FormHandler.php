@@ -235,7 +235,7 @@ class FormHandler implements Core
                 $this->virgilCryptoWrapper->importKey(Crypto::PRIVATE_KEY, $privateKeyIn);
             } catch (Exception $e) {
                 if ($e instanceof VirgilCryptoException) {
-                    Logger::log("Invalid " . Crypto::RECOVERY_PRIVATE_KEY, 0);
+                    Logger::log("Invalid " . Crypto::RECOVERY_PRIVATE_KEY . ': ' . $e->getMessage(), 0);
                 } else {
                     Logger::log($e->getMessage(), 0);
                 }
@@ -246,11 +246,11 @@ class FormHandler implements Core
 
             update_option(Option::RECOVERY_START, microtime(true));
             Logger::log(Log::START_RECOVERY);
-            $users = get_users(['fields' => ['ID']]);
+            $users = get_users(['fields' => ['ID', 'user_email']]);
 
             try {
                 $recoveryBackgroundProcess = new RecoveryBackgroundProcess();
-                $recoveryBackgroundProcess->setDep($this->dbq, $this->virgilCryptoWrapper, $this->cm);
+                $recoveryBackgroundProcess->setDep($this->dbq, $this->virgilCryptoWrapper, $this->cm, $this->coreProtocol);
 
                 $data['private_key_in'] = $privateKeyIn;
 

@@ -65,11 +65,6 @@ use VirgilSecurityPure\Helpers\DBQueryHelper;
 class EncryptAndMigrateBackgroundProcess extends BaseBackgroundProcess
 {
     /**
-     * @var string|null
-     */
-    private ?string $passwordHash = null;
-
-    /**
      * @var null|CoreProtocol
      */
     private ?CoreProtocol $protocol;
@@ -80,11 +75,6 @@ class EncryptAndMigrateBackgroundProcess extends BaseBackgroundProcess
     private ?DBQueryHelper $dbqh;
 
     /**
-     * @var VirgilCryptoWrapper|null
-     */
-    private ?VirgilCryptoWrapper $vcw;
-
-    /**
      * @var string
      */
     protected string $action = Config::BACKGROUND_ACTION_MIGRATE;
@@ -92,14 +82,12 @@ class EncryptAndMigrateBackgroundProcess extends BaseBackgroundProcess
     /**
      * @param CoreProtocol $protocol
      * @param DBQueryHelper $dbqh
-     * @param VirgilCryptoWrapper $vcw
      * @return void
      */
-    public function setDep(CoreProtocol $protocol, DBQueryHelper $dbqh, VirgilCryptoWrapper $vcw): void
+    public function setDep(CoreProtocol $protocol, DBQueryHelper $dbqh): void
     {
         $this->protocol = $protocol;
         $this->dbqh = $dbqh;
-        $this->vcw = $vcw;
     }
 
     /**
@@ -109,23 +97,23 @@ class EncryptAndMigrateBackgroundProcess extends BaseBackgroundProcess
      * @throws IllegalStateException
      * @throws NullArgumentException
      * @throws PheClientException
-     * @throws PureCryptoException
      * @throws VirgilCryptoException
      */
     protected function task(mixed $item): bool
     {
         try {
+            Logger::log('In task!');
             $this->protocol->getPure()->authenticateUser($item->user_email, $item->user_pass);
         } catch (PureStorageUserNotFoundException|VirgilCloudStorageException $e) {
             try {
+                $this->protocol->encryptAndSaveKeyForBackup($item->ID, $item->user_pass);
                 $this->protocol->getPure()->registerUser($item->user_email, $item->user_pass);
                 update_user_meta($item->ID, Option::MIGRATE_START, true);
                 return false;
-            } catch (ProtocolException $e) {
+            } catch (ProtocolException|PureCryptoException $e) {
                 Logger::log('When migrate email = ' . $item->user_email . ' : ' . $e->getMessage());
             }
         } catch (VirgilException|PureException|PureException|ClientException|ValidateException $e) {
-            Logger::log(get_debug_type($e));
             Logger::log('Error when auth User email = ' . $item->user_email . ' ' . $e->getMessage());
         }
         update_user_meta($item->ID, Option::MIGRATE_FINISH, true);

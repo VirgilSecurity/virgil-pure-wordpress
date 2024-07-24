@@ -39,9 +39,11 @@ namespace VirgilSecurityPure\Background;
 
 use Exception;
 use Virgil\Crypto\Exceptions\VirgilCryptoException;
+use Virgil\Crypto\VirgilCrypto;
 use VirgilSecurityPure\Config\Crypto;
 use VirgilSecurityPure\Config\Log;
 use VirgilSecurityPure\Config\Option;
+use VirgilSecurityPure\Core\CoreProtocol;
 use VirgilSecurityPure\Core\CredentialsManager;
 use VirgilSecurityPure\Core\Logger;
 use VirgilSecurityPure\Config\Config;
@@ -72,6 +74,7 @@ class RecoveryBackgroundProcess extends BaseBackgroundProcess
      * @var CredentialsManager|null
      */
     private ?CredentialsManager $credentialsManager;
+    private CoreProtocol $protocol;
 
     /**
      * @param DBQueryHelper $dbqh
@@ -88,28 +91,25 @@ class RecoveryBackgroundProcess extends BaseBackgroundProcess
     /**
      * @param mixed $item
      * @return bool
-     * @throws PluginPureException
-     * @throws VirgilCryptoException
      */
     protected function task(mixed $item): bool
     {
         if ($item) {
             $user = $item['user'];
-            $id = $user->ID;
-            $privateKeyIn = $item['private_key_in'];
-            $encryptedIn = get_user_meta($id, Option::ENCRYPTED)[0];
-            $privateKey = $this->vcw->importKey(Crypto::PRIVATE_KEY, $privateKeyIn)->getPrivateKey();
+            Logger::log('we gotta power!');
             try {
-                $decrypted = $this->vcw->decrypt(base64_decode($encryptedIn), $privateKey);
-            } catch (Exception) {
-                Logger::log("Invalid ".Crypto::RECOVERY_PRIVATE_KEY, 0);
+                $privateKey = $this->vcw->importKey(Crypto::PRIVATE_KEY, $item['private_key_in']);
+                $backupPwdHash = base64_decode(get_user_meta($user->ID, Option::ENCRYPT_BACKUP_KEY, true));
+                $pwdHashDecrypted = $this->vcw->decrypt($backupPwdHash, $privateKey->getPrivateKey());
+            } catch (Exception $e) {
+                Logger::log("Invalid ".Crypto::RECOVERY_PRIVATE_KEY . ': ' . $e->getMessage(), 0);
                 $this->cancel_process();
                 $this->getFinalLog(0);
                 $this->dbqh->clearActionProcess('recovery');
                 exit;
             }
 
-            $this->dbqh->passRecovery($id, $decrypted);
+            $this->dbqh->passRecovery($user->ID, $pwdHashDecrypted);
         }
 
         return false;
