@@ -38,6 +38,7 @@
 namespace VirgilSecurityPure\Helpers;
 
 use VirgilSecurityPure\Config\Credential;
+use VirgilSecurityPure\Core\Logger;
 use VirgilSecurityPure\Exceptions\PluginPureException;
 
 /**
@@ -126,7 +127,7 @@ class CredentialsChecker implements Helper
      */
     private function checkInputCredentials(array $credentials): void
     {
-        if (4!=count($credentials)) {
+        if (count(Credential::ALL)!=count($credentials)) {
             throw new PluginPureException("Invalid count of credentials");
         }
 
