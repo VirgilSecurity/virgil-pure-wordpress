@@ -163,7 +163,7 @@ class FormHandler implements Core
         $users = get_users(['fields' => ['ID', 'user_pass', 'user_email']]);
 
         $migrateBackgroundProcess = new EncryptAndMigrateBackgroundProcess();
-        $migrateBackgroundProcess->setDep($this->coreProtocol->init(), $this->dbq, $this->virgilCryptoWrapper);
+        $migrateBackgroundProcess->setDep($this->coreProtocol->init(), $this->dbq);
 
         update_option(Option::MIGRATE_START, microtime(true));
 

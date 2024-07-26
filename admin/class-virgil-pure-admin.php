@@ -4,6 +4,7 @@ use Virgil\Crypto\Exceptions\VirgilCryptoException;
 use Virgil\PureKit\Pure\Exception\EmptyArgumentException;
 use Virgil\PureKit\Pure\Exception\IllegalStateException;
 use Virgil\PureKit\Pure\Exception\NullArgumentException;
+use Virgil\PureKit\Pure\Exception\NullPointerException;
 use Virgil\PureKit\Pure\Exception\PheClientException;
 use Virgil\PureKit\Pure\Exception\PureCryptoException;
 use VirgilSecurityPure\Config\BackgroundProcess;
@@ -265,6 +266,10 @@ class Virgil_Pure_Admin
     {
         $wpUser = get_user_by('id', $userId);
         $this->updatePassword($wpUser);
+    }
+    public function virgil_pure_user_register(int $userId): void
+    {
+        $this->fh->migrate();
     }
 
     /**
