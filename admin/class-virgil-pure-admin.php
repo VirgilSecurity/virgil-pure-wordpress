@@ -269,7 +269,7 @@ class Virgil_Pure_Admin
     }
     public function virgil_pure_user_register(int $userId): void
     {
-        $this->fh->migrate();
+        $this->fh->migrateOneUser($userId);
     }
 
     /**

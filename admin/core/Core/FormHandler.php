@@ -185,6 +185,30 @@ class FormHandler implements Core
         $migrateBackgroundProcess->save()->dispatch();
     }
 
+    public function migrateOneUser($userId): void
+    {
+        $user = get_user_by('ID', $userId);
+        $migrateBackgroundProcess = new EncryptAndMigrateBackgroundProcess();
+        $migrateBackgroundProcess->setDep($this->coreProtocol->init(), $this->dbq);
+
+        update_option(Option::MIGRATE_START, microtime(true));
+
+        Logger::log(Log::START_MIGRATION_ONE_USER);
+
+        try {
+            $metaRecord = get_user_meta($userId, Option::RECORD);
+            $metaParams = get_user_meta($userId, Option::PARAMS);
+            if (empty($metaRecord) && empty($metaParams)) {
+                $migrateBackgroundProcess->push_to_queue($user);
+            }
+        } catch (Exception $e) {
+            Logger::log('Push user to migration return error:  ' . $e->getMessage());
+            wp_die($e->getMessage());
+        }
+
+        $migrateBackgroundProcess->save()->dispatch();
+    }
+
     /**
      * @return void
      */
