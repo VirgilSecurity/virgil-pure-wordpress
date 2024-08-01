@@ -140,8 +140,7 @@ class DBQueryHelper implements Core
      */
     public function clearAllUsersPass(Pure $pure): void
     {
-        $query = "SELECT ID, user_pass, user_email FROM {$this->tableUsers} WHERE LENGTH(user_pass) > 12";
-        $users = $this->wpdb->get_results($query);
+        $users = $this->getNewUsers();
         foreach ($users as $user) {
             if (get_user_meta($user->ID, Option::MIGRATE_START, true) === '1') {
                 try {
@@ -160,6 +159,15 @@ class DBQueryHelper implements Core
                 }
             }
         }
+    }
+
+    /**
+     * @return array|object|\stdClass[]|null
+     */
+    public function getNewUsers()
+    {
+        $query = "SELECT ID, user_pass, user_email FROM {$this->tableUsers} WHERE LENGTH(user_pass) > 12";
+        return $this->wpdb->get_results($query);
     }
 
     /**
@@ -204,5 +212,25 @@ class DBQueryHelper implements Core
         $this->wpdb->query(
             "DELETE FROM {$this->wpdb->usermeta} WHERE meta_key IN ('$encrypted', '$params', '$record')"
         );
+    }
+
+    public function isQueueEmpty($identifier): bool
+    {
+        $table = $this->wpdb->options;
+        $column = 'option_name';
+
+        if (is_multisite()) {
+            $table = $this->wpdb->sitemeta;
+            $column = 'meta_key';
+        }
+
+        $key = $this->wpdb->esc_like($identifier . '_batch_') . '%';
+
+        $count = $this->wpdb->get_var($this->wpdb->prepare("
+			SELECT COUNT(*)
+			FROM {$table}
+			WHERE {$column} LIKE %s
+		", $key));
+        return !(($count > 0));
     }
 }

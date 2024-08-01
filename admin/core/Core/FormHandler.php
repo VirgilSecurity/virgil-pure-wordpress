@@ -160,14 +160,18 @@ class FormHandler implements Core
      */
     public function migrate(): void
     {
-        $users = get_users(['fields' => ['ID', 'user_pass', 'user_email']]);
+        $users = $this->dbq->getNewUsers();
+
+        if (count($users) === 0) {
+            return;
+        }
 
         $migrateBackgroundProcess = new EncryptAndMigrateBackgroundProcess();
-        $migrateBackgroundProcess->setDep($this->coreProtocol->init(), $this->dbq);
+        $migrateBackgroundProcess->setDep($this->coreProtocol->init(), $this);
 
         update_option(Option::MIGRATE_START, microtime(true));
 
-        Logger::log(Log::START_MIGRATION);
+        Logger::log(Log::START_MIGRATION . ' Users: ' . count($users));
 
         try {
             foreach ($users as $user) {
@@ -183,30 +187,10 @@ class FormHandler implements Core
         }
 
         $migrateBackgroundProcess->save()->dispatch();
-    }
 
-    public function migrateOneUser($userId): void
-    {
-        $user = get_user_by('ID', $userId);
-        $migrateBackgroundProcess = new EncryptAndMigrateBackgroundProcess();
-        $migrateBackgroundProcess->setDep($this->coreProtocol->init(), $this->dbq);
-
-        update_option(Option::MIGRATE_START, microtime(true));
-
-        Logger::log(Log::START_MIGRATION_ONE_USER);
-
-        try {
-            $metaRecord = get_user_meta($userId, Option::RECORD);
-            $metaParams = get_user_meta($userId, Option::PARAMS);
-            if (empty($metaRecord) && empty($metaParams)) {
-                $migrateBackgroundProcess->push_to_queue($user);
-            }
-        } catch (Exception $e) {
-            Logger::log('Push user to migration return error:  ' . $e->getMessage());
-            wp_die($e->getMessage());
+        if (time() - get_option(Option::LAST_CHECK) > 300) {
+            $migrateBackgroundProcess->maybe_handle();
         }
-
-        $migrateBackgroundProcess->save()->dispatch();
     }
 
     /**
@@ -274,7 +258,7 @@ class FormHandler implements Core
 
             try {
                 $recoveryBackgroundProcess = new RecoveryBackgroundProcess();
-                $recoveryBackgroundProcess->setDep($this->dbq, $this->virgilCryptoWrapper, $this->cm);
+                $recoveryBackgroundProcess->setDep($this->virgilCryptoWrapper, $this->cm);
 
                 $data['private_key_in'] = $privateKeyIn;
 
@@ -307,7 +291,7 @@ class FormHandler implements Core
         for ($i = 0; $i < (int)$_POST['number_of_users']; $i++) {
             $user = 'user_' . rand(100, 999) . '_' . $i;
             $password = &$user;
-            wp_create_user($user, $password, $user . '@mailinator.com');
+            wp_create_user($user, $password, $user . '@erailinator.com');
         }
 
         $num = (int)$_POST['number_of_users'];

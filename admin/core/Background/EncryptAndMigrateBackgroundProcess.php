@@ -55,8 +55,8 @@ use VirgilSecurityPure\Config\Config;
 use VirgilSecurityPure\Config\Log;
 use VirgilSecurityPure\Config\Option;
 use VirgilSecurityPure\Core\CoreProtocol;
+use VirgilSecurityPure\Core\FormHandler;
 use VirgilSecurityPure\Core\Logger;
-use VirgilSecurityPure\Helpers\DBQueryHelper;
 
 /**
  * Class EncryptAndsMigrateBackgroundProcess
@@ -70,24 +70,23 @@ class EncryptAndMigrateBackgroundProcess extends BaseBackgroundProcess
     private ?CoreProtocol $protocol;
 
     /**
-     * @var DBQueryHelper|null
-     */
-    private ?DBQueryHelper $dbqh;
-
-    /**
      * @var string
      */
     protected string $action = Config::BACKGROUND_ACTION_MIGRATE;
+    /**
+     * @var FormHandler|null
+     */
+    private ?FormHandler $fh;
 
     /**
      * @param CoreProtocol $protocol
-     * @param DBQueryHelper $dbqh
+     * @param FormHandler $formHandler
      * @return void
      */
-    public function setDep(CoreProtocol $protocol, DBQueryHelper $dbqh): void
+    public function setDep(CoreProtocol $protocol, FormHandler $formHandler): void
     {
         $this->protocol = $protocol;
-        $this->dbqh = $dbqh;
+        $this->fh = $formHandler;
     }
 
     /**
@@ -133,7 +132,8 @@ class EncryptAndMigrateBackgroundProcess extends BaseBackgroundProcess
      */
     protected function complete(): void
     {
-        if ($this->is_queue_empty()) {
+        if ($this->dbqh->isQueueEmpty($this->identifier)) {
+
             update_option(Option::MIGRATE_FINISH, microtime(true));
 
             $this->dbqh->clearAllUsersPass($this->protocol->getPure());
@@ -141,7 +141,17 @@ class EncryptAndMigrateBackgroundProcess extends BaseBackgroundProcess
             delete_option(Option::MIGRATE_START);
             delete_option(Option::MIGRATE_FINISH);
             Logger::log(Log::FINISH_MIGRATION);
-            parent::complete();
+
+            update_option(Option::AUTO_MIGRATION, $this->identifier);
+
+            $newUsers = $this->dbqh->getNewUsers();
+
+            if (count($newUsers) > 0) {
+                $this->fh->migrate();
+            } else {
+                update_option(Option::LAST_CHECK, time());
+                parent::complete();
+            }
         }
     }
 }

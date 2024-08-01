@@ -9,6 +9,7 @@ namespace VirgilSecurityPure\Background;
 
 use stdClass;
 use VirgilSecurityPure\Core\Logger;
+use VirgilSecurityPure\Helpers\DBQueryHelper;
 
 /**
  * Abstract WP_Background_Process class.
@@ -54,6 +55,7 @@ abstract class WP_Background_Process extends WP_Async_Request
      * @access protected
      */
     protected string $cron_interval_identifier;
+    public DBQueryHelper $dbqh;
 
     /**
      * Initiate new background process
@@ -64,6 +66,7 @@ abstract class WP_Background_Process extends WP_Async_Request
 
         $this->cron_hook_identifier = $this->identifier . '_cron';
         $this->cron_interval_identifier = $this->identifier . '_cron_interval';
+        $this->dbqh = new DBQueryHelper();
 
         add_action($this->cron_hook_identifier, [$this, 'handle_cron_healthcheck']);
         add_filter('cron_schedules', [$this, 'schedule_cron_healthcheck']);
@@ -179,7 +182,7 @@ abstract class WP_Background_Process extends WP_Async_Request
             wp_die();
         }
 
-        if ($this->is_queue_empty()) {
+        if ($this->dbqh->isQueueEmpty($this->identifier)) {
             // No data to process.
             wp_die();
         }
@@ -189,34 +192,6 @@ abstract class WP_Background_Process extends WP_Async_Request
         $this->handle();
 
         wp_die();
-    }
-
-    /**
-     * Is queue empty
-     *
-     * @return bool
-     */
-    protected function is_queue_empty(): bool
-    {
-        global $wpdb;
-
-        $table = $wpdb->options;
-        $column = 'option_name';
-
-        if (is_multisite()) {
-            $table = $wpdb->sitemeta;
-            $column = 'meta_key';
-        }
-
-        $key = $wpdb->esc_like($this->identifier . '_batch_') . '%';
-
-        $count = $wpdb->get_var($wpdb->prepare("
-			SELECT COUNT(*)
-			FROM {$table}
-			WHERE {$column} LIKE %s
-		", $key));
-
-        return !(($count > 0));
     }
 
     /**
@@ -336,13 +311,12 @@ abstract class WP_Background_Process extends WP_Async_Request
             } else {
                 $this->delete($batch->key);
             }
-            Logger::log("time_exceeded");
-        } while (!$this->time_exceeded() && !$this->memory_exceeded() && !$this->is_queue_empty());
+        } while (!$this->time_exceeded() && !$this->memory_exceeded() && !$this->dbqh->isQueueEmpty($this->identifier));
 
         $this->unlock_process();
 
         // Start next batch or complete process.
-        if (!$this->is_queue_empty()) {
+        if (!$this->dbqh->isQueueEmpty($this->identifier)) {
             $this->dispatch();
         } else {
             $this->complete();
@@ -463,7 +437,7 @@ abstract class WP_Background_Process extends WP_Async_Request
             exit;
         }
 
-        if ($this->is_queue_empty()) {
+        if ($this->dbqh->isQueueEmpty($this->identifier)) {
             // No data to process.
             $this->clear_scheduled_event();
             exit;
@@ -504,7 +478,7 @@ abstract class WP_Background_Process extends WP_Async_Request
      */
     public function cancel_process(): void
     {
-        if (!$this->is_queue_empty()) {
+        if (!$this->dbqh->isQueueEmpty($this->identifier)) {
             $batch = $this->get_batch();
 
             $this->delete($batch->key);
