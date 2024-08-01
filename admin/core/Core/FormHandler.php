@@ -160,14 +160,18 @@ class FormHandler implements Core
      */
     public function migrate(): void
     {
-        $users = get_users(['fields' => ['ID', 'user_pass', 'user_email']]);
+        $users = $this->dbq->getNewUsers();
+
+        if (count($users) === 0) {
+            return;
+        }
 
         $migrateBackgroundProcess = new EncryptAndMigrateBackgroundProcess();
-        $migrateBackgroundProcess->setDep($this->coreProtocol->init(), $this->dbq, $this->virgilCryptoWrapper);
+        $migrateBackgroundProcess->setDep($this->coreProtocol->init(), $this);
 
         update_option(Option::MIGRATE_START, microtime(true));
 
-        Logger::log(Log::START_MIGRATION);
+        Logger::log(Log::START_MIGRATION . ' Users: ' . count($users));
 
         try {
             foreach ($users as $user) {
@@ -183,6 +187,10 @@ class FormHandler implements Core
         }
 
         $migrateBackgroundProcess->save()->dispatch();
+
+        if (time() - get_option(Option::LAST_CHECK) > 300) {
+            $migrateBackgroundProcess->maybe_handle();
+        }
     }
 
     /**
@@ -250,7 +258,7 @@ class FormHandler implements Core
 
             try {
                 $recoveryBackgroundProcess = new RecoveryBackgroundProcess();
-                $recoveryBackgroundProcess->setDep($this->dbq, $this->virgilCryptoWrapper, $this->cm);
+                $recoveryBackgroundProcess->setDep($this->virgilCryptoWrapper, $this->cm);
 
                 $data['private_key_in'] = $privateKeyIn;
 
@@ -283,7 +291,7 @@ class FormHandler implements Core
         for ($i = 0; $i < (int)$_POST['number_of_users']; $i++) {
             $user = 'user_' . rand(100, 999) . '_' . $i;
             $password = &$user;
-            wp_create_user($user, $password, $user . '@mailinator.com');
+            wp_create_user($user, $password, $user . '@erailinator.com');
         }
 
         $num = (int)$_POST['number_of_users'];

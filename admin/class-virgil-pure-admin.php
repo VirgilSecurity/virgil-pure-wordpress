@@ -241,13 +241,13 @@ class Virgil_Pure_Admin
     {
         if ($this->protocol) {
             $migrateBP = $this->coreFactory->buildBackgroundProcess(BackgroundProcess::ENCRYPT_AND_MIGRATE);
-            $migrateBP->setDep($this->protocol, $this->dbqh);
+            $migrateBP->setDep($this->protocol, $this->fh);
 
             $updateBP = $this->coreFactory->buildBackgroundProcess(BackgroundProcess::UPDATE);
             $updateBP->setDep($this->protocol, $this->cm);
 
             $recoveryBP = $this->coreFactory->buildBackgroundProcess(BackgroundProcess::RECOVERY);
-            $recoveryBP->setDep($this->dbqh, $this->virgilCryptoWrapper, $this->cm);
+            $recoveryBP->setDep($this->virgilCryptoWrapper, $this->cm);
         }
     }
 
@@ -265,6 +265,21 @@ class Virgil_Pure_Admin
     {
         $wpUser = get_user_by('id', $userId);
         $this->updatePassword($wpUser);
+    }
+    public function virgil_pure_user_register(int $userId): void
+    {
+        if (get_option(Option::AUTO_MIGRATION)) {
+            if ($this->dbqh->isQueueEmpty(get_option(Option::AUTO_MIGRATION))) {
+                $this->fh->migrate();
+                update_option(Option::LAST_CHECK, time());
+                return;
+            }
+
+            if (time() - get_option(Option::LAST_CHECK) > 300) {
+                $this->fh->migrate();
+                update_option(Option::LAST_CHECK, time());
+            }
+        }
     }
 
     /**

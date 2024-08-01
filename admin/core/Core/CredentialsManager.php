@@ -134,6 +134,11 @@ class CredentialsManager implements Core
 
         $formatString = ENVFormatter::formatData($aT, $sPK, $aSK, $nMS, $bPK, $ut);
 
+        if (!is_writable(VIRGIL_PURE_CORE_ENV_FILE)) {
+            Logger::log('Please set ENV file writable');
+            Redirector::toPageLog();
+        }
+
         file_put_contents(VIRGIL_PURE_CORE_ENV_FILE, $formatString);
 
         $this->updateENV();

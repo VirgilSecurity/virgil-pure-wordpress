@@ -41,12 +41,10 @@ use Exception;
 use VirgilSecurityPure\Config\Crypto;
 use VirgilSecurityPure\Config\Log;
 use VirgilSecurityPure\Config\Option;
-use VirgilSecurityPure\Core\CoreProtocol;
 use VirgilSecurityPure\Core\CredentialsManager;
 use VirgilSecurityPure\Core\Logger;
 use VirgilSecurityPure\Config\Config;
 use VirgilSecurityPure\Core\VirgilCryptoWrapper;
-use VirgilSecurityPure\Helpers\DBQueryHelper;
 
 /**
  * Class RecoveryBackgroundProcess
@@ -63,24 +61,19 @@ class RecoveryBackgroundProcess extends BaseBackgroundProcess
      * @var VirgilCryptoWrapper|null
      */
     private ?VirgilCryptoWrapper $vcw;
-    /**
-     * @var DBQueryHelper|null
-     */
-    private ?DBQueryHelper $dbqh;
+
     /**
      * @var CredentialsManager|null
      */
     private ?CredentialsManager $credentialsManager;
 
     /**
-     * @param DBQueryHelper $dbqh
      * @param VirgilCryptoWrapper $vcw
      * @param CredentialsManager $credentialsManager
      */
-    public function setDep(DBQueryHelper $dbqh, VirgilCryptoWrapper $vcw, CredentialsManager $credentialsManager): void
+    public function setDep(VirgilCryptoWrapper $vcw, CredentialsManager $credentialsManager): void
     {
         $this->vcw = $vcw;
-        $this->dbqh = $dbqh;
         $this->credentialsManager = $credentialsManager;
     }
 
@@ -115,7 +108,7 @@ class RecoveryBackgroundProcess extends BaseBackgroundProcess
      */
     protected function complete(): void
     {
-        if ($this->is_queue_empty()) {
+        if ($this->dbqh->isQueueEmpty($this->identifier)) {
             $this->getFinalLog();
             $this->dbqh->clearPureParams();
             $this->credentialsManager->addEmptyCredentials();

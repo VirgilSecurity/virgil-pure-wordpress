@@ -46,6 +46,7 @@ class Log
     const PLUGIN_ACTIVATION = "Plugin activation";
     const INIT_CREDENTIALS = "Init credentials";
     const START_MIGRATION = "Start of the migration process";
+    const START_MIGRATION_ONE_USER = "Start of the migration process for one user";
     const FINISH_MIGRATION = "The end of the migration process";
     const START_UPDATE = "Start of the update process";
     const FINISH_UPDATE = "The end of the update process";

@@ -50,11 +50,9 @@ class Option
     const MIGRATE_FINISH = Config::PLUGIN_NAME.'_migrate_finish';
     const UPDATE_START = Config::PLUGIN_NAME.'_update_start';
     const UPDATE_FINISH = Config::PLUGIN_NAME.'_update_finish';
+    const AUTO_MIGRATION = Config::PLUGIN_NAME.'_auto_migration';
+    const LAST_CHECK = Config::PLUGIN_NAME.'_last_check';
 
-    /** @deprecated  */
-    const ENCRYPT_START = Config::PLUGIN_NAME.'_encrypt_start';
-    /** @deprecated  */
-    const ENCRYPT_FINISH = Config::PLUGIN_NAME.'_encrypt_finish';
     const RECOVERY_START = Config::PLUGIN_NAME.'_recovery_start';
     const RECOVERY_FINISH = Config::PLUGIN_NAME.'_recovery_finish';
 

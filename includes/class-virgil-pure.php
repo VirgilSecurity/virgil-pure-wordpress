@@ -75,6 +75,7 @@ class Virgil_Pure
         $this->loader->add_filter('check_password', $plugin_admin, 'virgil_pure_check_password', 1, 4);
         $this->loader->add_action('after_password_reset', $plugin_admin, 'virgil_pure_password_reset', 1);
         $this->loader->add_action('profile_update', $plugin_admin, 'virgil_pure_profile_update', 1);
+        $this->loader->add_action('user_register', $plugin_admin, 'virgil_pure_user_register', 1);
     }
 
     /**

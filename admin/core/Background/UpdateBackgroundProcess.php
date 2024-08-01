@@ -114,7 +114,7 @@ class UpdateBackgroundProcess extends BaseBackgroundProcess
      */
     protected function complete(): void
     {
-        if ($this->is_queue_empty()) {
+        if ($this->dbqh->isQueueEmpty($this->identifier)) {
             update_option(Option::UPDATE_FINISH, microtime(true));
 
             $v = $this->credentialsManager->getVersion($_ENV[Credential::UPDATE_TOKEN]);
