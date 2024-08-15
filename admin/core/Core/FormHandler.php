@@ -291,7 +291,7 @@ class FormHandler implements Core
         for ($i = 0; $i < (int)$_POST['number_of_users']; $i++) {
             $user = 'user_' . rand(100, 999) . '_' . $i;
             $password = &$user;
-            wp_create_user($user, $password, $user . '@erailinator.com');
+            wp_create_user($user, $password, $user . '@mailinator.com');
         }
 
         $num = (int)$_POST['number_of_users'];

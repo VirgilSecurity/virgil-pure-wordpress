@@ -142,13 +142,13 @@ class EncryptAndMigrateBackgroundProcess extends BaseBackgroundProcess
             delete_option(Option::MIGRATE_FINISH);
             Logger::log(Log::FINISH_MIGRATION);
 
-            update_option(Option::AUTO_MIGRATION, $this->identifier);
-
             $newUsers = $this->dbqh->getNewUsers();
 
             if (count($newUsers) > 0) {
                 $this->fh->migrate();
             } else {
+                // set option for check \VirgilSecurityPure\Background\CheckMigrationBackgroundProcess::migrateNewUsers
+                update_option(Option::AUTO_MIGRATION, $this->identifier);
                 update_option(Option::LAST_CHECK, time());
                 parent::complete();
             }

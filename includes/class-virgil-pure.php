@@ -65,7 +65,6 @@ class Virgil_Pure
      */
     private function define_admin_hooks(): void
     {
-
         $plugin_admin = new Virgil_Pure_Admin($this->get_Virgil_Pure(), $this->get_version());
 
         $this->loader->add_action('admin_enqueue_scripts', $plugin_admin, 'enqueue_styles');
@@ -75,7 +74,12 @@ class Virgil_Pure
         $this->loader->add_filter('check_password', $plugin_admin, 'virgil_pure_check_password', 1, 4);
         $this->loader->add_action('after_password_reset', $plugin_admin, 'virgil_pure_password_reset', 1);
         $this->loader->add_action('profile_update', $plugin_admin, 'virgil_pure_profile_update', 1);
-        $this->loader->add_action('user_register', $plugin_admin, 'virgil_pure_user_register', 1);
+        $this->loader->add_action('virgil_pure_profile_update_event', $plugin_admin, 'virgil_pure_check_migration', 1);
+        wp_schedule_event(
+            time(),
+            'wp_virgil-pure_action_encrypt_and_migrate_cron_interval',
+            'virgil_pure_profile_update_event'
+        );
     }
 
     /**

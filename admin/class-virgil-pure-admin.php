@@ -266,16 +266,14 @@ class Virgil_Pure_Admin
         $wpUser = get_user_by('id', $userId);
         $this->updatePassword($wpUser);
     }
-    public function virgil_pure_user_register(int $userId): void
+
+    /**
+     * @return void
+     */
+    public function virgil_pure_check_migration(): void
     {
         if (get_option(Option::AUTO_MIGRATION)) {
             if ($this->dbqh->isQueueEmpty(get_option(Option::AUTO_MIGRATION))) {
-                $this->fh->migrate();
-                update_option(Option::LAST_CHECK, time());
-                return;
-            }
-
-            if (time() - get_option(Option::LAST_CHECK) > 300) {
                 $this->fh->migrate();
                 update_option(Option::LAST_CHECK, time());
             }
