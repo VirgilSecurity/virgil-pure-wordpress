@@ -53,11 +53,13 @@ use Virgil\PureKit\Pure\PheManager;
 use Virgil\PureKit\Pure\Pure;
 use Virgil\PureKit\Pure\PureContext;
 use Virgil\PureKit\Pure\PureCrypto;
+use VirgilSecurityPure\Config\Config;
 use VirgilSecurityPure\Config\Credential;
 use VirgilSecurityPure\Config\Option;
 use VirgilSecurityPure\Helpers\Redirector;
 
-require_once(ABSPATH . 'wp-includes/class-phpass.php');
+require_once ABSPATH . 'wp-includes/class-phpass.php';
+require_once ABSPATH . 'wp-admin/includes/plugin.php';
 
 /**
  * Class CoreProtocol
@@ -80,10 +82,13 @@ class CoreProtocol implements Core
             if (Credential::isAllRequiredCredentialsSet()) {
                 $this->protocol = $this->createProtocol();
             } else {
-                Logger::log("Invalid credentials: Fill all Credentials", 0);
+                $description = "Invalid credentials: Fill all Credentials";
+                Logger::log($description, 0);
+                add_option( 'virgil_error_redirect', $description);
                 Redirector::toPageLog();
             }
         } catch (Exception $e) {
+            add_option( 'virgil_error_redirect', $e->getMessage());
             if (0 == $e->getCode()) {
                 Logger::log("Invalid credentials: " . $e->getMessage(), 0);
                 $credentialsManager = new CredentialsManager();
@@ -91,7 +96,10 @@ class CoreProtocol implements Core
             } else {
                 Logger::log($e->getMessage(), 0);
             }
-            Redirector::toPageLog();
+
+            if (is_plugin_active(Config::PLUGIN_FULL_NAME)) {
+                Redirector::toPageLog();
+            }
         }
 
         return $this;

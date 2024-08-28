@@ -4,7 +4,15 @@ use VirgilSecurityPure\Core\LogPagination;
 
 $lp = new LogPagination();
 ?>
-
+<?php
+if (get_option('virgil_error_redirect')) { ?>
+    <div id="virgil-status-notice" class="notice virgil-pure-failed-content">
+        <p><?php
+            echo esc_html(get_option('virgil_error_redirect')); ?></p>
+    </div>
+    <?php
+    delete_option('virgil_error_redirect');
+} ?>
 <div class="virgil-pure-global-section">
     <h3 class="virgil-pure-global-page-title">Log</h3>
 

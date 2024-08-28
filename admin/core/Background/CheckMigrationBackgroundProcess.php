@@ -60,7 +60,6 @@ class CheckMigrationBackgroundProcess
 
         //If $timestamp === false schedule daily backups since it hasn't been done previously
         if( $timestamp === false ){
-            Logger::log('imhere');
             wp_schedule_event( time(), 'pure_action_encrypt_and_migrate_cron_interval', self::CRON_HOOK );
         }
     }
