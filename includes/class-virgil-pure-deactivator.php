@@ -21,7 +21,6 @@ class Virgil_Pure_Deactivator
 
         foreach ($users as $user) {
             delete_user_meta($user->ID, Option::USER_RECORD);
-            delete_user_meta($user->ID, Option::USER_PARAMS);
         }
 
         delete_option(Option::DEV_MODE);

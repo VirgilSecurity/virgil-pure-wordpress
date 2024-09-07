@@ -172,8 +172,7 @@ class FormHandler implements Core
         try {
             foreach ($users as $user) {
                 $metaRecord = get_user_meta($user->ID, Option::USER_RECORD);
-                $metaParams = get_user_meta($user->ID, Option::USER_PARAMS);
-                if (empty($metaRecord) && empty($metaParams)) {
+                if (empty($metaRecord)) {
                     $migrateBackgroundProcess->push_to_queue($user);
                 }
             }
@@ -302,7 +301,6 @@ class FormHandler implements Core
 
         foreach ($users as $user) {
             delete_user_meta($user->ID, Option::USER_RECORD);
-            delete_user_meta($user->ID, Option::USER_PARAMS);
         }
 
         delete_option(Option::USER_MIGRATE_START);

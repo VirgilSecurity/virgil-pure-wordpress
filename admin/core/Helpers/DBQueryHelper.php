@@ -197,11 +197,10 @@ class DBQueryHelper implements Core
      */
     public function clearPureParams(): void
     {
-        $params = Option::USER_PARAMS;
         $record = Option::USER_RECORD;
 
         $this->wpdb->query(
-            "DELETE FROM {$this->wpdb->usermeta} WHERE meta_key IN ('$params', '$record')"
+            "DELETE FROM {$this->wpdb->usermeta} WHERE meta_key IN ('$record')"
         );
     }
 }
