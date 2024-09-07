@@ -57,12 +57,13 @@ use VirgilSecurityPure\Config\Option;
 use VirgilSecurityPure\Core\CoreProtocol;
 use VirgilSecurityPure\Core\Logger;
 use VirgilSecurityPure\Helpers\DBQueryHelper;
+use WP_Background_Process;
 
 /**
  * Class EncryptAndsMigrateBackgroundProcess
  * @package VirgilSecurityPure\Background
  */
-class EncryptAndMigrateBackgroundProcess extends BaseBackgroundProcess
+class EncryptAndMigrateBackgroundProcess extends WP_Background_Process
 {
     /**
      * @var null|CoreProtocol

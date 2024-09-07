@@ -45,12 +45,13 @@ use VirgilSecurityPure\Core\CoreProtocol;
 use VirgilSecurityPure\Core\CredentialsManager;
 use VirgilSecurityPure\Core\Logger;
 use VirgilSecurityPure\Config\Config;
+use WP_Background_Process;
 
 /**
  * Class UpdateBackgroundProcess
  * @package VirgilSecurityPure\Background
  */
-class UpdateBackgroundProcess extends BaseBackgroundProcess
+class UpdateBackgroundProcess extends WP_Background_Process
 {
 
     /**

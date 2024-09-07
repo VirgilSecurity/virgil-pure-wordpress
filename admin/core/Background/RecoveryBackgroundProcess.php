@@ -47,12 +47,13 @@ use VirgilSecurityPure\Core\Logger;
 use VirgilSecurityPure\Config\Config;
 use VirgilSecurityPure\Core\VirgilCryptoWrapper;
 use VirgilSecurityPure\Helpers\DBQueryHelper;
+use WP_Background_Process;
 
 /**
  * Class RecoveryBackgroundProcess
  * @package VirgilSecurityPure\Background
  */
-class RecoveryBackgroundProcess extends BaseBackgroundProcess
+class RecoveryBackgroundProcess extends WP_Background_Process
 {
     /**
      * @var string
