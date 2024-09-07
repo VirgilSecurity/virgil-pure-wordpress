@@ -165,14 +165,14 @@ class FormHandler implements Core
         $migrateBackgroundProcess = new EncryptAndMigrateBackgroundProcess();
         $migrateBackgroundProcess->setDep($this->coreProtocol->init(), $this->dbq, $this->virgilCryptoWrapper);
 
-        update_option(Option::MIGRATE_START, microtime(true));
+        update_option(Option::USER_MIGRATE_START, microtime(true));
 
         Logger::log(Log::START_MIGRATION);
 
         try {
             foreach ($users as $user) {
-                $metaRecord = get_user_meta($user->ID, Option::RECORD);
-                $metaParams = get_user_meta($user->ID, Option::PARAMS);
+                $metaRecord = get_user_meta($user->ID, Option::USER_RECORD);
+                $metaParams = get_user_meta($user->ID, Option::USER_PARAMS);
                 if (empty($metaRecord) && empty($metaParams)) {
                     $migrateBackgroundProcess->push_to_queue($user);
                 }
@@ -197,7 +197,7 @@ class FormHandler implements Core
                 Logger::log("Add ." . Credential::UPDATE_TOKEN . " to old credentials", 0);
             }
 
-            update_option(Option::UPDATE_START, microtime(true));
+            update_option(Option::USER_RECORD_UPDATE_STARTED_TIMESTAMP, microtime(true));
             Logger::log(Log::START_UPDATE);
 
             try {
@@ -280,13 +280,13 @@ class FormHandler implements Core
      */
     public function addUsers(): void
     {
-        for ($i = 0; $i < (int)$_POST['number_of_users']; $i++) {
+        for ($i = 0; $i < (int) $_POST['number_of_users']; $i++) {
             $user = 'user_' . rand(100, 999) . '_' . $i;
             $password = &$user;
             wp_create_user($user, $password, $user . '@mailinator.com');
         }
 
-        $num = (int)$_POST['number_of_users'];
+        $num = (int) $_POST['number_of_users'];
         Logger::log(Log::DEV_ADD_USERS . " (" . $num . ")");
     }
 
@@ -301,16 +301,15 @@ class FormHandler implements Core
         $users = get_users(['fields' => ['ID']]);
 
         foreach ($users as $user) {
-            delete_user_meta($user->ID, Option::RECORD);
-            delete_user_meta($user->ID, Option::PARAMS);
-            delete_user_meta($user->ID, Option::ENCRYPTED);
+            delete_user_meta($user->ID, Option::USER_RECORD);
+            delete_user_meta($user->ID, Option::USER_PARAMS);
         }
 
-        delete_option(Option::MIGRATE_START);
-        delete_option(Option::MIGRATE_FINISH);
-        delete_option(Option::UPDATE_START);
-        delete_option(Option::UPDATE_FINISH);
-        delete_option('_transient_doing_cron');
+        delete_option(Option::USER_MIGRATE_START);
+        delete_option(Option::USER_MIGRATE_FINISH);
+        delete_option(Option::USER_RECORD_UPDATE_STARTED_TIMESTAMP);
+        delete_option(Option::USER_RECORD_UPDATE_FINISHED_TIMESTAMP);
+        delete_option('_transient_doing_cron'); // wp-cron specific option
 
         foreach (Config::ALL_BACKGROUND_PROCESSES as $bp) {
             $this->dbq->clearActionProcess($bp);

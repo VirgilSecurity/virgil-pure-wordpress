@@ -12,7 +12,7 @@ class Virgil_Pure_Activator
 {
 
     /**
-     * @return void
+     * @brief Create required DB tables
      */
     public static function activate(): void
     {

@@ -143,12 +143,12 @@ class DBQueryHelper implements Core
         $query = "SELECT ID, user_pass, user_email FROM {$this->tableUsers} WHERE LENGTH(user_pass) > 12";
         $users = $this->wpdb->get_results($query);
         foreach ($users as $user) {
-            if (get_user_meta($user->ID, Option::MIGRATE_START, true) === '1') {
+            if (get_user_meta($user->ID, Option::USER_MIGRATE_START, true) === '1') {
                 try {
                     $pure->authenticateUser($user->user_email, $user->user_pass);
-                    update_user_meta($user->ID, Option::MIGRATE_FINISH, true);
+                    update_user_meta($user->ID, Option::USER_MIGRATE_FINISH, true);
                     $this->clearUserPass($user->ID);
-                    update_user_meta($user->ID, Option::RECORD, true);
+                    update_user_meta($user->ID, Option::USER_RECORD, true);
                 } catch (VirgilCloudStorageException $e) {
                     Logger::log("When clean all users have an error: " . $e->getMessage());
                 } catch (PureLogicException $e) {
@@ -197,12 +197,11 @@ class DBQueryHelper implements Core
      */
     public function clearPureParams(): void
     {
-        $encrypted = Option::ENCRYPTED;
-        $params = Option::PARAMS;
-        $record = Option::RECORD;
+        $params = Option::USER_PARAMS;
+        $record = Option::USER_RECORD;
 
         $this->wpdb->query(
-            "DELETE FROM {$this->wpdb->usermeta} WHERE meta_key IN ('$encrypted', '$params', '$record')"
+            "DELETE FROM {$this->wpdb->usermeta} WHERE meta_key IN ('$params', '$record')"
         );
     }
 }

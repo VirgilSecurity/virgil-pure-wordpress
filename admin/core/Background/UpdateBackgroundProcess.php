@@ -85,13 +85,13 @@ class UpdateBackgroundProcess extends BaseBackgroundProcess
      */
     protected function task($item): bool
     {
-        $record = get_user_meta($item->ID, Option::RECORD);
+        $record = get_user_meta($item->ID, Option::USER_RECORD);
 
         try {
             $newRecordRaw = $this->protocol->performRotation(base64_decode($record[0]));
         } catch (Exception $e) {
-            if ("PHE Client error"==$e->getMessage()) {
-                $msg = "Invalid ".Credential::UPDATE_TOKEN;
+            if ("PHE Client error" == $e->getMessage()) {
+                $msg = "Invalid " . Credential::UPDATE_TOKEN;
             } else {
                 $msg = $e->getMessage();
             }
@@ -102,7 +102,7 @@ class UpdateBackgroundProcess extends BaseBackgroundProcess
 
         if (isset($newRecordRaw)) {
             $newRecord = base64_encode($newRecordRaw);
-            update_user_meta($item->ID, Option::RECORD, $newRecord);
+            update_user_meta($item->ID, Option::USER_RECORD, $newRecord);
         }
 
         return false;
@@ -115,25 +115,25 @@ class UpdateBackgroundProcess extends BaseBackgroundProcess
     protected function complete(): void
     {
         if ($this->is_queue_empty()) {
-            update_option(Option::UPDATE_FINISH, microtime(true));
+            update_option(Option::USER_RECORD_UPDATE_FINISHED_TIMESTAMP, microtime(true));
 
             $v = $this->credentialsManager->getVersion($_ENV[Credential::UPDATE_TOKEN]);
 
-            $duration = round(get_option(Option::UPDATE_FINISH) - get_option(Option::UPDATE_START), 2);
+            $duration = round(get_option(Option::USER_RECORD_UPDATE_FINISHED_TIMESTAMP) - get_option(Option::USER_RECORD_UPDATE_STARTED_TIMESTAMP), 2);
             Logger::log(Log::FINISH_UPDATE . " (records ver.: $v, duration: $duration sec.)");
 
 
             $nk = $this->protocol->getNewRawKeys(); // [new_client_private_key, new_server_public_key]
 
-            $newAppSecretKey = Credential::APP_SECRET_KEY_PREFIX."." . $v . "." . base64_encode($nk[0]);
-            $newServicePublicKey = Credential::SERVICE_PUBLIC_KEY_PREFIX."." . $v . "." . base64_encode($nk[1]);
+            $newAppSecretKey = Credential::APP_SECRET_KEY_PREFIX . "." . $v . "." . base64_encode($nk[0]);
+            $newServicePublicKey = Credential::SERVICE_PUBLIC_KEY_PREFIX . "." . $v . "." . base64_encode($nk[1]);
 
             $this->credentialsManager->addRotatedCredentials($newServicePublicKey, $newAppSecretKey);
 
             unset($this->protocol);
 
-            delete_option(Option::UPDATE_START);
-            delete_option(Option::UPDATE_FINISH);
+            delete_option(Option::USER_RECORD_UPDATE_STARTED_TIMESTAMP);
+            delete_option(Option::USER_RECORD_UPDATE_FINISHED_TIMESTAMP);
         }
 
         parent::complete();

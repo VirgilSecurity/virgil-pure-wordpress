@@ -160,8 +160,7 @@ class Virgil_Pure_Admin
                         break;
 
                     case Form::DEV_ADD_USERS:
-                        $this->fh->
-                        addUsers();
+                        $this->fh->addUsers();
                         break;
 
                     case Form::DEV_RESTORE_DEFAULTS:

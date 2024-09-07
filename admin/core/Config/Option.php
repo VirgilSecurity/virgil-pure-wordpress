@@ -43,27 +43,21 @@ namespace VirgilSecurityPure\Config;
  */
 class Option
 {
-    const DEV_MODE = Config::PLUGIN_NAME.'_dev_mode';
-    const DEMO_MODE = Config::PLUGIN_NAME.'_demo_mode';
-    const ACTIVATION_DATE = Config::PLUGIN_NAME.'_activation_date';
-    const MIGRATE_START = Config::PLUGIN_NAME.'_migrate_start';
-    const MIGRATE_FINISH = Config::PLUGIN_NAME.'_migrate_finish';
-    const UPDATE_START = Config::PLUGIN_NAME.'_update_start';
-    const UPDATE_FINISH = Config::PLUGIN_NAME.'_update_finish';
+    // Plugin level options
+    const DEV_MODE = Config::PLUGIN_NAME . '_dev_mode';
+    const DEMO_MODE = Config::PLUGIN_NAME . '_demo_mode';
+    const CONTINUES_MIGRATION_ON = Config::PLUGIN_NAME . '_continues_migration_on';
+    const RECOVERY_START = Config::PLUGIN_NAME . '_recovery_start';
+    const RECOVERY_FINISH = Config::PLUGIN_NAME . '_recovery_finish';
+    const RECOVERY_CHECKBOX_AGREE = Config::PLUGIN_NAME . '_recovery_checkbox_agree';
+    const PRE_RELEASE_PREFIX = '_rf';
 
-    /** @deprecated  */
-    const ENCRYPT_START = Config::PLUGIN_NAME.'_encrypt_start';
-    /** @deprecated  */
-    const ENCRYPT_FINISH = Config::PLUGIN_NAME.'_encrypt_finish';
-    const RECOVERY_START = Config::PLUGIN_NAME.'_recovery_start';
-    const RECOVERY_FINISH = Config::PLUGIN_NAME.'_recovery_finish';
-
-    const PREREALISE_PREFIX = '_rf';
-
-    const RECORD = Config::PLUGIN_NAME.'_record'.self::PREREALISE_PREFIX;
-    const PARAMS = Config::PLUGIN_NAME.'_params'.self::PREREALISE_PREFIX;
-    const ENCRYPTED = Config::PLUGIN_NAME.'_encrypted'.self::PREREALISE_PREFIX;
-
-    const RECOVERY_CHECKBOX_AGREE = Config::PLUGIN_NAME.'_recovery_checkbox_agree';
-    const ENCRYPT_BACKUP_KEY = Config::PLUGIN_NAME.'_encrypt_backup_key';
+    // User level options
+    const USER_MIGRATE_START = Config::PLUGIN_NAME . '_migrate_start';
+    const USER_MIGRATE_FINISH = Config::PLUGIN_NAME . '_migrate_finish';
+    const USER_RECORD_UPDATE_STARTED_TIMESTAMP = Config::PLUGIN_NAME . '_update_start';
+    const USER_RECORD_UPDATE_FINISHED_TIMESTAMP = Config::PLUGIN_NAME . '_update_finish';
+    const USER_ENCRYPTED_BACKUP_KEY = Config::PLUGIN_NAME . '_encrypt_backup_key';
+    const USER_RECORD = Config::PLUGIN_NAME . '_record' . self::PRE_RELEASE_PREFIX;
+    const USER_PARAMS = Config::PLUGIN_NAME . '_params' . self::PRE_RELEASE_PREFIX;
 }

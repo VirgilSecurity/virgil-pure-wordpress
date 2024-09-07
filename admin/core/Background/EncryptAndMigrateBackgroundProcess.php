@@ -103,20 +103,20 @@ class EncryptAndMigrateBackgroundProcess extends BaseBackgroundProcess
     {
         try {
             $this->protocol->getPure()->authenticateUser($item->user_email, $item->user_pass);
-        } catch (PureStorageUserNotFoundException|VirgilCloudStorageException $e) {
+        } catch (PureStorageUserNotFoundException | VirgilCloudStorageException $e) {
             try {
                 $this->protocol->encryptAndSaveKeyForBackup($item->ID, $item->user_pass);
                 $this->protocol->getPure()->registerUser($item->user_email, $item->user_pass);
-                update_user_meta($item->ID, Option::MIGRATE_START, true);
+                update_user_meta($item->ID, Option::USER_MIGRATE_START, true);
                 return false;
-            } catch (ProtocolException|PureCryptoException $e) {
+            } catch (ProtocolException | PureCryptoException $e) {
                 Logger::log('When migrate email = ' . $item->user_email . ' : ' . $e->getMessage());
             }
-        } catch (VirgilException|PureException|PureException|ClientException|ValidateException $e) {
+        } catch (VirgilException | PureException | PureException | ClientException | ValidateException $e) {
             Logger::log('Error when auth User email = ' . $item->user_email . ' ' . $e->getMessage());
         }
 
-        update_user_meta($item->ID, Option::MIGRATE_FINISH, true);
+        update_user_meta($item->ID, Option::USER_MIGRATE_FINISH, true);
 
         return false;
     }
@@ -134,12 +134,12 @@ class EncryptAndMigrateBackgroundProcess extends BaseBackgroundProcess
     protected function complete(): void
     {
         if ($this->is_queue_empty()) {
-            update_option(Option::MIGRATE_FINISH, microtime(true));
+            update_option(Option::USER_MIGRATE_FINISH, microtime(true));
 
             $this->dbqh->clearAllUsersPass($this->protocol->getPure());
 
-            delete_option(Option::MIGRATE_START);
-            delete_option(Option::MIGRATE_FINISH);
+            delete_option(Option::USER_MIGRATE_START);
+            delete_option(Option::USER_MIGRATE_FINISH);
             Logger::log(Log::FINISH_MIGRATION);
             parent::complete();
         }

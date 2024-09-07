@@ -52,13 +52,13 @@ class InfoHelper
     public static function getMigrated(): string
     {
         global $wpdb;
-        $record = Option::RECORD;
+        $record = Option::USER_RECORD;
 
         $sql = <<<SQL
             SELECT count(u.id) as c
-            FROM $wpdb->users u 
-            LEFT JOIN $wpdb->usermeta um 
-            ON u.id=um.user_id 
+            FROM $wpdb->users u
+            LEFT JOIN $wpdb->usermeta um
+            ON u.id=um.user_id
             WHERE um.meta_key = "$record"
 SQL;
         $count = $wpdb->get_results($sql);
@@ -70,7 +70,7 @@ SQL;
      */
     public static function getMigratedPercents(): float
     {
-        return round(self::getMigrated()/self::getTotalUsers(), 2) *100;
+        return round(self::getMigrated() / self::getTotalUsers(), 2) * 100;
     }
 
     /**
@@ -78,7 +78,7 @@ SQL;
      */
     public static function isAllUsersMigrated(): bool
     {
-        return self::getTotalUsers()==self::getMigrated();
+        return self::getTotalUsers() == self::getMigrated();
     }
 
     /**
@@ -94,7 +94,7 @@ SQL;
      */
     public static function getEnvFilePath(): string
     {
-        return WP_PLUGIN_DIR.DIRECTORY_SEPARATOR.Config::PLUGIN_NAME.DIRECTORY_SEPARATOR.'.env';
+        return WP_PLUGIN_DIR . DIRECTORY_SEPARATOR . Config::PLUGIN_NAME . DIRECTORY_SEPARATOR . '.env';
     }
 
     /**

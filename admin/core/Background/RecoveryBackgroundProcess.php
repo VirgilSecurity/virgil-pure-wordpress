@@ -94,10 +94,10 @@ class RecoveryBackgroundProcess extends BaseBackgroundProcess
             $user = $item['user'];
             try {
                 $privateKey = $this->vcw->importKey(Crypto::PRIVATE_KEY, $item['private_key_in']);
-                $backupPwdHash = base64_decode(get_user_meta($user->ID, Option::ENCRYPT_BACKUP_KEY, true));
+                $backupPwdHash = base64_decode(get_user_meta($user->ID, Option::USER_ENCRYPTED_BACKUP_KEY, true));
                 $pwdHashDecrypted = $this->vcw->decrypt($backupPwdHash, $privateKey->getPrivateKey());
             } catch (Exception $e) {
-                Logger::log("Invalid ".Crypto::RECOVERY_PRIVATE_KEY . ': ' . $e->getMessage(), 0);
+                Logger::log("Invalid " . Crypto::RECOVERY_PRIVATE_KEY . ': ' . $e->getMessage(), 0);
                 $this->cancel_process();
                 $this->getFinalLog(0);
                 $this->dbqh->clearActionProcess('recovery');
@@ -132,8 +132,8 @@ class RecoveryBackgroundProcess extends BaseBackgroundProcess
     {
         update_option(Option::RECOVERY_FINISH, microtime(true));
 
-        $duration = round(get_option(Option::RECOVERY_FINISH)-get_option(Option::RECOVERY_START), 2);
-        Logger::log(Log::FINISH_RECOVERY." (duration: $duration sec.)", $status);
+        $duration = round(get_option(Option::RECOVERY_FINISH) - get_option(Option::RECOVERY_START), 2);
+        Logger::log(Log::FINISH_RECOVERY . " (duration: $duration sec.)", $status);
 
         delete_option(Option::RECOVERY_START);
         delete_option(Option::RECOVERY_FINISH);

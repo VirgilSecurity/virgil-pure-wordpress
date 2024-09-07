@@ -17,7 +17,7 @@ class Virgil_Pure_Uninstaller
         $dbQuery = new DBQueryHelper();
         $dbQuery->dropTableLog();
 
-        delete_option(Option::ACTIVATION_DATE);
         delete_option(Option::DEV_MODE);
+        delete_option(Option::DEMO_MODE);
     }
 }

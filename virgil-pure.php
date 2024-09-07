@@ -23,61 +23,63 @@ use Dotenv\Dotenv;
 require plugin_dir_path(__FILE__) . 'admin/core/vendor/autoload.php';
 
 if (!defined('VIRGIL_PURE_CORE')) {
-    define('VIRGIL_PURE_CORE', __DIR__ . DIRECTORY_SEPARATOR .'admin'. DIRECTORY_SEPARATOR. 'core');
+    define('VIRGIL_PURE_CORE', __DIR__ . DIRECTORY_SEPARATOR . 'admin' . DIRECTORY_SEPARATOR . 'core');
 }
 
 if (!defined('VIRGIL_PURE_CORE_ENV_FILE')) {
-    define('VIRGIL_PURE_CORE_ENV_FILE', VIRGIL_PURE_CORE . DIRECTORY_SEPARATOR .'.env');
+    define('VIRGIL_PURE_CORE_ENV_FILE', VIRGIL_PURE_CORE . DIRECTORY_SEPARATOR . '.env');
 }
 
 if (!is_file(VIRGIL_PURE_CORE_ENV_FILE)) {
-    copy(VIRGIL_PURE_CORE_ENV_FILE."-example", VIRGIL_PURE_CORE_ENV_FILE);
+    copy(VIRGIL_PURE_CORE_ENV_FILE . "-example", VIRGIL_PURE_CORE_ENV_FILE);
 }
 
-//(new Dotenv(VIRGIL_PURE_CORE))->overload();
 (Dotenv::createImmutable(VIRGIL_PURE_CORE))->load();
 
 if (!defined('WPINC')) {
     die;
 }
 
-const VIRGIL_PURE_VERSION = '0.3.0';
+const VIRGIL_PURE_VERSION = '0..0';
 
 /**
- * @return void
+ * @brief Hook that is triggered when plugin is activated
  */
 function activate_Virgil_Pure(): void
 {
     require_once plugin_dir_path(__FILE__) . 'includes/class-virgil-pure-activator.php';
     Virgil_Pure_Activator::activate();
 }
+register_activation_hook(__FILE__, 'activate_Virgil_Pure');
 
 /**
- * @return void
+ * @brief Hook that is triggered when plugin is deactivated
  */
 function deactivate_Virgil_Pure(): void
 {
     require_once plugin_dir_path(__FILE__) . 'includes/class-virgil-pure-deactivator.php';
     Virgil_Pure_Deactivator::deactivate();
 }
+register_deactivation_hook(__FILE__, 'deactivate_Virgil_Pure');
 
 /**
- * @return void
+ * @brief Hook that is triggered when plugin is uninstalled
  */
 function uninstall_Virgil_Pure(): void
 {
     require_once plugin_dir_path(__FILE__) . 'includes/class-virgil-pure-uninstaller.php';
     Virgil_Pure_Uninstaller::uninstall();
 }
-
-register_activation_hook(__FILE__, 'activate_Virgil_Pure');
-register_deactivation_hook(__FILE__, 'deactivate_Virgil_Pure');
 register_uninstall_hook(__FILE__, 'uninstall_Virgil_Pure');
 
+
+/**
+ * @brief Load main plugin class
+ */
 require plugin_dir_path(__FILE__) . 'includes/class-virgil-pure.php';
 
 /**
- * @return void
+ * @brief Run plugin
  */
 function run_Virgil_Pure(): void
 {
