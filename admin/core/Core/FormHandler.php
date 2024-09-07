@@ -281,7 +281,7 @@ class FormHandler implements Core
     public function addUsers(): void
     {
         for ($i = 0; $i < (int) $_POST['number_of_users']; $i++) {
-            $user = 'user_' . rand(100, 999) . '_' . $i;
+            $user = 'user_' . substr(hrtime(true), 0, -6);
             $password = &$user;
             wp_create_user($user, $password, $user . '@mailinator.com');
         }
