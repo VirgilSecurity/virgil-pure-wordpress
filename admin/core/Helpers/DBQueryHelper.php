@@ -98,9 +98,9 @@ class DBQueryHelper implements Core
      */
     public function createTableLog(): void
     {
-        $sql = "CREATE TABLE {$this->tableLog} (
+        $sql = "CREATE TABLE IF NOT EXISTS {$this->tableLog} (
 		id mediumint(9) NOT NULL AUTO_INCREMENT,
-		description varchar (255) NOT NULL,
+		description varchar (512) NOT NULL,
         status smallint(3) NOT NULL,
 		date datetime DEFAULT '0000-00-00 00:00:00' NOT NULL,
 		PRIMARY KEY  (id)
@@ -180,9 +180,9 @@ class DBQueryHelper implements Core
         $this->wpdb->query("UPDATE {$this->tableUsers} SET user_pass=SUBSTRING(user_pass,1,12) WHERE ID={$id}");
     }
 
-        /**
-         * @param string $name
-         */
+    /**
+     * @param string $name
+     */
     public function clearActionProcess(string $name): void
     {
         $process = '%' . Config::PLUGIN_NAME . '_action_' . $name . '_process%';
@@ -192,9 +192,9 @@ class DBQueryHelper implements Core
         );
     }
 
-        /**
-         * @return void
-         */
+    /**
+     * @return void
+     */
     public function clearPureParams(): void
     {
         $encrypted = Option::ENCRYPTED;
