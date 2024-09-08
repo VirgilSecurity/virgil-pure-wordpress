@@ -115,8 +115,18 @@ class EncryptAndMigrateBackgroundProcess extends WP_Background_Process
             } catch (ProtocolException | PureCryptoException $e) {
                 Logger::log('When migrate email = ' . $item->user_email . ' : ' . $e->getMessage());
             }
-        } catch (VirgilException | PureException | PureException | ClientException | ValidateException $e) {
-            Logger::log('Error when auth User email = ' . $item->user_email . ' ' . $e->getMessage());
+        } catch (VirgilException | PureException | ClientException | ValidateException $e) {
+            Logger::log('Error when auth User email = ' . $item->user_email . ' ' . $e->getMessage() . ' the to reset password');
+            try {
+                // This is mostly demo situation, when local password is not equal to Pure password
+                $this->protocol->encryptAndSaveKeyForBackup($item->ID, $item->user_pass);
+                $this->protocol->getPure()->resetUserPassword($item->user_email, $item->user_pass, true);
+                $this->markUserAsMigrated($item->ID);
+                Logger::log('Password where reset for ' . $item->user_email);
+            } catch (PureCryptoException | PureException | ClientException | ValidateException $e) {
+                Logger::log('Error when reset password for User email = ' . $item->user_email . ' ' . $e->getMessage());
+            }
+            return false; // return false to remove the item from the queue
         }
 
         return $item; // return item to queue to try again

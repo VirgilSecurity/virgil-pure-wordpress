@@ -166,8 +166,8 @@ class Virgil_Pure_Admin
                         break;
 
                     case Form::DEV_ADD_USERS:
-                        Redirector::toPageAction(false);
                         $this->fh->addUsers();
+                        Redirector::toPage(Config::ACTION_PAGE);
                         break;
 
                     case Form::DEV_RESTORE_DEFAULTS:
@@ -293,9 +293,11 @@ class Virgil_Pure_Admin
      */
     private function updatePassword(WP_User $user): void
     {
-        if ($this->pv->check() && InfoHelper::isUserMigrated($user->ID)) {
+        if ($this->pv->check() && InfoHelper::isContinuesMigrationOn()) {
+            $this->protocol->encryptAndSaveKeyForBackup($user->ID, $user->user_pass);
             $this->protocol->getPure()->resetUserPassword($user->user_email, $user->user_pass, true);
-            $this->dbqh->removePasswordHashForUser($user->ID);
+            $this->migrateBP->push_to_queue($user);
+            $this->migrateBP->save()->dispatch();
         }
     }
 }
