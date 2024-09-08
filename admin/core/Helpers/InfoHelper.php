@@ -52,15 +52,12 @@ class InfoHelper
     public static function getMigrated(): string
     {
         global $wpdb;
-        $record = Option::USER_RECORD;
 
-        $sql = <<<SQL
+        $sql = "
             SELECT count(u.id) as c
             FROM $wpdb->users u
-            LEFT JOIN $wpdb->usermeta um
-            ON u.id=um.user_id
-            WHERE um.meta_key = "$record"
-SQL;
+            WHERE LENGTH(u.user_pass) = 12
+        ";
         $count = $wpdb->get_results($sql);
         return null == $count[0]->c ? 0 : $count[0]->c;
     }
@@ -71,6 +68,11 @@ SQL;
     public static function getMigratedPercents(): float
     {
         return round(self::getMigrated() / self::getTotalUsers(), 2) * 100;
+    }
+
+    public static function isContinuesMigrationOn(): bool
+    {
+        return (bool) get_option(Option::CONTINUES_MIGRATION_ON);
     }
 
     /**
@@ -103,5 +105,13 @@ SQL;
     public static function isRecoveryCheckboxAgree(): bool
     {
         return (bool) get_option(Option::RECOVERY_CHECKBOX_AGREE);
+    }
+
+    /**
+     * @return bool
+     */
+    public static function isUserMigrated($hash): bool
+    {
+        return strlen($hash) == 12;
     }
 }

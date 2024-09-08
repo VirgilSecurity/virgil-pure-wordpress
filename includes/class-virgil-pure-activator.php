@@ -20,7 +20,7 @@ class Virgil_Pure_Activator
         $dbQuery->createTableLog();
 
         if (!get_option(Option::DEV_MODE)) {
-            update_option(Option::DEV_MODE, 0);
+            update_option(Option::DEV_MODE, 1);
         }
 
         Logger::log(Log::PLUGIN_ACTIVATION);

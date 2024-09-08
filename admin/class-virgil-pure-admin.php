@@ -6,7 +6,8 @@ use Virgil\PureKit\Pure\Exception\IllegalStateException;
 use Virgil\PureKit\Pure\Exception\NullArgumentException;
 use Virgil\PureKit\Pure\Exception\PheClientException;
 use Virgil\PureKit\Pure\Exception\PureCryptoException;
-use VirgilSecurityPure\Config\BackgroundProcess;
+use VirgilSecurityPure\Background\EncryptAndMigrateBackgroundProcess;
+use VirgilSecurityPure\Background\RecoveryBackgroundProcess;
 use VirgilSecurityPure\Config\BuildCore;
 use VirgilSecurityPure\Config\Config;
 use VirgilSecurityPure\Config\Form;
@@ -40,6 +41,8 @@ class Virgil_Pure_Admin
     private Core|FormHandler $fh;
     private Core|CredentialsManager $cm;
     private Core|PluginValidator $pv;
+    private EncryptAndMigrateBackgroundProcess $migrateBP;
+    private RecoveryBackgroundProcess $recoveryBP;
     private string $virgilPure;
     private string $version;
 
@@ -61,11 +64,16 @@ class Virgil_Pure_Admin
         $coreProtocol->init();
         $this->protocol = $coreProtocol;
         $this->dbqh = $this->coreFactory->buildCore(BuildCore::DB_QUERY_HELPER);
-        $this->fh = $this->coreFactory->buildCore(BuildCore::FORM_HANDLER);
         $this->cm = $this->coreFactory->buildCore(BuildCore::CREDENTIALS_MANAGER);
+        $this->fh = $this->coreFactory->buildCore(BuildCore::FORM_HANDLER);
+        $this->fh->setDep($coreProtocol, $this->virgilCryptoWrapper, $this->cm, $this->dbqh);
         $this->pv = $this->coreFactory->buildCore(BuildCore::PLUGIN_VALIDATOR);
 
-        $this->fh->setDep($coreProtocol, $this->virgilCryptoWrapper, $this->cm, $this->dbqh);
+        $this->migrateBP = new EncryptAndMigrateBackgroundProcess();
+        $this->migrateBP->setDep($this->protocol, $this->dbqh);
+
+        $this->recoveryBP = new RecoveryBackgroundProcess();
+        $this->recoveryBP->setDep($this->dbqh, $this->virgilCryptoWrapper, $this->cm);
 
         $this->virgilPure = $virgilPure;
         $this->version = $version;
@@ -151,10 +159,6 @@ class Virgil_Pure_Admin
                         $this->fh->migrate();
                         break;
 
-                    case Form::UPDATE:
-                        $this->fh->update();
-                        break;
-
                     case Form::RECOVERY:
                         $this->fh->recovery();
                         break;
@@ -186,12 +190,11 @@ class Virgil_Pure_Admin
      */
     public function virgil_pure_check_password($check, $password, $hash, $userId): bool
     {
-
         /** @var PluginValidator $pluginValidator */
         $pluginValidator = $this->coreFactory->buildCore(BuildCore::PLUGIN_VALIDATOR);
 
         if ($pluginValidator->check() && $userId) {
-            if (InfoHelper::isAllUsersMigrated()) {
+            if (InfoHelper::isUserMigrated($hash)) {
                 try {
                     $wpUser = get_user_by('id', $userId);
                     $this->protocol->auth($wpUser->user_email, $password, $hash);
@@ -238,16 +241,13 @@ class Virgil_Pure_Admin
      */
     public function virgil_pure_init_background_processes(): void
     {
-        if ($this->protocol) {
-            $migrateBP = $this->coreFactory->buildBackgroundProcess(BackgroundProcess::ENCRYPT_AND_MIGRATE);
-            $migrateBP->setDep($this->protocol, $this->dbqh);
+    }
 
-            $updateBP = $this->coreFactory->buildBackgroundProcess(BackgroundProcess::UPDATE);
-            $updateBP->setDep($this->protocol, $this->cm);
-
-            $recoveryBP = $this->coreFactory->buildBackgroundProcess(BackgroundProcess::RECOVERY);
-            $recoveryBP->setDep($this->dbqh, $this->virgilCryptoWrapper, $this->cm);
-        }
+    public function virgil_pure_user_register(int $userId): void
+    {
+        $user = get_user_by('ID', $userId);
+        $this->migrateBP->push_to_queue($user);
+        $this->migrateBP->save()->dispatch();
     }
 
     /**

@@ -58,7 +58,7 @@ class RecoveryBackgroundProcess extends WP_Background_Process
     /**
      * @var string
      */
-    protected string $action = Config::BACKGROUND_ACTION_RECOVERY;
+    protected $action = Config::BACKGROUND_ACTION_RECOVERY;
 
     /**
      * @var VirgilCryptoWrapper|null

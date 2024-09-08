@@ -45,8 +45,7 @@ class Log
 {
     const PLUGIN_ACTIVATION = "Plugin activation";
     const INIT_CREDENTIALS = "Init credentials";
-    const START_MIGRATION = "Start of the migration process";
-    const FINISH_MIGRATION = "The end of the migration process";
+    const CONTINUES_MIGRATION_ENABLED = "Continues migration enabled, all users will be migrated";
     const START_UPDATE = "Start of the update process";
     const FINISH_UPDATE = "The end of the update process";
 
@@ -60,11 +59,11 @@ class Log
     const DEV_ADD_USERS = "Add users";
     const DEV_RESTORE_DEFAULTS = "Restore defaults";
 
-    const INVALID_APP_TOKEN = "Invalid ".Credential::APP_TOKEN;
-    const INVALID_PROOF = "Invalid ".Credential::SERVICE_PUBLIC_KEY." or ".
-    Credential::APP_SECRET_KEY;
+    const INVALID_APP_TOKEN = "Invalid " . Credential::APP_TOKEN;
+    const INVALID_PROOF = "Invalid " . Credential::SERVICE_PUBLIC_KEY . " or " .
+        Credential::APP_SECRET_KEY;
 
     /** @deprecated  */
     const GENERATE_RECOVERY_KEYS = "Generate Recovery Keys";
-    const RECOVERY_ERROR = "Invalid ".Crypto::RECOVERY_PRIVATE_KEY;
+    const RECOVERY_ERROR = "Invalid " . Crypto::RECOVERY_PRIVATE_KEY;
 }

@@ -43,23 +43,30 @@ namespace VirgilSecurityPure\Config;
  */
 class Form
 {
-    const PREFIX = Config::PLUGIN_NAME."_form_";
+    const PREFIX = Config::PLUGIN_NAME_UNDERSCORE . "_form_";
 
-    const ALL = [self::DEMO, self::CREDENTIALS, self::MIGRATE, self::UPDATE,
-        self::DEV_ADD_USERS, self::DEV_RESTORE_DEFAULTS, self::RECOVERY];
+    const ALL = [
+        self::DEMO,
+        self::CREDENTIALS,
+        self::MIGRATE,
+        self::UPDATE,
+        self::DEV_ADD_USERS,
+        self::DEV_RESTORE_DEFAULTS,
+        self::RECOVERY
+    ];
 
-    const NONCE = self::PREFIX.'nonce';
+    const NONCE = self::PREFIX . 'nonce';
     const ACTION = 'virgil_pure';
     const TYPE = 'form_type';
 
-    const DEMO = self::PREFIX.'demo';
+    const DEMO = self::PREFIX . 'demo';
 
     /** @deprecated  */
-    const DOWNLOAD_RECOVERY_PRIVATE_KEY = self::PREFIX.'downloadRecoveryPrivateKey';
-    const CREDENTIALS = self::PREFIX.'credentials';
-    const MIGRATE = self::PREFIX.'migrate';
-    const UPDATE = self::PREFIX.'update';
-    const RECOVERY = self::PREFIX.'recovery';
-    const DEV_ADD_USERS = self::PREFIX.'addUsers';
-    const DEV_RESTORE_DEFAULTS = self::PREFIX.'restoreDefaults';
+    const DOWNLOAD_RECOVERY_PRIVATE_KEY = self::PREFIX . 'downloadRecoveryPrivateKey';
+    const CREDENTIALS = self::PREFIX . 'credentials';
+    const MIGRATE = self::PREFIX . 'migrate';
+    const UPDATE = self::PREFIX . 'update';
+    const RECOVERY = self::PREFIX . 'recovery';
+    const DEV_ADD_USERS = self::PREFIX . 'addUsers';
+    const DEV_RESTORE_DEFAULTS = self::PREFIX . 'restoreDefaults';
 }

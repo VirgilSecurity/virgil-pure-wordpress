@@ -44,20 +44,14 @@ namespace VirgilSecurityPure\Config;
 class Option
 {
     // Plugin level options
-    const DEV_MODE = Config::PLUGIN_NAME . '_dev_mode';
-    const DEMO_MODE = Config::PLUGIN_NAME . '_demo_mode';
-    const CONTINUES_MIGRATION_ON = Config::PLUGIN_NAME . '_continues_migration_on';
-    const RECOVERY_START = Config::PLUGIN_NAME . '_recovery_start';
-    const RECOVERY_FINISH = Config::PLUGIN_NAME . '_recovery_finish';
-    const RECOVERY_CHECKBOX_AGREE = Config::PLUGIN_NAME . '_recovery_checkbox_agree';
+    const DEV_MODE = Config::PLUGIN_NAME_UNDERSCORE . '_dev_mode';
+    const DEMO_MODE = Config::PLUGIN_NAME_UNDERSCORE . '_demo_mode';
+    const CONTINUES_MIGRATION_ON = Config::PLUGIN_NAME_UNDERSCORE . '_continues_migration_on';
+    const RECOVERY_START = Config::PLUGIN_NAME_UNDERSCORE . '_recovery_start';
+    const RECOVERY_FINISH = Config::PLUGIN_NAME_UNDERSCORE . '_recovery_finish';
+    const RECOVERY_CHECKBOX_AGREE = Config::PLUGIN_NAME_UNDERSCORE . '_recovery_checkbox_agree';
     const PRE_RELEASE_PREFIX = '_rf';
 
     // User level options
-    const USER_MIGRATE_START = Config::PLUGIN_NAME . '_migrate_start';
-    const USER_MIGRATE_FINISH = Config::PLUGIN_NAME . '_migrate_finish';
-    const USER_RECORD_UPDATE_STARTED_TIMESTAMP = Config::PLUGIN_NAME . '_update_start';
-    const USER_RECORD_UPDATE_FINISHED_TIMESTAMP = Config::PLUGIN_NAME . '_update_finish';
-    const USER_ENCRYPTED_BACKUP_KEY = Config::PLUGIN_NAME . '_encrypt_backup_key';
-    const USER_RECORD = Config::PLUGIN_NAME . '_record' . self::PRE_RELEASE_PREFIX;
-    const USER_PARAMS = Config::PLUGIN_NAME . '_params' . self::PRE_RELEASE_PREFIX;
+    const USER_ENCRYPTED_BACKUP_KEY = Config::PLUGIN_NAME_UNDERSCORE . '_encrypt_backup_key';
 }

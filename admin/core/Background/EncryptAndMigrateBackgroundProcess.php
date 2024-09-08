@@ -78,7 +78,7 @@ class EncryptAndMigrateBackgroundProcess extends WP_Background_Process
     /**
      * @var string
      */
-    protected string $action = Config::BACKGROUND_ACTION_MIGRATE;
+    protected $action = Config::BACKGROUND_ACTION_MIGRATE;
 
     /**
      * @param CoreProtocol $protocol
@@ -104,12 +104,14 @@ class EncryptAndMigrateBackgroundProcess extends WP_Background_Process
     {
         try {
             $this->protocol->getPure()->authenticateUser($item->user_email, $item->user_pass);
+            $this->markUserAsMigrated($item->ID);
+            return false; // return false to remove the item from the queue
         } catch (PureStorageUserNotFoundException | VirgilCloudStorageException $e) {
             try {
                 $this->protocol->encryptAndSaveKeyForBackup($item->ID, $item->user_pass);
                 $this->protocol->getPure()->registerUser($item->user_email, $item->user_pass);
-                update_user_meta($item->ID, Option::USER_MIGRATE_START, true);
-                return false;
+                $this->markUserAsMigrated($item->ID);
+                return false; // return false to remove the item from the queue
             } catch (ProtocolException | PureCryptoException $e) {
                 Logger::log('When migrate email = ' . $item->user_email . ' : ' . $e->getMessage());
             }
@@ -117,32 +119,12 @@ class EncryptAndMigrateBackgroundProcess extends WP_Background_Process
             Logger::log('Error when auth User email = ' . $item->user_email . ' ' . $e->getMessage());
         }
 
-        update_user_meta($item->ID, Option::USER_MIGRATE_FINISH, true);
-
-        return false;
+        return $item; // return item to queue to try again
     }
 
-    /**
-     * @return void
-     * @throws EmptyArgumentException
-     * @throws IllegalStateException
-     * @throws NullArgumentException
-     * @throws PheClientException
-     * @throws PureCryptoException
-     * @throws VirgilCryptoException
-     * @throws NullPointerException
-     */
-    protected function complete(): void
+    private function markUserAsMigrated(int $userId): void
     {
-        if ($this->is_queue_empty()) {
-            update_option(Option::USER_MIGRATE_FINISH, microtime(true));
-
-            $this->dbqh->clearAllUsersPass($this->protocol->getPure());
-
-            delete_option(Option::USER_MIGRATE_START);
-            delete_option(Option::USER_MIGRATE_FINISH);
-            Logger::log(Log::FINISH_MIGRATION);
-            parent::complete();
-        }
+        // TODO: Optimize this code, it can be done in one query
+        $this->dbqh->removePasswordHashForUser($userId);
     }
 }

@@ -37,22 +37,11 @@
 
 namespace VirgilSecurityPure\Helpers;
 
-use Virgil\Crypto\Exceptions\VirgilCryptoException;
-use Virgil\PureKit\Pure\Exception\EmptyArgumentException;
-use Virgil\PureKit\Pure\Exception\IllegalStateException;
-use Virgil\PureKit\Pure\Exception\NullArgumentException;
-use Virgil\PureKit\Pure\Exception\NullPointerException;
-use Virgil\PureKit\Pure\Exception\PheClientException;
-use Virgil\PureKit\Pure\Exception\PureCryptoException;
-use Virgil\PureKit\Pure\Exception\PureLogicException;
-use Virgil\PureKit\Pure\Exception\VirgilCloudStorageException;
-use Virgil\PureKit\Pure\Pure;
+
 use VirgilSecurityPure\Config\Config;
 use VirgilSecurityPure\Config\Option;
 use VirgilSecurityPure\Core\Core;
-use VirgilSecurityPure\Core\Logger;
 use wpdb;
-use WpOrg\Requests\Exception;
 
 /**
  * Class DBQueryHelper
@@ -128,41 +117,6 @@ class DBQueryHelper implements Core
     }
 
     /**
-     * @param Pure $pure
-     * @return void
-     * @throws EmptyArgumentException
-     * @throws IllegalStateException
-     * @throws NullArgumentException
-     * @throws NullPointerException
-     * @throws PheClientException
-     * @throws PureCryptoException
-     * @throws VirgilCryptoException
-     */
-    public function clearAllUsersPass(Pure $pure): void
-    {
-        $query = "SELECT ID, user_pass, user_email FROM {$this->tableUsers} WHERE LENGTH(user_pass) > 12";
-        $users = $this->wpdb->get_results($query);
-        foreach ($users as $user) {
-            if (get_user_meta($user->ID, Option::USER_MIGRATE_START, true) === '1') {
-                try {
-                    $pure->authenticateUser($user->user_email, $user->user_pass);
-                    update_user_meta($user->ID, Option::USER_MIGRATE_FINISH, true);
-                    $this->clearUserPass($user->ID);
-                    update_user_meta($user->ID, Option::USER_RECORD, true);
-                } catch (VirgilCloudStorageException $e) {
-                    Logger::log("When clean all users have an error: " . $e->getMessage());
-                } catch (PureLogicException $e) {
-                    if ($e->getMessage() === 'Invalid password') {
-                        Logger::log('Invalid password for user ' . $user->user_email); // delete it ?
-                    }
-                } catch (Exception $e) {
-                    Logger::log($e->getMessage());
-                }
-            }
-        }
-    }
-
-    /**
      * @param int $id
      * @param string $password
      * @return void
@@ -175,7 +129,7 @@ class DBQueryHelper implements Core
     /**
      * @param int $id
      */
-    public function clearUserPass(int $id): void
+    public function removePasswordHashForUser(int $id): void
     {
         $this->wpdb->query("UPDATE {$this->tableUsers} SET user_pass=SUBSTRING(user_pass,1,12) WHERE ID={$id}");
     }
@@ -197,8 +151,6 @@ class DBQueryHelper implements Core
      */
     public function clearPureParams(): void
     {
-        $record = Option::USER_RECORD;
-
         $this->wpdb->query(
             "DELETE FROM {$this->wpdb->usermeta} WHERE meta_key IN ('$record')"
         );
