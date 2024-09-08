@@ -20,7 +20,6 @@ use VirgilSecurityPure\Core\FormHandler;
 use VirgilSecurityPure\Core\Logger;
 use VirgilSecurityPure\Core\PluginValidator;
 use VirgilSecurityPure\Core\VirgilCryptoWrapper;
-use VirgilSecurityPure\Helpers\ConfigHelper;
 use VirgilSecurityPure\Helpers\DBQueryHelper;
 use VirgilSecurityPure\Helpers\Redirector;
 use VirgilSecurityPure\Helpers\InfoHelper;
@@ -108,7 +107,7 @@ class Virgil_Pure_Admin
         if ($extLoaded) {
             add_submenu_page(Config::ACTION_PAGE, 'Log', 'Log', Config::CAPABILITY, Config::LOG_PAGE, $pageBuilder);
             add_submenu_page(Config::ACTION_PAGE, 'FAQ', 'FAQ', Config::CAPABILITY, Config::FAQ_PAGE, $pageBuilder);
-            if ($this->isAddSubmenuPage()) {
+            if (InfoHelper::isContinuesMigrationOn()) {
                 add_submenu_page(
                     Config::ACTION_PAGE,
                     'Recovery',
@@ -129,14 +128,6 @@ class Virgil_Pure_Admin
                 );
             }
         }
-    }
-
-    /**
-     * @return bool
-     */
-    private function isAddSubmenuPage(): bool
-    {
-        return InfoHelper::isAllUsersMigrated() && ConfigHelper::isDemoMode();
     }
 
     /**

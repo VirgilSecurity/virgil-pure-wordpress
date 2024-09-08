@@ -43,7 +43,6 @@ use Virgil\PureKit\Pure\Exception\ClientException;
 use Virgil\PureKit\Pure\Exception\EmptyArgumentException;
 use Virgil\PureKit\Pure\Exception\IllegalStateException;
 use Virgil\PureKit\Pure\Exception\NullArgumentException;
-use Virgil\PureKit\Pure\Exception\NullPointerException;
 use Virgil\PureKit\Pure\Exception\PheClientException;
 use Virgil\PureKit\Pure\Exception\ProtocolException;
 use Virgil\PureKit\Pure\Exception\PureCryptoException;
@@ -52,11 +51,10 @@ use Virgil\PureKit\Pure\Exception\PureStorageUserNotFoundException;
 use Virgil\PureKit\Pure\Exception\ValidateException;
 use Virgil\PureKit\Pure\Exception\VirgilCloudStorageException;
 use VirgilSecurityPure\Config\Config;
-use VirgilSecurityPure\Config\Log;
-use VirgilSecurityPure\Config\Option;
 use VirgilSecurityPure\Core\CoreProtocol;
 use VirgilSecurityPure\Core\Logger;
 use VirgilSecurityPure\Helpers\DBQueryHelper;
+use VirgilSecurityPure\Helpers\InfoHelper;
 use WP_Background_Process;
 
 /**
@@ -102,6 +100,11 @@ class EncryptAndMigrateBackgroundProcess extends WP_Background_Process
      */
     protected function task(mixed $item): bool
     {
+        if (!InfoHelper::isContinuesMigrationOn()) {
+            // in case if recovery is on, we should not migrate
+            return false;
+        }
+
         try {
             $this->protocol->getPure()->authenticateUser($item->user_email, $item->user_pass);
             $this->markUserAsMigrated($item->ID);

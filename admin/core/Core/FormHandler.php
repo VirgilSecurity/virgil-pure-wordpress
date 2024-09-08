@@ -214,6 +214,10 @@ class FormHandler implements Core
             $users = get_users(['fields' => ['ID', 'user_email']]);
 
             try {
+                $migrateBackgroundProcess = new EncryptAndMigrateBackgroundProcess();
+                $migrateBackgroundProcess->setDep($this->coreProtocol->init(), $this->dbq);
+                $migrateBackgroundProcess->cancel();
+
                 $recoveryBackgroundProcess = new RecoveryBackgroundProcess();
                 $recoveryBackgroundProcess->setDep($this->dbq, $this->virgilCryptoWrapper, $this->cm);
 
@@ -245,7 +249,7 @@ class FormHandler implements Core
     public function addUsers(): void
     {
         for ($i = 0; $i < (int) $_POST['number_of_users']; $i++) {
-            $user = 'user_' . substr(hrtime(true), 0, -6);
+            $user = 'user_' . substr(hrtime(true), 0, 9);
             $password = &$user;
             wp_create_user($user, $password, $user . '@mailinator.com');
         }
