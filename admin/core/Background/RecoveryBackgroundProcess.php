@@ -97,17 +97,15 @@ class RecoveryBackgroundProcess extends WP_Background_Process
                 $privateKey = $this->vcw->importKey(Crypto::PRIVATE_KEY, $item['private_key_in']);
                 $backupPwdHash = base64_decode(get_user_meta($user->ID, Option::USER_ENCRYPTED_BACKUP_KEY, true));
                 $pwdHashDecrypted = $this->vcw->decrypt($backupPwdHash, $privateKey->getPrivateKey());
+                $this->dbqh->passRecovery($user->ID, $pwdHashDecrypted);
             } catch (Exception $e) {
                 Logger::log("Invalid " . Crypto::RECOVERY_PRIVATE_KEY . ': ' . $e->getMessage(), 0);
-                $this->cancel_process();
+                $this->cancel();
                 $this->getFinalLog(0);
                 $this->dbqh->clearActionProcess('recovery');
                 exit;
             }
-
-            $this->dbqh->passRecovery($user->ID, $pwdHashDecrypted);
         }
-
         return false;
     }
 
@@ -118,8 +116,6 @@ class RecoveryBackgroundProcess extends WP_Background_Process
     {
         if ($this->is_queue_empty()) {
             $this->getFinalLog();
-            $this->dbqh->clearPureParams();
-            $this->credentialsManager->addEmptyCredentials();
         }
 
         parent::complete();

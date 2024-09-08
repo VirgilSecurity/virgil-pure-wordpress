@@ -145,14 +145,4 @@ class DBQueryHelper implements Core
             "DELETE FROM {$this->wpdb->options} WHERE option_name LIKE \"$process\" AND option_name LIKE \"$batch\""
         );
     }
-
-    /**
-     * @return void
-     */
-    public function clearPureParams(): void
-    {
-        $this->wpdb->query(
-            "DELETE FROM {$this->wpdb->usermeta} WHERE meta_key IN ('$record')"
-        );
-    }
 }

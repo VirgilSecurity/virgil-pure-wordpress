@@ -192,7 +192,6 @@ class FormHandler implements Core
             if (350 < $file['size']) {
                 Logger::log(Log::RECOVERY_ERROR, 0);
                 Redirector::toPageLog();
-                exit();
             }
 
             $privateKeyIn = file_get_contents($file['tmp_name']);
@@ -207,10 +206,10 @@ class FormHandler implements Core
                 }
 
                 Redirector::toPageLog();
-                exit();
             }
 
             update_option(Option::RECOVERY_START, microtime(true));
+            update_option(Option::CONTINUES_MIGRATION_ON, 0);
             Logger::log(Log::START_RECOVERY);
             $users = get_users(['fields' => ['ID', 'user_email']]);
 
@@ -222,7 +221,6 @@ class FormHandler implements Core
 
                 foreach ($users as $user) {
                     $data['user'] = $user;
-
                     $recoveryBackgroundProcess->push_to_queue($data);
                 }
 
@@ -234,12 +232,10 @@ class FormHandler implements Core
                     Logger::log($e->getMessage(), 0);
                 }
                 Redirector::toPageLog();
-                exit();
             }
         } else {
             Logger::log("Empty " . Crypto::RECOVERY_PRIVATE_KEY, 0);
             Redirector::toPageLog();
-            exit();
         }
     }
 

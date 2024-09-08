@@ -157,13 +157,16 @@ class Virgil_Pure_Admin
 
                     case Form::MIGRATE:
                         $this->fh->migrate();
+                        Redirector::toPage(Config::ACTION_PAGE);
                         break;
 
                     case Form::RECOVERY:
                         $this->fh->recovery();
+                        Redirector::toPageLog();
                         break;
 
                     case Form::DEV_ADD_USERS:
+                        Redirector::toPageAction(false);
                         $this->fh->addUsers();
                         break;
 
@@ -171,8 +174,6 @@ class Virgil_Pure_Admin
                         $this->fh->restoreDefaults();
                         break;
                 }
-
-                Redirector::toPageLog();
             } else {
                 wp_die($_POST[Form::TYPE] . ' form response error');
             }
@@ -245,9 +246,11 @@ class Virgil_Pure_Admin
 
     public function virgil_pure_user_register(int $userId): void
     {
-        $user = get_user_by('ID', $userId);
-        $this->migrateBP->push_to_queue($user);
-        $this->migrateBP->save()->dispatch();
+        if (InfoHelper::isContinuesMigrationOn()) {
+            $user = get_user_by('ID', $userId);
+            $this->migrateBP->push_to_queue($user);
+            $this->migrateBP->save()->dispatch();
+        }
     }
 
     /**
@@ -290,9 +293,9 @@ class Virgil_Pure_Admin
      */
     private function updatePassword(WP_User $user): void
     {
-        if ($this->pv->check()) {
+        if ($this->pv->check() && InfoHelper::isUserMigrated($user->ID)) {
             $this->protocol->getPure()->resetUserPassword($user->user_email, $user->user_pass, true);
-            $this->dbqh->clearUserPass($user->ID);
+            $this->dbqh->removePasswordHashForUser($user->ID);
         }
     }
 }

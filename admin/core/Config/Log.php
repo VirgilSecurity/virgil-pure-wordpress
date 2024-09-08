@@ -56,7 +56,7 @@ class Log
     const START_RECOVERY = "Start of the recovery process";
     const FINISH_RECOVERY = "The end of the recovery process";
 
-    const DEV_ADD_USERS = "Add users";
+    const DEV_ADD_USERS = "Adding users...";
     const DEV_RESTORE_DEFAULTS = "Restore defaults";
 
     const INVALID_APP_TOKEN = "Invalid " . Credential::APP_TOKEN;
