@@ -165,6 +165,7 @@ class Virgil_Pure_Admin
                         $this->fh->restoreDefaults();
                         break;
                 }
+                Redirector::toPage(Config::ACTION_PAGE);
             } else {
                 wp_die($_POST[Form::TYPE] . ' form response error');
             }
