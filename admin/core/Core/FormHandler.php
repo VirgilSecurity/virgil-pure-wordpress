@@ -49,6 +49,7 @@ use VirgilSecurityPure\Config\Option;
 use VirgilSecurityPure\Config\Credential;
 use VirgilSecurityPure\Config\Log;
 use VirgilSecurityPure\Helpers\DBQueryHelper;
+use VirgilSecurityPure\Helpers\InfoHelper;
 use VirgilSecurityPure\Helpers\Redirector;
 use VirgilSecurityPure\Config\Crypto;
 use wpdb;
@@ -163,58 +164,23 @@ class FormHandler implements Core
         $users = get_users(['fields' => ['ID', 'user_pass', 'user_email']]);
 
         $migrateBackgroundProcess = new EncryptAndMigrateBackgroundProcess();
-        $migrateBackgroundProcess->setDep($this->coreProtocol->init(), $this->dbq, $this->virgilCryptoWrapper);
+        $migrateBackgroundProcess->setDep($this->coreProtocol->init(), $this->dbq);
 
-        update_option(Option::MIGRATE_START, microtime(true));
+        update_option(Option::CONTINUES_MIGRATION_ON, true);
 
-        Logger::log(Log::START_MIGRATION);
+        Logger::log(Log::CONTINUES_MIGRATION_ENABLED);
 
         try {
             foreach ($users as $user) {
-                $metaRecord = get_user_meta($user->ID, Option::RECORD);
-                $metaParams = get_user_meta($user->ID, Option::PARAMS);
-                if (empty($metaRecord) && empty($metaParams)) {
+                if (!InfoHelper::isUserMigrated($user->ID)) {
                     $migrateBackgroundProcess->push_to_queue($user);
                 }
             }
         } catch (Exception $e) {
             Logger::log('Push user to migration return error:  ' . $e->getMessage());
-            wp_die($e->getMessage());
         }
 
         $migrateBackgroundProcess->save()->dispatch();
-    }
-
-    /**
-     * @return void
-     */
-    public function update(): void
-    {
-        if (!empty($_POST[Credential::UPDATE_TOKEN])) {
-            $users = get_users(['fields' => ['ID']]);
-
-            if (!$this->cm->addUpdateTokenToOldCredentials($_POST[Credential::UPDATE_TOKEN])) {
-                Logger::log("Add ." . Credential::UPDATE_TOKEN . " to old credentials", 0);
-            }
-
-            update_option(Option::UPDATE_START, microtime(true));
-            Logger::log(Log::START_UPDATE);
-
-            try {
-                $updateBackgroundProcess = new UpdateBackgroundProcess();
-                $updateBackgroundProcess->setDep($this->coreProtocol->init(), $this->cm);
-
-                foreach ($users as $user) {
-                    $updateBackgroundProcess->push_to_queue($user);
-                }
-
-                $updateBackgroundProcess->save()->dispatch();
-            } catch (Exception $e) {
-                wp_die($e->getMessage());
-            }
-        } else {
-            wp_die("Empty " . Credential::UPDATE_TOKEN);
-        }
     }
 
     /**
@@ -226,7 +192,6 @@ class FormHandler implements Core
             if (350 < $file['size']) {
                 Logger::log(Log::RECOVERY_ERROR, 0);
                 Redirector::toPageLog();
-                exit();
             }
 
             $privateKeyIn = file_get_contents($file['tmp_name']);
@@ -241,14 +206,18 @@ class FormHandler implements Core
                 }
 
                 Redirector::toPageLog();
-                exit();
             }
 
             update_option(Option::RECOVERY_START, microtime(true));
+            update_option(Option::CONTINUES_MIGRATION_ON, 0);
             Logger::log(Log::START_RECOVERY);
             $users = get_users(['fields' => ['ID', 'user_email']]);
 
             try {
+                $migrateBackgroundProcess = new EncryptAndMigrateBackgroundProcess();
+                $migrateBackgroundProcess->setDep($this->coreProtocol->init(), $this->dbq);
+                $migrateBackgroundProcess->cancel();
+
                 $recoveryBackgroundProcess = new RecoveryBackgroundProcess();
                 $recoveryBackgroundProcess->setDep($this->dbq, $this->virgilCryptoWrapper, $this->cm);
 
@@ -256,7 +225,6 @@ class FormHandler implements Core
 
                 foreach ($users as $user) {
                     $data['user'] = $user;
-
                     $recoveryBackgroundProcess->push_to_queue($data);
                 }
 
@@ -268,10 +236,10 @@ class FormHandler implements Core
                     Logger::log($e->getMessage(), 0);
                 }
                 Redirector::toPageLog();
-                exit();
             }
         } else {
-            wp_die("Empty " . Crypto::RECOVERY_PRIVATE_KEY);
+            Logger::log("Empty " . Crypto::RECOVERY_PRIVATE_KEY, 0);
+            Redirector::toPageLog();
         }
     }
 
@@ -280,13 +248,13 @@ class FormHandler implements Core
      */
     public function addUsers(): void
     {
-        for ($i = 0; $i < (int)$_POST['number_of_users']; $i++) {
-            $user = 'user_' . rand(100, 999) . '_' . $i;
+        for ($i = 0; $i < (int) $_POST['number_of_users']; $i++) {
+            $user = 'user_' . substr(hrtime(true), 0, 9);
             $password = &$user;
             wp_create_user($user, $password, $user . '@mailinator.com');
         }
 
-        $num = (int)$_POST['number_of_users'];
+        $num = (int) $_POST['number_of_users'];
         Logger::log(Log::DEV_ADD_USERS . " (" . $num . ")");
     }
 
@@ -300,17 +268,7 @@ class FormHandler implements Core
 
         $users = get_users(['fields' => ['ID']]);
 
-        foreach ($users as $user) {
-            delete_user_meta($user->ID, Option::RECORD);
-            delete_user_meta($user->ID, Option::PARAMS);
-            delete_user_meta($user->ID, Option::ENCRYPTED);
-        }
-
-        delete_option(Option::MIGRATE_START);
-        delete_option(Option::MIGRATE_FINISH);
-        delete_option(Option::UPDATE_START);
-        delete_option(Option::UPDATE_FINISH);
-        delete_option('_transient_doing_cron');
+        delete_option('_transient_doing_cron'); // wp-cron specific option
 
         foreach (Config::ALL_BACKGROUND_PROCESSES as $bp) {
             $this->dbq->clearActionProcess($bp);

@@ -6,7 +6,8 @@ use Virgil\PureKit\Pure\Exception\IllegalStateException;
 use Virgil\PureKit\Pure\Exception\NullArgumentException;
 use Virgil\PureKit\Pure\Exception\PheClientException;
 use Virgil\PureKit\Pure\Exception\PureCryptoException;
-use VirgilSecurityPure\Config\BackgroundProcess;
+use VirgilSecurityPure\Background\EncryptAndMigrateBackgroundProcess;
+use VirgilSecurityPure\Background\RecoveryBackgroundProcess;
 use VirgilSecurityPure\Config\BuildCore;
 use VirgilSecurityPure\Config\Config;
 use VirgilSecurityPure\Config\Form;
@@ -19,7 +20,6 @@ use VirgilSecurityPure\Core\FormHandler;
 use VirgilSecurityPure\Core\Logger;
 use VirgilSecurityPure\Core\PluginValidator;
 use VirgilSecurityPure\Core\VirgilCryptoWrapper;
-use VirgilSecurityPure\Helpers\ConfigHelper;
 use VirgilSecurityPure\Helpers\DBQueryHelper;
 use VirgilSecurityPure\Helpers\Redirector;
 use VirgilSecurityPure\Helpers\InfoHelper;
@@ -40,6 +40,8 @@ class Virgil_Pure_Admin
     private Core|FormHandler $fh;
     private Core|CredentialsManager $cm;
     private Core|PluginValidator $pv;
+    private EncryptAndMigrateBackgroundProcess $migrateBP;
+    private RecoveryBackgroundProcess $recoveryBP;
     private string $virgilPure;
     private string $version;
 
@@ -61,11 +63,16 @@ class Virgil_Pure_Admin
         $coreProtocol->init();
         $this->protocol = $coreProtocol;
         $this->dbqh = $this->coreFactory->buildCore(BuildCore::DB_QUERY_HELPER);
-        $this->fh = $this->coreFactory->buildCore(BuildCore::FORM_HANDLER);
         $this->cm = $this->coreFactory->buildCore(BuildCore::CREDENTIALS_MANAGER);
+        $this->fh = $this->coreFactory->buildCore(BuildCore::FORM_HANDLER);
+        $this->fh->setDep($coreProtocol, $this->virgilCryptoWrapper, $this->cm, $this->dbqh);
         $this->pv = $this->coreFactory->buildCore(BuildCore::PLUGIN_VALIDATOR);
 
-        $this->fh->setDep($coreProtocol, $this->virgilCryptoWrapper, $this->cm, $this->dbqh);
+        $this->migrateBP = new EncryptAndMigrateBackgroundProcess();
+        $this->migrateBP->setDep($this->protocol, $this->dbqh);
+
+        $this->recoveryBP = new RecoveryBackgroundProcess();
+        $this->recoveryBP->setDep($this->dbqh, $this->virgilCryptoWrapper, $this->cm);
 
         $this->virgilPure = $virgilPure;
         $this->version = $version;
@@ -100,7 +107,7 @@ class Virgil_Pure_Admin
         if ($extLoaded) {
             add_submenu_page(Config::ACTION_PAGE, 'Log', 'Log', Config::CAPABILITY, Config::LOG_PAGE, $pageBuilder);
             add_submenu_page(Config::ACTION_PAGE, 'FAQ', 'FAQ', Config::CAPABILITY, Config::FAQ_PAGE, $pageBuilder);
-            if ($this->isAddSubmenuPage()) {
+            if (InfoHelper::isContinuesMigrationOn()) {
                 add_submenu_page(
                     Config::ACTION_PAGE,
                     'Recovery',
@@ -124,14 +131,6 @@ class Virgil_Pure_Admin
     }
 
     /**
-     * @return bool
-     */
-    private function isAddSubmenuPage(): bool
-    {
-        return InfoHelper::isAllUsersMigrated() && ConfigHelper::isDemoMode();
-    }
-
-    /**
      * @return void
      */
     public function virgil_pure_form_handler(): void
@@ -149,27 +148,24 @@ class Virgil_Pure_Admin
 
                     case Form::MIGRATE:
                         $this->fh->migrate();
-                        break;
-
-                    case Form::UPDATE:
-                        $this->fh->update();
+                        Redirector::toPage(Config::ACTION_PAGE);
                         break;
 
                     case Form::RECOVERY:
                         $this->fh->recovery();
+                        Redirector::toPageLog();
                         break;
 
                     case Form::DEV_ADD_USERS:
-                        $this->fh->
-                        addUsers();
+                        $this->fh->addUsers();
+                        Redirector::toPage(Config::ACTION_PAGE);
                         break;
 
                     case Form::DEV_RESTORE_DEFAULTS:
                         $this->fh->restoreDefaults();
                         break;
                 }
-
-                Redirector::toPageLog();
+                Redirector::toPage(Config::ACTION_PAGE);
             } else {
                 wp_die($_POST[Form::TYPE] . ' form response error');
             }
@@ -187,12 +183,11 @@ class Virgil_Pure_Admin
      */
     public function virgil_pure_check_password($check, $password, $hash, $userId): bool
     {
-
         /** @var PluginValidator $pluginValidator */
         $pluginValidator = $this->coreFactory->buildCore(BuildCore::PLUGIN_VALIDATOR);
 
         if ($pluginValidator->check() && $userId) {
-            if (InfoHelper::isAllUsersMigrated()) {
+            if (InfoHelper::isUserMigrated($hash)) {
                 try {
                     $wpUser = get_user_by('id', $userId);
                     $this->protocol->auth($wpUser->user_email, $password, $hash);
@@ -239,15 +234,14 @@ class Virgil_Pure_Admin
      */
     public function virgil_pure_init_background_processes(): void
     {
-        if ($this->protocol) {
-            $migrateBP = $this->coreFactory->buildBackgroundProcess(BackgroundProcess::ENCRYPT_AND_MIGRATE);
-            $migrateBP->setDep($this->protocol, $this->dbqh);
+    }
 
-            $updateBP = $this->coreFactory->buildBackgroundProcess(BackgroundProcess::UPDATE);
-            $updateBP->setDep($this->protocol, $this->cm);
-
-            $recoveryBP = $this->coreFactory->buildBackgroundProcess(BackgroundProcess::RECOVERY);
-            $recoveryBP->setDep($this->dbqh, $this->virgilCryptoWrapper, $this->cm);
+    public function virgil_pure_user_register(int $userId): void
+    {
+        if (InfoHelper::isContinuesMigrationOn()) {
+            $user = get_user_by('ID', $userId);
+            $this->migrateBP->push_to_queue($user);
+            $this->migrateBP->save()->dispatch();
         }
     }
 
@@ -291,9 +285,11 @@ class Virgil_Pure_Admin
      */
     private function updatePassword(WP_User $user): void
     {
-        if ($this->pv->check()) {
+        if ($this->pv->check() && InfoHelper::isContinuesMigrationOn()) {
+            $this->protocol->encryptAndSaveKeyForBackup($user->ID, $user->user_pass);
             $this->protocol->getPure()->resetUserPassword($user->user_email, $user->user_pass, true);
-            $this->dbqh->clearUserPass($user->ID);
+            $this->migrateBP->push_to_queue($user);
+            $this->migrateBP->save()->dispatch();
         }
     }
 }

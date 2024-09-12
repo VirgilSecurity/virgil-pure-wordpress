@@ -56,30 +56,30 @@ class Config
     const PLUGIN_NAME = 'virgil-pure';
     const PLUGIN_NAME_UNDERSCORE = 'virgil_pure';
 
-    const PLUGIN_FULL_NAME = self::PLUGIN_NAME.DIRECTORY_SEPARATOR.self::PLUGIN_NAME.'.php';
+    const PLUGIN_FULL_NAME = self::PLUGIN_NAME . DIRECTORY_SEPARATOR . self::PLUGIN_NAME . '.php';
 
     const MAIN_PAGE = 'Virgil_Pure';
 
     const MAIN_PAGE_TITLE = 'Virgil Pure';
-    const ACTION_PAGE = self::MAIN_PAGE.'_Action';
-    const LOG_PAGE = self::MAIN_PAGE.'_Log';
-    const FAQ_PAGE = self::MAIN_PAGE.'_FAQ';
-    const RECOVERY_PAGE = self::MAIN_PAGE.'_Recovery';
-    const DEV_PAGE = self::MAIN_PAGE.'_Dev';
+    const ACTION_PAGE = self::MAIN_PAGE . '_Action';
+    const LOG_PAGE = self::MAIN_PAGE . '_Log';
+    const FAQ_PAGE = self::MAIN_PAGE . '_FAQ';
+    const RECOVERY_PAGE = self::MAIN_PAGE . '_Recovery';
+    const DEV_PAGE = self::MAIN_PAGE . '_Dev';
     /** @deprecated  */
-    const CHANGE_MODE = self::MAIN_PAGE.'_Change_Mode';
+    const CHANGE_MODE = self::MAIN_PAGE . '_Change_Mode';
 
     const CAPABILITY = 'administrator';
 
     const TEST_ENROLLMENT = 'test-enrollment';
 
-    const PLUGIN_DB_LOG_TABLE = self::PLUGIN_NAME_UNDERSCORE.'_log';
+    const PLUGIN_DB_LOG_TABLE = self::PLUGIN_NAME_UNDERSCORE . '_log';
 
-    const BACKGROUND_ACTION_MIGRATE = self::PLUGIN_NAME."_action_encrypt_and_migrate";
-    const BACKGROUND_ACTION_UPDATE = self::PLUGIN_NAME."_action_update";
-    const BACKGROUND_ACTION_RECOVERY = self::PLUGIN_NAME."_action_recovery";
+    const BACKGROUND_ACTION_MIGRATE = self::PLUGIN_NAME_UNDERSCORE . "_action_encrypt_and_migrate";
+    const BACKGROUND_ACTION_UPDATE = self::PLUGIN_NAME_UNDERSCORE . "_action_update";
+    const BACKGROUND_ACTION_RECOVERY = self::PLUGIN_NAME_UNDERSCORE . "_action_recovery";
 
-    const ALL_BACKGROUND_PROCESSES = ['encrypt_and_migrate', 'update', 'recovery'];
+    const ALL_BACKGROUND_PROCESSES = [BACKGROUND_ACTION_MIGRATE, BACKGROUND_ACTION_UPDATE, BACKGROUND_ACTION_RECOVERY];
 
     public static function isAllExtensionEnabled(): bool
     {

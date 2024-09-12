@@ -47,17 +47,18 @@ use VirgilSecurityPure\Core\Logger;
 use VirgilSecurityPure\Config\Config;
 use VirgilSecurityPure\Core\VirgilCryptoWrapper;
 use VirgilSecurityPure\Helpers\DBQueryHelper;
+use WP_Background_Process;
 
 /**
  * Class RecoveryBackgroundProcess
  * @package VirgilSecurityPure\Background
  */
-class RecoveryBackgroundProcess extends BaseBackgroundProcess
+class RecoveryBackgroundProcess extends WP_Background_Process
 {
     /**
      * @var string
      */
-    protected string $action = Config::BACKGROUND_ACTION_RECOVERY;
+    protected $action = Config::BACKGROUND_ACTION_RECOVERY;
 
     /**
      * @var VirgilCryptoWrapper|null
@@ -94,19 +95,17 @@ class RecoveryBackgroundProcess extends BaseBackgroundProcess
             $user = $item['user'];
             try {
                 $privateKey = $this->vcw->importKey(Crypto::PRIVATE_KEY, $item['private_key_in']);
-                $backupPwdHash = base64_decode(get_user_meta($user->ID, Option::ENCRYPT_BACKUP_KEY, true));
+                $backupPwdHash = base64_decode(get_user_meta($user->ID, Option::USER_ENCRYPTED_BACKUP_KEY, true));
                 $pwdHashDecrypted = $this->vcw->decrypt($backupPwdHash, $privateKey->getPrivateKey());
+                $this->dbqh->passRecovery($user->ID, $pwdHashDecrypted);
             } catch (Exception $e) {
-                Logger::log("Invalid ".Crypto::RECOVERY_PRIVATE_KEY . ': ' . $e->getMessage(), 0);
-                $this->cancel_process();
+                Logger::log("Invalid " . Crypto::RECOVERY_PRIVATE_KEY . ': ' . $e->getMessage(), 0);
+                $this->cancel();
                 $this->getFinalLog(0);
                 $this->dbqh->clearActionProcess('recovery');
                 exit;
             }
-
-            $this->dbqh->passRecovery($user->ID, $pwdHashDecrypted);
         }
-
         return false;
     }
 
@@ -117,8 +116,6 @@ class RecoveryBackgroundProcess extends BaseBackgroundProcess
     {
         if ($this->is_queue_empty()) {
             $this->getFinalLog();
-            $this->dbqh->clearPureParams();
-            $this->credentialsManager->addEmptyCredentials();
         }
 
         parent::complete();
@@ -132,8 +129,8 @@ class RecoveryBackgroundProcess extends BaseBackgroundProcess
     {
         update_option(Option::RECOVERY_FINISH, microtime(true));
 
-        $duration = round(get_option(Option::RECOVERY_FINISH)-get_option(Option::RECOVERY_START), 2);
-        Logger::log(Log::FINISH_RECOVERY." (duration: $duration sec.)", $status);
+        $duration = round(get_option(Option::RECOVERY_FINISH) - get_option(Option::RECOVERY_START), 2);
+        Logger::log(Log::FINISH_RECOVERY . " (duration: $duration sec.)", $status);
 
         delete_option(Option::RECOVERY_START);
         delete_option(Option::RECOVERY_FINISH);

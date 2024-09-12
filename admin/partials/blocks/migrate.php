@@ -7,18 +7,19 @@ use VirgilSecurityPure\Background\EncryptAndMigrateBackgroundProcess;
 $total = InfoHelper::getTotalUsers();
 $migrated = InfoHelper::getMigrated();
 $migratedPercents = InfoHelper::getMigratedPercents();
+$isContinuesMigrationOn = InfoHelper::isContinuesMigrationOn();
 
 $mbp = new EncryptAndMigrateBackgroundProcess();
 
-$value = $mbp->is_process_running() ? "Migration In Progress" : "Start Migration";
-$disabled = $mbp->is_process_running() ? "disabled" : null;
-$message = $mbp->is_process_running() ? "- $migratedPercents% complete.<br>Please reload the page in a few minutes." :
+$value = $isContinuesMigrationOn ? "Migration In Progress" : "Start Migration";
+$disabled = $isContinuesMigrationOn ? "disabled" : null;
+$message = $mbp->is_processing() ? "- $migratedPercents% complete.<br>Please reload the page in a few minutes." :
     null;
 ?>
 
 <div class="virgil-pure-global-section">
     <h3 class="virgil-pure-global-section-title">Migration</h3>
-    <hr class="virgil-pure-global-line"/>
+    <hr class="virgil-pure-global-line" />
 
     <div class="virgil-pure-migration-container">
 
@@ -34,12 +35,11 @@ $message = $mbp->is_process_running() ? "- $migratedPercents% complete.<br>Pleas
             <?= $message ?>
         </p>
 
-        <form action="<?php echo esc_url(admin_url('admin-post.php')); ?>" method="post"
-              id="passw0rd_form_migration">
+        <form action="<?php echo esc_url(admin_url('admin-post.php')); ?>" method="post" id="passw0rd_form_migration">
             <input type="hidden" name="action" value="<?= Form::ACTION ?>">
             <input type="hidden" name="form_type" value="<?= Form::MIGRATE ?>">
             <?php wp_nonce_field('nonce', Form::NONCE) ?>
-            <input  type="submit" name="submit" id="submit" class="virgil-pure-global-button
+            <input type="submit" name="submit" id="submit" class="virgil-pure-global-button
             virgil-pure-global-submit" value="<?= $value ?>" <?= $disabled ?>>
         </form>
     </div>

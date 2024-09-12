@@ -196,6 +196,6 @@ class CoreProtocol implements Core
         $buppk = $this->getPure()->getBuppk();
         $privateKey = $this->getPure()->getOskp()->getPrivateKey();
         $encryptedKey = $this->pureCrypto->encryptForBackup($userPass, $buppk, $privateKey);
-        update_user_meta($userId, Option::ENCRYPT_BACKUP_KEY, base64_encode($encryptedKey));
+        update_user_meta($userId, Option::USER_ENCRYPTED_BACKUP_KEY, base64_encode($encryptedKey));
     }
 }

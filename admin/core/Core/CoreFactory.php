@@ -37,13 +37,12 @@
 
 namespace VirgilSecurityPure\Core;
 
-use VirgilSecurityPure\Background\BaseBackgroundProcess;
 use VirgilSecurityPure\Background\EncryptAndMigrateBackgroundProcess;
 use VirgilSecurityPure\Background\RecoveryBackgroundProcess;
-use VirgilSecurityPure\Background\UpdateBackgroundProcess;
 use VirgilSecurityPure\Config\BackgroundProcess;
 use VirgilSecurityPure\Config\BuildCore;
 use VirgilSecurityPure\Helpers\DBQueryHelper;
+use WP_Background_Process;
 
 /**
  * Class CoreFactory
@@ -70,24 +69,6 @@ class CoreFactory
                 return new CredentialsManager();
             case BuildCore::FORM_HANDLER:
                 return new FormHandler();
-        }
-
-        $this->throwError($class);
-    }
-
-    /**
-     * @param string $class
-     * @return BaseBackgroundProcess
-     */
-    public function buildBackgroundProcess(string $class): BaseBackgroundProcess
-    {
-        switch ($class) {
-            case BackgroundProcess::ENCRYPT_AND_MIGRATE:
-                return new EncryptAndMigrateBackgroundProcess();
-            case BackgroundProcess::UPDATE:
-                return new UpdateBackgroundProcess();
-            case BackgroundProcess::RECOVERY:
-                return new RecoveryBackgroundProcess();
         }
 
         $this->throwError($class);

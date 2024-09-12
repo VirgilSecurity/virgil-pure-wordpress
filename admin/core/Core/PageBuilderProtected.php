@@ -38,7 +38,6 @@
 namespace VirgilSecurityPure\Core;
 
 use VirgilSecurityPure\Config\Config;
-use VirgilSecurityPure\Config\Credential;
 use VirgilSecurityPure\Helpers\InfoHelper;
 
 /**
@@ -52,7 +51,7 @@ class PageBuilderProtected
      */
     protected function isAllUsersMigrated(): bool
     {
-        return 100==(int)InfoHelper::getMigratedPercents();
+        return InfoHelper::getTotalUsers() == InfoHelper::getMigrated();
     }
 
     /**
@@ -60,7 +59,7 @@ class PageBuilderProtected
      */
     protected function isMainPage(): bool
     {
-        return Config::ACTION_PAGE==$_GET['page'];
+        return Config::ACTION_PAGE == $_GET['page'];
     }
 
     /**
@@ -68,7 +67,7 @@ class PageBuilderProtected
      */
     protected function isLogPage(): bool
     {
-        return Config::LOG_PAGE==$_GET['page'];
+        return Config::LOG_PAGE == $_GET['page'];
     }
 
     /**
@@ -76,7 +75,7 @@ class PageBuilderProtected
      */
     protected function isFAQPage(): bool
     {
-        return Config::FAQ_PAGE==$_GET['page'];
+        return Config::FAQ_PAGE == $_GET['page'];
     }
 
     /**
@@ -84,7 +83,7 @@ class PageBuilderProtected
      */
     protected function isRecoveryPage(): bool
     {
-        return Config::RECOVERY_PAGE==$_GET['page'];
+        return Config::RECOVERY_PAGE == $_GET['page'];
     }
 
     /**

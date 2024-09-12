@@ -39,6 +39,7 @@ namespace VirgilSecurityPure\Core;
 
 use VirgilSecurityPure\Config\Config;
 use VirgilSecurityPure\Config\Credential;
+use VirgilSecurityPure\Helpers\InfoHelper;
 
 /**
  * Class PageBuilder
@@ -81,7 +82,7 @@ class PageBuilderPublic extends PageBuilderProtected
             return false;
         }
 
-        return (Credential::isAllRequiredCredentialsSet() && $this->isMainPage() && !$this->isAllUsersMigrated());
+        return (Credential::isAllRequiredCredentialsSet() && $this->isMainPage() && !InfoHelper::isContinuesMigrationOn());
     }
 
     /**
@@ -93,7 +94,7 @@ class PageBuilderPublic extends PageBuilderProtected
             return false;
         }
 
-        return (Credential::isAllRequiredCredentialsSet() && $this->isMainPage() && $this->isAllUsersMigrated());
+        return (Credential::isAllRequiredCredentialsSet() && $this->isMainPage() && InfoHelper::isContinuesMigrationOn());
     }
 
     /**
